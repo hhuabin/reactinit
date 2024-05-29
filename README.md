@@ -1,30 +1,61 @@
 # React + TypeScript + Vite
+用于创建新的 React 18.2.0 项目，开箱即用
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 项目集成
 
-## Expanding the ESLint configuration
+1. React-Router
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+   同时封装了全局前置路由守卫 `src/router/RouteGuard`
 
-- Configure the top-level `parserOptions` property like this:
+2. Redux
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+3. Axios
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+4. Less
+
+5. TailWind
+
+   样式组件
+
+6. antd-mobile
+
+   PC端请卸载 `antd-mobile`，安装 `antd` 即可，同时修改 `src/App.less`
+
+
+
+
+## Use
+
+1. First
+
+   ```bash
+   git clone
+   ```
+
+2. Second
+
+   ```bash
+   yarn install
+   ```
+
+3. Third
+
+   ```bash
+   yarn dev
+   ```
+
+4. Fourth
+
+   ```bash
+   yarn build
+   ```
+
+
+
+# version
+
+node: v20.10.0
+
+yarn: 1.22.21
