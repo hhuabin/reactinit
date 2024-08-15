@@ -21,8 +21,6 @@ const App: React.FC = () => {
 		const observer = new PerformanceObserver((entryList) => {
 			const entries = entryList.getEntries()
 			const lcpEntry = entries[entries.length - 1]
-			console.log("lcpEntry", lcpEntry);
-			
 			console.log('LCP:' + lcpEntry.startTime + 'ms')
 		});
 		observer.observe({ type: 'largest-contentful-paint', buffered: true })
