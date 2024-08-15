@@ -19,6 +19,7 @@ export default class FunctionUtil {
 			clearTimeout((timer.current as NodeJS.Timeout))
 			timer.current = setTimeout(() => {
 				callback(...args)
+				// callback.call(this, ...args)
 			}, delay);
 		}
 	}
@@ -36,6 +37,7 @@ export default class FunctionUtil {
 			const nowTime = Date.now()
 			if (nowTime - lastTime.current > delay) {
 				callback(...args)
+				// callback.apply(this, args)
 				lastTime.current = nowTime
 			}
 		}

@@ -88,7 +88,7 @@ export default class Axios {
 			commonParam.timestamp = timestamp
 
 			commonParam.token = store.getState().user.token
-			config.data = { ...data, ...commonParam }
+			config.data = { ...commonParam, ...data }
 			return config
 		}, this.errorHandler)
 

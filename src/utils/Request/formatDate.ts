@@ -1,4 +1,4 @@
-const formatDate = (value: string | Date | number, fmt: string): string => {
+const formatDate = (value: string | Date | number, fmt = "YYYY/MM/DD hh:mm:ss"): string => {
 	let date: Date;
 	if (typeof value === "string" && value.constructor === String) {
 		// ios 不支持 - 连接故而需要使用 / 
@@ -12,7 +12,6 @@ const formatDate = (value: string | Date | number, fmt: string): string => {
 		return value.toString();
 	}
 
-	fmt = fmt || "YYYY/MM/DD hh:mm:ss";
 	const weekList = ['日', '一', '二', '三', '四', '五', '六'];
 	const fmtobj: Record<string, number | string> = {
 		'M+': date.getMonth() + 1,
