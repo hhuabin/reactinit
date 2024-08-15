@@ -1,9 +1,14 @@
+:root {
+	--font-family: Source Han Sans CN, Source Han Sans CN;
+	--font-size: calc(16 * (100vw / 750));
+}
+
 html {
-	font-size: 16px;
+	font-size: var(--font-size);
 }
 
 #root {
-	font-family: Avenir, Helvetica, Arial, sans-serif;
+	font-family: var(--font-family);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	height: 100vh;
