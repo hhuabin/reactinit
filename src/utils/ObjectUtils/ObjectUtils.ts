@@ -1,7 +1,12 @@
-export default class FunctionUtil {
+export default class ObjectUtil {
 
 	/**
-	 * 深复制函数
+	 * 优点：可以处理更复杂的数据结构，如嵌套对象、数组、Date、RegExp 等。
+	 *       不会丢失非 JSON 数据类型（例如函数、undefined 等）
+	 * 缺点：实现起来较复杂，容易出错，特别是处理循环引用和其他边缘情况时需要额外逻辑
+	 */
+	/**
+	 * 循环递归深复制函数
 	 * @param obj T
 	 * @returns T
 	 */
@@ -14,7 +19,7 @@ export default class FunctionUtil {
 
 		for (const key in obj) {
 			if (Object.prototype.hasOwnProperty.call(obj, key)) {
-				copy[key] = FunctionUtil.deepCopy(obj[key]);
+				copy[key] = ObjectUtil.deepCopy(obj[key]);
 			}
 		}
 
@@ -22,7 +27,11 @@ export default class FunctionUtil {
 	}
 
 	/**
-	 * JSON深复制
+	 * 优点：速度更快，处理简单数据类型
+	 * 缺点：不支持函数、undefined、Date、RegExp 等特殊对象。使用 JSON.stringify() 会丢失这些值
+	 */
+	/**
+	 * JSON转换深复制函数
 	 * @param obj T
 	 * @returns T
 	 */

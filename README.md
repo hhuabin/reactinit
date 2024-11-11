@@ -3,25 +3,20 @@
 
 
 
-## 项目集成
+## Project Introduction
 
-1. React-Router
+Base Technology Stack：`React18` + `React-Router` + `Redux` + `Vite`
 
-   同时封装了全局前置路由守卫 `src/router/RouteGuard`
+UI：`antd-mobile`
 
-2. Redux
+Request：`Axios`
 
-3. Axios
+CSS：`Less` + `TailWind CSS`
 
-4. Less
+Other Introduction：
 
-5. TailWind
-
-   样式组件
-
-6. antd-mobile
-
-   PC端请卸载 `antd-mobile`，安装 `antd` 即可，同时修改 `src/App.less`
+1. 全局前置路由守卫 `src/router/RouteGuard`
+2. PC端请卸载 `antd-mobile`，安装 `antd` 即可，同时修改 `src/App.less`
 
 
 
