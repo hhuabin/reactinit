@@ -1,9 +1,37 @@
-import { useEffect, lazy } from 'react'
+import { useEffect, lazy, useRef } from 'react'
 
 import { Button, Space } from 'antd-mobile'
 import home from './home.module.less'
 
+import { baseRequest } from '@/api/axiosRequest'
+
 const Home: React.FC = () => {
+
+	const controller = useRef<AbortController>(new AbortController())
+
+	useEffect(() => {})
+
+	const request = () => {
+		cancelRequest()
+		const { signal } = controller.current
+		baseRequest({
+			cancelLastRequest: true,
+		}, {
+			url: "http://localhost:5000/user/postlist",
+			signal,
+		})
+		.then(res => {
+			console.log(res)
+		})
+		.catch(error => {
+			console.error(error)
+		})
+	}
+
+	const cancelRequest = () => {
+		controller.current.abort()
+		controller.current = new AbortController()
+	}
 
 	return (
 		<>
@@ -12,11 +40,14 @@ const Home: React.FC = () => {
 					<Button color='primary' fill='solid'>
 						Solid
 					</Button>
-					<Button color='primary' fill='outline'>
+					<Button color='primary' fill='outline' onClick={() => request()}>
 						Outline
 					</Button>
 					<Button color='primary' fill='none'>
 						None
+					</Button>
+					<Button color='primary' fill='outline' onClick={() => request()}>
+						Request
 					</Button>
 				</Space>
 			</div>

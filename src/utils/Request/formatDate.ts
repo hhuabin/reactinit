@@ -19,7 +19,7 @@ const formatDate = (value: string | Date | number, fmt = "YYYY/MM/DD hh:mm:ss"):
 		'h+': date.getHours(),
 		'm+': date.getMinutes(),
 		's+': date.getSeconds(),
-		'w+': weekList[date.getDay()]
+		'w+': weekList[date.getDay()],
 	};
 	if (/(Y+)/.test(fmt)) {
 		const yearLength = (fmt.match(/(Y+)/) as RegExpMatchArray)[0].length;
@@ -37,7 +37,8 @@ const formatDate = (value: string | Date | number, fmt = "YYYY/MM/DD hh:mm:ss"):
 
 // 给左边加 0
 const addLeftZero = (str: string): string => {
-	return ("00" + str).substring(str.length);
+	if (str.length >= 2) return str
+	return ("00" + str).slice(-2)
 }
 
 export default formatDate
