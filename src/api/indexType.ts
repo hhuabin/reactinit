@@ -1,8 +1,7 @@
 // 公共请求参数
 export interface PublicParam {
     readonly userId?: string;
-    readonly loading?: boolean;
-    readonly cancelLastFetch?: boolean;
+    readonly cancelLoading?: boolean;
     readonly cancelLastRequest?: boolean;
 }
 // 公共返回参数

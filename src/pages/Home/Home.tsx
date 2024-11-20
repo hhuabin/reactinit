@@ -1,9 +1,10 @@
-import { useEffect, lazy, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { Button, Space } from 'antd-mobile'
 import home from './home.module.less'
 
 import { baseRequest } from '@/api/axiosRequest'
+import { baseRequest as fetchReq } from '@/api/fetch'
 
 const Home: React.FC = () => {
 
@@ -12,13 +13,26 @@ const Home: React.FC = () => {
     useEffect(() => { })
 
     const request = () => {
-        cancelRequest()
+        // cancelRequest()
         const { signal } = controller.current
         baseRequest({
+            cancelLoading: true,
             cancelLastRequest: true,
         }, {
             url: "http://localhost:5000/user/postlist",
             signal,
+        })
+            .then(res => {
+                console.log(res)
+            })
+            .catch(error => {
+                console.error(error)
+            })
+    }
+
+    const fetchRequest = () => {
+        fetchReq({
+            cancelLastRequest: true,
         })
             .then(res => {
                 console.log(res)
@@ -48,6 +62,9 @@ const Home: React.FC = () => {
                     </Button>
                     <Button color='primary' fill='outline' onClick={() => request()}>
                         Request
+                    </Button>
+                    <Button color='primary' fill='outline' onClick={() => fetchRequest()}>
+                        fetchRequest
                     </Button>
                 </Space>
             </div>

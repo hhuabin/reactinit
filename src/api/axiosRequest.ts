@@ -1,4 +1,4 @@
-import { AxiosPromise, AxiosRequestConfig } from 'axios'
+import type { AxiosPromise, AxiosRequestConfig } from 'axios'
 
 import AxiosRequest from '@/utils/Request/AxiosRequest'
 import {

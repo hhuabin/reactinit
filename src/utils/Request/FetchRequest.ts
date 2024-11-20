@@ -1,7 +1,11 @@
+import { Toast } from 'antd-mobile'
+import type { ToastHandler } from 'antd-mobile/es/components/toast'
+
 export default class FetchRequest {
 
     private baseURL = import.meta.env.VITE_API_BASE_URL
     private controller: AbortController
+    private loadingMessage = new Map()
 
     constructor() {
         this.controller = new AbortController()
@@ -15,8 +19,8 @@ export default class FetchRequest {
     // eslint-disable-next-line
     public sendRequest = async <T = any>(url: string, data: any = {}, options?: RequestInit): Promise<T> => {
         // 是否取消上次请求
-        if (data.cancelLastFetch) {
-            delete data.cancelLastFetch
+        if (data.cancelLastRequest) {
+            delete data.cancelLastRequest
             this.cancelFetch(this.controller)
             /**
              * 可以在这里更新请求 controller
@@ -28,6 +32,22 @@ export default class FetchRequest {
         }
         // 不管是否取消上一次请求，都应该更新controller
         this.updateController()
+
+        // 处理loading逻辑
+        let loadingMessage: ToastHandler
+        let timer: NodeJS.Timeout
+        if (!data.cancelLoading) {
+            timer = setTimeout(() => {
+                loadingMessage = Toast.show({
+                    icon: 'loading',
+                    maskClickable: false,
+                    content: "loading...",
+                    duration: 0,
+                })
+            }, 1000)
+        } else {
+            delete data.cancelLoading
+        }
 
         const body = data ? JSON.stringify({
             ...data,
@@ -46,16 +66,20 @@ export default class FetchRequest {
             body,
         })
             .then((response: Response) => {
-                console.log("response", response)
                 return response.json()
             })
             .then(data => {
                 if (data.result_code === '0') {
+                    clearTimeout(timer)
+                    loadingMessage?.close()
                     return data
                 }
                 return Promise.reject(data)
             })
             .catch(error => {
+                clearTimeout(timer)
+                loadingMessage?.close()
+
                 if (error.name === 'AbortError') {
                     console.warn('请求被取消', error)
                     return new Promise(() => { })
