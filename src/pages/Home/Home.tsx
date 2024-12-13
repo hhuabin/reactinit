@@ -1,8 +1,48 @@
+import {  useRef } from 'react'
 import { Button, Space } from 'antd-mobile'
 
+import { baseRequest } from '@/api/axios'
+import { baseRequest as fetchReq } from '@/api/fetch'
 import home from './home.module.less'
 
 const Home: React.FC = () => {
+
+    const controller = useRef<AbortController>(new AbortController())
+
+    const axiosRequest = () => {
+        cancelRequest()
+        const { signal } = controller.current
+        baseRequest({
+            cancelLoading: true,
+            cancelLastRequest: true,
+        }, {
+            url: "http://localhost:5000/user/content",
+            signal,
+        })
+        .then(res => {
+            console.log(res)
+        })
+        .catch(error => {
+            console.error(error)
+        })
+    }
+
+    const fetchRequest = () => {
+        fetchReq({
+            cancelLastRequest: true,
+        })
+        .then(res => {
+            console.log(res)
+        })
+        .catch(error => {
+            console.error(error)
+        })
+    }
+
+    const cancelRequest = () => {
+        controller.current.abort()
+        controller.current = new AbortController()
+    }
 
     return (
         <>
@@ -17,10 +57,10 @@ const Home: React.FC = () => {
                     <Button color='primary' fill='none'>
                         None
                     </Button>
-                    <Button color='primary' fill='outline'>
+                    <Button color='primary' fill='outline' onClick={() => axiosRequest()}>
                         Request
                     </Button>
-                    <Button color='primary' fill='outline'>
+                    <Button color='primary' fill='outline' onClick={() => fetchRequest()}>
                         fetchRequest
                     </Button>
                 </Space>
