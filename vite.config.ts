@@ -3,10 +3,22 @@ import type { ConfigEnv } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import { visualizer } from 'rollup-plugin-visualizer'
 
+import { version } from './package.json'
+
 // https://vitejs.dev/config/
 export default defineConfig((env: ConfigEnv) => ({
     base: './',
-    plugins: [react()],
+    plugins: [
+        react(),
+        {
+            name: "inject-version",
+            transformIndexHtml(html) {
+                html = html.replace(/__VERSION__/g, version)
+                    .replace(/__BUILD_TIME__/g, String(new Date().getTime()))
+                return html
+            },
+        },
+    ],
     resolve: {
         alias: { '@': new URL('./src', import.meta.url).pathname },
     },
