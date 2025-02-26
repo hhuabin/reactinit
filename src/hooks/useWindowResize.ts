@@ -1,6 +1,6 @@
 import { useLayoutEffect, useEffect } from "react"
 
-import FunctionUtil from "@/utils/FunctionUtils/FunctionUtil"
+import ThrottleDebounce from "@/utils/functionUtils/ThrottleDebounce"
 
 /**
  * 监听浏览器窗口变化，实现自适应（大屏使用）
@@ -48,7 +48,7 @@ const useWindowResize = (designWidth = 1920, designHeight = 1080, renderDOM = '#
         // document.body.style.scrollbarWidth = 'none'
     }
 
-    const listenerFunction = FunctionUtil.debounce((event: UIEvent) => {
+    const listenerFunction = ThrottleDebounce.debounce((event: UIEvent) => {
         htmlResize()
     }, 50)
 

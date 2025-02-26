@@ -1,14 +1,14 @@
 import type { AxiosPromise, AxiosRequestConfig } from 'axios'
 
-import AxiosRequest from '@/utils/Request/AxiosRequest'
+import AxiosRequest from '@/utils/request/AxiosRequest'
 import type {
     PublicParam, PublicAnswer,
 } from './types'
 
-const service = new AxiosRequest().getAxiosInstance()
+const axiosRequest = new AxiosRequest().getAxiosInstance()
 
 export const baseRequest = (params: PublicParam, config?: AxiosRequestConfig): AxiosPromise<PublicAnswer> => {
-    return service({
+    return axiosRequest({
         url: 'url',
         method: 'post',
         ...config,
@@ -23,7 +23,7 @@ export const baseRequest = (params: PublicParam, config?: AxiosRequestConfig): A
  * 监控上传进度
  */
 export const largeFileUpload = (params: { file: FormData }, config?: AxiosRequestConfig) => {
-    return service({
+    return axiosRequest({
         url: 'url',
         method: 'post',
         headers: {

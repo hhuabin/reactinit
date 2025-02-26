@@ -1,4 +1,4 @@
-import FetchRequest from "@/utils/Request/FetchRequest"
+import FetchRequest from "@/utils/request/FetchRequest"
 import type {
     PublicParam, PublicAnswer,
 } from './types'

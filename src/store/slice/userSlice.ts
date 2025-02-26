@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import CookieUtil from '@/utils/StorageUtils/CookieUtil'
+import CookieUtil from '@/utils/storageUtils/CookieUtil'
 import type { Token } from '../types/userSlice'
 
 export const userSlice = createSlice({
