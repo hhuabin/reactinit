@@ -1,5 +1,5 @@
 <svg width="100" height="100" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
   <!-- viewBox: 定义了 SVG 画布的内部坐标系 -->
-  <path d="M10 28L20 38L40 18" stroke="black" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10 28L20 38L40 18" stroke="black" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
   <!-- 描述了一个勾形的路径，从 (10, 28) 开始，经过 (20, 38)，最终到达 (40, 18) -->
 </svg>
