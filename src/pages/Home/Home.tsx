@@ -1,9 +1,11 @@
-import {  useRef } from 'react'
+import { useRef } from 'react'
 import { Button, Space } from 'antd-mobile'
 
 import { baseRequest } from '@/api/axios'
 import { baseRequest as fetchReq } from '@/api/fetch'
 import home from './home.module.less'
+
+import Loading from '@/components/Loading/Loading'
 
 const Home: React.FC = () => {
 
@@ -47,6 +49,7 @@ const Home: React.FC = () => {
     return (
         <>
             <div className={home.home}>
+                <Loading></Loading>
                 <Space wrap>
                     <Button color='primary' fill='solid'>
                         Solid

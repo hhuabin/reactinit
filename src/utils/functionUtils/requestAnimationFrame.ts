@@ -8,7 +8,7 @@
  * @returns { Object } 包含 start 和 stop 方法的对象
  */
 const createAnimation = (callback: (progress: number, elapsedTime: number) => void, duration = 1000, interval = 0) => {
-    let startTime: number |null = null     // 动画起始时间
+    let startTime: number | null = null    // 动画起始时间
     let lastFrameTime: number | null       // 上一帧的时间
     let requestID: number | null           // reques进度tAnimationFrame 的 ID
 
