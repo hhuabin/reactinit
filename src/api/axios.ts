@@ -9,8 +9,8 @@ const axiosRequest = new AxiosRequest().getAxiosInstance()
 
 export const baseRequest = (params: PublicParam, config?: AxiosRequestConfig): AxiosPromise<PublicAnswer> => {
     return axiosRequest({
-        url: 'url',
-        method: 'post',
+        url: "/user/postlist",
+        method: "post",
         ...config,
         data: {
             ...params,

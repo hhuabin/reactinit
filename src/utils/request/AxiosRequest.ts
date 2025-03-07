@@ -2,11 +2,12 @@ import axios from 'axios'
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import { Toast } from 'antd-mobile'
 
+// import { navigate } from '@/hooks/router'
 import store from '@/store/store'
-import { removeToken } from '@/store/slice/userSlice'
+import { removeToken, saveToken } from '@/store/slice/userSlice'
 import formatDate from './formatDate'
 
-interface CommonParams {
+type CommonParams = {
     version: string;
     charset: string;
     req_source: string;
@@ -17,7 +18,7 @@ interface CommonParams {
 }
 
 export default class AxiosRequest {
-    private service: AxiosInstance = axios.create({
+    private instance: AxiosInstance = axios.create({
         baseURL: import.meta.env.VITE_API_BASE_URL,
         timeout: 60000,
         headers: {
@@ -34,6 +35,7 @@ export default class AxiosRequest {
         system: 'H5',
         timestamp: '',
     }
+    private refreshTokenPromise: Promise<void> | null = null
 
     constructor() {
         this.controller = new AbortController()
@@ -46,7 +48,7 @@ export default class AxiosRequest {
     }
 
     private init = () => {
-        this.service.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+        this.instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
             const { data = {} } = config
 
             // 是否取消上次请求
@@ -98,7 +100,7 @@ export default class AxiosRequest {
             return config
         }, this.handleRequestError)
 
-        this.service.interceptors.response.use((response: AxiosResponse) => {
+        this.instance.interceptors.response.use(async (response: AxiosResponse) => {
             if (this.timerId) {
                 /**
                  * 这里会产生一个问题，在多个请求同时携带loading参数时
@@ -113,13 +115,24 @@ export default class AxiosRequest {
             // response.status === 200
             if (response.data.result_code === '0') {
                 return response
-            } else if (response.data.result_code === '1010007') {
-                store.dispatch(removeToken())
-                Toast.show({
-                    icon: 'fail',
-                    content: "登录已失效",
-                })
-                return Promise.reject(new Error("登录已失效"))
+            } else if (response.data.result_code === '-1' && response.config.url !== '/user/refreshtoken') {
+                // 无感刷新 token ，进入此逻辑的请求链接不能是无感刷新的 url ，避免逻辑死循环
+                console.error(response)
+                try {
+                    await this.refreshToken()
+                    return this.requestAgain({
+                        ...response.config,
+                        data: {
+                            ...response.config.data,
+                            token: store.getState().user.token,
+                        },
+                    })
+                } catch (error) {
+                    // 刷新 token 接口失败
+                    console.error(error)
+                    // 需返回原来接口的报错
+                    return Promise.reject(response)
+                }
             } else {
                 console.error(response)
                 return Promise.reject(response)
@@ -127,9 +140,70 @@ export default class AxiosRequest {
         }, this.handleRequestError)
     }
 
-    // 取消请求
+    /**
+     * 取消请求
+     * @param controller AbortController
+     * @returns void
+     */
     public cancelRequest = (controller: AbortController) => {
         controller.abort()
+    }
+
+    /**
+     * 请求重发
+     * @param config InternalAxiosRequestConfig
+     * @returns Promise<AxiosResponse<any, any>>
+     */
+    public requestAgain = (config: InternalAxiosRequestConfig) => {
+        // 基于 response.cnofig === request 的 config
+        return this.instance(config)
+    }
+
+    /**
+     * 无感刷新 token 函数
+     * @returns Promise<void>
+     */
+    public refreshToken = (): Promise<void> => {
+
+        // 当多个请求同时触发时 refreshToken时，只会发起一次请求
+        if (this.refreshTokenPromise) return this.refreshTokenPromise
+
+        console.log("refresh-token")
+        store.dispatch(removeToken())
+        // 开发者自行修改
+        const refreshToken = "refreshToken"
+
+        this.refreshTokenPromise =  new Promise<void>((resolve, reject) => {
+            // 发起刷新token请求
+            this.instance({
+                url: '/user/refreshtoken',
+                method: "post",
+                headers: {
+                    Authorization: `Bearer ${refreshToken}`,
+                },
+            })
+            .then((res) => {
+                const newToken = res.data.token
+                if (newToken) {
+                    // 存储新的 token 到 store 中
+                    store.dispatch(saveToken({
+                        token: newToken,
+                    }))
+                    resolve()
+                }
+                return Promise.reject(res)
+            })
+            .catch((error) => {
+                // 此处可做跳转至登录页
+                // navigate("login")
+                reject(error)
+            })
+            .finally(() => {
+                this.refreshTokenPromise = null
+            })
+        })
+
+        return this.refreshTokenPromise
     }
 
     // 异常拦截处理器
@@ -173,6 +247,6 @@ export default class AxiosRequest {
     }
 
     public getAxiosInstance = () => {
-        return this.service
+        return this.instance
     }
 }

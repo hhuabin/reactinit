@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { Button, Space } from 'antd-mobile'
+import { Button, Space, Toast } from 'antd-mobile'
 
 import { baseRequest } from '@/api/axios'
 import { baseRequest as fetchReq } from '@/api/fetch'
@@ -18,14 +18,16 @@ const Home: React.FC = () => {
             cancelLoading: true,
             cancelLastRequest: true,
         }, {
-            url: "http://localhost:5000/user/content",
             signal,
         })
         .then(res => {
             console.log(res)
         })
         .catch(error => {
-            console.error(error)
+            Toast.show({
+                content: error.data?.err_msg || "未知错误",
+                duration: 3000,
+            })
         })
     }
 

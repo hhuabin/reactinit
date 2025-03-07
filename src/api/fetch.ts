@@ -7,12 +7,12 @@ const fetchRequest = new FetchRequest()
 
 export const baseRequest = (params: PublicParam, options?: RequestInit): Promise<PublicAnswer> => {
     return fetchRequest.sendRequest(
-        "http://localhost:5000/user/content",
+        "/user/postlist",
         {
             ...params,
         },
         {
-            method: 'POST',
+            method: "POST",
             ...options,
         },
     )
