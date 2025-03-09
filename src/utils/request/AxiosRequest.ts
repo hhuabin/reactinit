@@ -26,7 +26,7 @@ export default class AxiosRequest {
             'Authorization': 'Bearer <token>',
         },
     })
-    private controller: AbortController | null = null
+    private controller: AbortController
     private timerId: NodeJS.Timeout | null = null
     private commonParams: CommonParams = {
         version: '1.0',
@@ -38,6 +38,7 @@ export default class AxiosRequest {
     private refreshTokenPromise: Promise<void> | null = null
 
     constructor() {
+        this.controller = new AbortController()
         this.init()
     }
 
@@ -51,19 +52,18 @@ export default class AxiosRequest {
             const { data = {} } = config
 
             /**
-             * 是否取消上次请求
+             * 是否取消上次请求，适合用在请求数据接口，不适合在提交数据接口使用，以避免重复提交
              * 只有携带了 cancelLastRequest 参数的请求才允许被取消，避免取消必要的请求
              * attention：禁止多个并行请求（如Promise.all中）同时携带 cancelLastRequest 参数，会造成只有最后一个请求生效
              */
             if (data.cancelLastRequest) {
                 delete data.cancelLastRequest
-                this.controller && this.cancelRequest(this.controller)
+                this.cancelRequest(this.controller)
                 this.updateController()
                 config.signal ??= this.controller?.signal
             }
 
-            if (data.loading) {
-                delete data.loading
+            if (!data.cancelLoading) {
                 /**
                  * 防止上一个 loading 有值但是未 clear
                  * 适用于：阻止多个请求都有 loading 时，timerId未清除导致的 loading一直存在
@@ -77,6 +77,8 @@ export default class AxiosRequest {
                         duration: 0,
                     })
                 }, 1000)
+            } else {
+                delete data.cancelLoading
             }
 
             // 深拷贝数据，令对象不被改变
@@ -97,17 +99,8 @@ export default class AxiosRequest {
         }, this.handleRequestError)
 
         this.instance.interceptors.response.use(async (response: AxiosResponse) => {
-            if (this.timerId) {
-                /**
-                 * 这里会产生一个问题，在多个请求同时携带loading参数时
-                 * 第一个请求成功，则会进入此函数。清空timerId，关闭loadingToast，尽管后续请求失败也会造成关闭
-                 * 故而如非特殊需要，请不要在多个请求中（如Promise.all中）同时携带loading参数
-                 * 请自行在请求中处理
-                 */
-                clearTimeout(this.timerId)
-                Toast.clear()
-                this.timerId = null
-            }
+            this.clearTimerId()
+
             // response.status === 200
             if (response.data.result_code === '0') {
                 return response
@@ -137,11 +130,36 @@ export default class AxiosRequest {
     }
 
     /**
+     * 清除 loading 定时器
+     */
+    private clearTimerId = () => {
+        if (this.timerId) {
+            /**
+             * 这里会产生一个问题，在多个请求同时携带loading参数时
+             * 第一个请求成功，则会进入此函数。清空timerId，关闭loadingToast，尽管后续请求失败也会造成关闭
+             * 故而如非特殊需要，请不要在多个请求中（如Promise.all中）同时携带loading参数
+             * 请自行在请求中处理
+             */
+            clearTimeout(this.timerId)
+            Toast.clear()
+            this.timerId = null
+        }
+    }
+
+    /**
      * 取消请求
      * @param controller AbortController
      * @returns void
      */
-    public cancelRequest = (controller: AbortController) => {
+    private cancelRequest = (controller: AbortController) => {
+        if (!controller) {
+            console.warn("controller is null")
+            return
+        }
+        /**
+         * 取消请求是异步的，比较慢，会造成一些问题
+         * 比如新的 request 中的 timerId 会被 handleRequestError() 清除掉，造成没有loading
+         */
         controller.abort()
     }
 
@@ -150,7 +168,7 @@ export default class AxiosRequest {
      * @param config InternalAxiosRequestConfig
      * @returns Promise<AxiosResponse<any, any>>
      */
-    public requestAgain = (config: InternalAxiosRequestConfig) => {
+    private requestAgain = (config: InternalAxiosRequestConfig) => {
         // 基于 response.cnofig === request 的 config
         return this.instance(config)
     }
@@ -159,7 +177,7 @@ export default class AxiosRequest {
      * 无感刷新 token 函数
      * @returns Promise<void>
      */
-    public refreshToken = (): Promise<void> => {
+    private refreshToken = (): Promise<void> => {
 
         // 当多个请求同时触发时 refreshToken时，只会发起一次请求
         if (this.refreshTokenPromise) return this.refreshTokenPromise
@@ -169,7 +187,7 @@ export default class AxiosRequest {
         // 开发者自行修改
         const refreshToken = "refreshToken"
 
-        this.refreshTokenPromise =  new Promise<void>((resolve, reject) => {
+        this.refreshTokenPromise = new Promise<void>((resolve, reject) => {
             // 发起刷新token请求
             this.instance({
                 url: '/user/refreshtoken',
@@ -204,11 +222,7 @@ export default class AxiosRequest {
 
     // 异常拦截处理器
     private handleRequestError = (error: unknown): Promise<AxiosError> => {
-        if (this.timerId) {
-            clearTimeout(this.timerId)
-            Toast.clear()
-            this.timerId = null
-        }
+        this.clearTimerId()
 
         let errorMessage = "请求失败，请稍后再试"
         if (axios.isCancel(error)) {
@@ -218,7 +232,7 @@ export default class AxiosRequest {
              * 比如清除组件的loading状态、以及函数防抖等
              * 若有此类逻辑，该接口不能使用取消请求功能，或者此处返回一个失败状态的 Promise
              */
-            return new Promise(() => {})
+            return new Promise(() => { })
         } else if (axios.isAxiosError(error)) {
             if (error.response?.status === 403) {
                 errorMessage = "拒绝访问"
