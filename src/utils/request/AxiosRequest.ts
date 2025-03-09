@@ -26,7 +26,7 @@ export default class AxiosRequest {
             'Authorization': 'Bearer <token>',
         },
     })
-    private controller: AbortController
+    private controller: AbortController | null = null
     private timerId: NodeJS.Timeout | null = null
     private commonParams: CommonParams = {
         version: '1.0',
@@ -38,7 +38,6 @@ export default class AxiosRequest {
     private refreshTokenPromise: Promise<void> | null = null
 
     constructor() {
-        this.controller = new AbortController()
         this.init()
     }
 
@@ -51,21 +50,17 @@ export default class AxiosRequest {
         this.instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
             const { data = {} } = config
 
-            // 是否取消上次请求
+            /**
+             * 是否取消上次请求
+             * 只有携带了 cancelLastRequest 参数的请求才允许被取消，避免取消必要的请求
+             * attention：禁止多个并行请求（如Promise.all中）同时携带 cancelLastRequest 参数，会造成只有最后一个请求生效
+             */
             if (data.cancelLastRequest) {
                 delete data.cancelLastRequest
-                this.cancelRequest(this.controller)
-                /**
-                 * 可以在这里更新请求 controller
-                 * 但是这样会造成controller长期不更新
-                 * 一旦取消请求，多个请求会被同时取消
-                 * 甚至是请求不同组件的请求被取消，不推荐在这里更新
-                 */
-                // this.updateController()
+                this.controller && this.cancelRequest(this.controller)
+                this.updateController()
+                config.signal ??= this.controller?.signal
             }
-            // 不管是否取消上一次请求，都应该更新controller
-            this.updateController()
-            config.signal ??= this.controller.signal
 
             if (data.loading) {
                 delete data.loading
@@ -83,20 +78,21 @@ export default class AxiosRequest {
                     })
                 }, 1000)
             }
+
             // 深拷贝数据，令对象不被改变
-            const commonParam = { ...this.commonParams }
+            const commonParams = { ...this.commonParams }
             // requestSerial 请求序列号
             let requestSerial: string = new Date().getTime().toString()
             for (let i = 0; i < 6; i++) {
                 requestSerial += Math.floor(Math.random() * 10)
             }
-            commonParam.requestSerial = requestSerial
+            commonParams.requestSerial = requestSerial
             // timestamp 请求时间
             const timestamp: string = formatDate(new Date(), 'YYYY-MM-DD hh:mm:ss')
-            commonParam.timestamp = timestamp
+            commonParams.timestamp = timestamp
 
-            commonParam.token = store.getState().user.token
-            config.data = { ...commonParam, ...data }
+            commonParams.token = store.getState().user.token
+            config.data = { ...commonParams, ...data }
             return config
         }, this.handleRequestError)
 

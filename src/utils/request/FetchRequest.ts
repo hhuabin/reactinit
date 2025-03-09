@@ -1,11 +1,7 @@
 export default class FetchRequest {
 
     private baseURL = import.meta.env.VITE_API_BASE_URL
-    private controller: AbortController
-
-    constructor() {
-        this.controller = new AbortController()
-    }
+    private controller: AbortController | null = null
 
     private updateController = () => {
         this.controller = new AbortController()
@@ -14,19 +10,11 @@ export default class FetchRequest {
     // eslint-disable-next-line
     public sendRequest = async <T = any>(url: string, data: any = {}, options?: RequestInit): Promise<T> => {
         // 是否取消上次请求
-        if (data.cancelLastFetch) {
-            delete data.cancelLastFetch
-            this.cancelFetch(this.controller)
-            /**
-             * 可以在这里更新请求 controller
-             * 但是这样会造成controller长期不更新
-             * 一旦取消请求，多个请求会被同时取消
-             * 甚至是请求不同组件的请求被取消，不推荐在这里更新
-             */
-            // this.updateController()
+        if (data.cancelLastRequest) {
+            delete data.cancelLastRequest
+            this.controller && this.cancelFetch(this.controller)
+            this.updateController()
         }
-        // 不管是否取消上一次请求，都应该更新controller
-        this.updateController()
 
         const body = data ? JSON.stringify({
             ...data,
@@ -37,7 +25,7 @@ export default class FetchRequest {
         }
 
         return fetch(url, {
-            signal: this.controller.signal,
+            signal: this.controller?.signal,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -56,7 +44,7 @@ export default class FetchRequest {
         })
         .catch(error => {
             if (error.name === 'AbortError') {
-                console.log('请求被取消')
+                console.warn('请求被取消', error.message)
                 /**
                  * 在返回 pendding 状态的时候，要确保请求函数的.catch没有什么必须要处理的逻辑
                  * 比如清除组件的loading状态、以及函数防抖等
