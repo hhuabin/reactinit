@@ -15,7 +15,7 @@ export default class FetchRequest {
     }
 
     // eslint-disable-next-line
-    private sendRequest = async <T = any>(url: string, data: any = {}, options?: RequestInit): Promise<T> => {
+    public sendRequest = async <T = any>(url: string, data: any = {}, options?: RequestInit): Promise<T> => {
         // 是否取消上次请求
         if (data.cancelLastRequest) {
             delete data.cancelLastRequest
