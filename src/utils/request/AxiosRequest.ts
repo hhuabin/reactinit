@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import { message } from 'antd'
 
-// import { navigate } from '@/hooks/router'
+// import { navigate } from '@/hooks/useRouter'
 import store from '@/store/store'
 import { saveToken, removeToken } from '@/store/slice/userSlice'
 import formatDate from '../stringUtils/formatDate'

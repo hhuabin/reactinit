@@ -1,8 +1,9 @@
+import { useNavigate } from 'react-router-dom'
 import type { NavigateFunction } from 'react-router-dom'
 
 /**
- * 供组件外跳转路由使用
- * 使用前请务必给 navigator 初始化，如在App.tsx 中初始化
+ * 供组件外路由跳转使用
+ * 使用 navigator 前请务必先初始化，如在 App.tsx 中调用初始化
  */
 
 let navigator: NavigateFunction
@@ -18,3 +19,13 @@ export const navigate = (to: string) => {
         console.warn("Navigator not initialized!")
     }
 }
+
+const useRouter = () => {
+
+    const navigate = useNavigate()
+
+    setNavigator(navigate)
+
+}
+
+export default useRouter

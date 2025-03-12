@@ -3,12 +3,15 @@ import { useDispatch } from 'react-redux'
 
 import { saveToken } from '@/store/slice/userSlice'
 import RenderRoutes from "@/router/RenderRoutes"
+import useRouter from '@/hooks/useRouter'
 import usePerformanceMonitor from "@/hooks/usePerformanceMonitor"
 import useProjectAutoUpdate from "@/hooks/useProjectAutoUpdate"
 import "./App.less"
 
 const App: React.FC = () => {
 
+    // 初始化路由Hooks
+    useRouter()
     // 性能监控
     usePerformanceMonitor()
     // 项目自动检测更新
