@@ -5,7 +5,8 @@
  * - elapsedTime 为当前动画已经执行的时间，单位为毫秒
  * @param { number } duration 动画总时长，单位为毫秒，默认为 1000ms
  * @param { number } interval 动画每一帧执行的间隔时间，单位为毫秒，默认为一帧的时间，建议不小于16.67ms（即 60Hz 的一帧时间）
- * @returns { Object } 包含 start 和 stop 方法的对象
+ * @returns { object } 包含 start 和 stop 方法的对象
+ * @example const animation = createAnimation((progress, elapsedTime) => { console.log(progress, elapsedTime) }, 1000, 16.67)
  */
 const createAnimation = (callback: (progress: number, elapsedTime: number) => void, duration = 1000, interval = 0) => {
     let startTime: number | null = null    // 动画起始时间

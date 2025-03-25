@@ -1,9 +1,3 @@
-/**
- * @Author: bin
- * @Date: 2025-02-26 18:30:03
- * @LastEditors: bin
- * @LastEditTime: 2025-02-26 18:59:59
- */
 import { useRef } from 'react'
 
 export default class ThrottleDebounce {
@@ -14,8 +8,8 @@ export default class ThrottleDebounce {
     /**
      * 防抖函数： 一个需要频繁触发的函数，在规定时间内触发，只让最后一次生效，前面的不生效
      * @param { Function } callback 回调函数
-     * @param { Number } delay 延迟时间
-     * @param { Boolean } immediate 立即执行
+     * @param {number } delay 延迟时间
+     * @param { boolean } immediate 立即执行
      * @returns { Function } debounced防抖函数
      */
     public static debounce = <T>(callback: (...args: Array<T>) => void, delay = 500, immediate = false) => {
@@ -58,7 +52,7 @@ export default class ThrottleDebounce {
     /**
      * 函数节流：一个函数执行完后只有大于设定时间才会再次执行第二次  (节约浏览器资源)
      * @param { Function } callback 回调函数
-     * @param { Number } delay 延迟时间
+     * @param { number } delay 延迟时间
      * @returns { Function } throttled节流函数
      */
     public static throttle = <T>(callback: (...args: Array<T>) => void, delay = 200) => {

@@ -1,11 +1,11 @@
 import axios from 'axios'
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
-import { message } from 'antd'
+import { Toast } from 'antd-mobile'
 
 // import { navigate } from '@/hooks/useRouter'
 import store from '@/store/store'
-import { saveToken, removeToken } from '@/store/slice/userSlice'
-import formatDate from '../stringUtils/formatDate'
+import { saveUserInfo, removeUserInfo } from '@/store/slice/userSlice'
+import formatDate from '@/utils/stringUtils/formatDate'
 
 /**
  * AxiosRequest
@@ -15,7 +15,7 @@ import formatDate from '../stringUtils/formatDate'
  * 4. requestRetry 存在间隔 loading 问题，建议修复为只有一个loading
  */
 
-interface CommonParams {
+type PublicParams = {
     version: string;
     charset: string;
     req_source: string;
@@ -26,8 +26,6 @@ interface CommonParams {
 }
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-    loadingSymbol?: symbol;
-    timerId?: NodeJS.Timeout;
     requestRetryNumber?: number;
 }
 
@@ -41,9 +39,9 @@ export default class AxiosRequest {
         },
     })
     private controller: AbortController | null = null
-    private loadingMessage = new Map<symbol, () => void>()
+    private timerId: NodeJS.Timeout | null = null
     private refreshTokenPromise: Promise<void> | null = null
-    private commonParams: CommonParams = {
+    private publicParams: PublicParams = {
         version: '1.0',
         charset: 'UTF-8',
         req_source: 'PROJECT',
@@ -56,7 +54,7 @@ export default class AxiosRequest {
     }
 
     private init = () => {
-        this.instance.interceptors.request.use((config: CustomAxiosRequestConfig) => {
+        this.instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
             const { data = {} } = config
 
             /**
@@ -73,40 +71,40 @@ export default class AxiosRequest {
 
             if (!data.cancelLoading) {
                 if (data.cancelLoading === false) delete data.cancelLoading
-                const loadingSymbol = Symbol('loading')
-                let loadingHandler: () => void
-                const timerId = setTimeout(() => {
-                    loadingHandler = message.loading('loading...', 0)
-                    this.loadingMessage.set(loadingSymbol, loadingHandler)
+                if (this.timerId) clearTimeout(this.timerId)
+                this.timerId = setTimeout(() => {
+                    Toast.show({
+                        icon: 'loading',
+                        maskClickable: false,
+                        content: "loading...",
+                        duration: 0,
+                    })
                 }, 1000)
-                config.loadingSymbol = loadingSymbol
-                config.timerId = timerId
             } else {
                 delete data.cancelLoading
             }
 
             // 深拷贝数据，令对象不被改变
-            const commonParam = { ...this.commonParams }
+            const publicParams = { ...this.publicParams }
             // requestSerial 请求序列号
             let requestSerial: string = new Date().getTime().toString()
             for (let i = 0; i < 6; i++) {
                 requestSerial += Math.floor(Math.random() * 10)
             }
-            commonParam.requestSerial = requestSerial
+            publicParams.requestSerial = requestSerial
             // timestamp 请求时间
             const timestamp: string = formatDate(new Date(), 'YYYY-MM-DD hh:mm:ss')
-            commonParam.timestamp = timestamp
+            publicParams.timestamp = timestamp
 
-            commonParam.token = store.getState().user.token
-            config.data = { ...commonParam, ...data }
+            publicParams.token = store.getState().user.userInfo.token
+            config.data = { ...publicParams, ...data }
             // 默认使用POST方法
             config.method = config.method || 'POST'
             return config
         }, this.handleRequestError)
 
         this.instance.interceptors.response.use(async (response: AxiosResponse) => {
-            const config: CustomAxiosRequestConfig = response.config
-            this.clearTimeoutTimer(config)
+            this.clearTimerId()
 
             // response.status === 200
             if (response.data.result_code === '0') {
@@ -118,8 +116,8 @@ export default class AxiosRequest {
                     await this.refreshToken()
                     // 重新发送请求，如果此时接口还是报token过期，则会继续请求
                     return this.requestRetry(
-                        config,
-                        { token: store.getState().user.token },
+                        response.config,
+                        { token: store.getState().user.userInfo.token },
                         response,
                     )
                 } catch (error) {
@@ -143,12 +141,17 @@ export default class AxiosRequest {
     /**
      * 清除 loading 定时器
      */
-    private clearTimeoutTimer = (config: CustomAxiosRequestConfig) => {
-        clearTimeout(config.timerId)
-        if (config.loadingSymbol) {
-            const loadingHandler = this.loadingMessage.get(config.loadingSymbol)
-            loadingHandler && loadingHandler()
-            this.loadingMessage.delete(config.loadingSymbol)
+    private clearTimerId = () => {
+        if (this.timerId) {
+            /**
+             * 这里会产生一个问题，在多个请求同时携带loading参数时
+             * 第一个请求成功，则会进入此函数。清空timerId，关闭loadingToast，尽管后续请求失败也会造成关闭
+             * 故而如非特殊需要，请不要在多个请求中（如Promise.all中）同时携带loading参数
+             * 请自行在请求中处理
+             */
+            clearTimeout(this.timerId)
+            Toast.clear()
+            this.timerId = null
         }
     }
 
@@ -216,7 +219,7 @@ export default class AxiosRequest {
         if (this.refreshTokenPromise) return this.refreshTokenPromise
 
         console.log("refresh-token")
-        store.dispatch(removeToken())
+        store.dispatch(removeUserInfo())
         // 开发者自行修改
         const refreshToken = "refreshToken"
 
@@ -233,7 +236,7 @@ export default class AxiosRequest {
                 const newToken = res.data.token
                 if (newToken) {
                     // 存储新的 token 到 store 中
-                    store.dispatch(saveToken({
+                    store.dispatch(saveUserInfo({
                         token: newToken,
                     }))
                     resolve()
@@ -255,12 +258,16 @@ export default class AxiosRequest {
 
     // 异常拦截处理器
     private handleRequestError = (error: unknown): Promise<AxiosError> => {
-        const config = (error as AxiosError).config as CustomAxiosRequestConfig
-        this.clearTimeoutTimer(config)
+        this.clearTimerId()
 
         let errorMessage = "请求失败，请稍后再试"
         if (axios.isCancel(error)) {
             console.warn('请求被取消', error.message)
+            /**
+             * 在返回 pendding 状态的时候，要确保请求函数的.catch没有什么必须要处理的逻辑
+             * 比如清除组件的loading状态、以及函数防抖等
+             * 若有此类逻辑，该接口不能使用取消请求功能，或者此处返回一个失败状态的 Promise
+             */
             return new Promise(() => { })
         } else if (axios.isAxiosError(error)) {
             if (error.response?.status === 403) {
@@ -285,7 +292,7 @@ export default class AxiosRequest {
         return Promise.reject({ ...(error as AxiosError), data: { err_msg: errorMessage } })
     }
 
-    // 获取实例，用于请求
+    // 暴露实例
     public getAxiosInstance = () => {
         return this.instance
     }

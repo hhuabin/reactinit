@@ -1,9 +1,10 @@
 export default class CookieUtil {
 
     /**
-     * 获取单个 cookie
-     * @param name string
-     * @returns string
+     * @description 获取单个 cookie
+     * @param { string } name cookie 名称
+     * @returns { string | null }
+     * @example CookieUtil.get("name")
      */
     public static get = (name: string): string | null => {
         const cookieName = `${encodeURIComponent(name)}=`,
@@ -22,8 +23,8 @@ export default class CookieUtil {
     }
 
     /**
-     * 返回当前路径下的所有 cookie
-     * @returns Record<string, string>
+     * @description 返回当前路径下的所有 cookie
+     * @returns { Record<string, string> }
      */
     public static getAll = (): Record<string, string> => {
         const result: Record<string, string> = {}
@@ -48,16 +49,15 @@ export default class CookieUtil {
         domain: "",  指定可以访问该 Cookie 的域名。默认情况下，只有设置该 Cookie 的域名可以访问该 Cookie。
         secure: false，指定是否仅通过安全连接（HTTPS）传输该 Cookie。默认情况下，该标识为 false，即可以通过 HTTP 和 HTTPS 传输该 Cookie。
     }) */
-
     /**
-     * 设置Cookie
-     * @param params 参数对象
-     * @param params[name] Cookie名称
-     * @param params[value] Cookie值
-     * @param params[expires] 过期时间
-     * @param params[path] 路径，默认当前页
-     * @param params[domain] 域
-     * @param params[secure] 安全标志
+     * @description 设置Cookie
+     * @param params cookie 参数对象
+     * @param { string } params.name Cookie名称
+     * @param { string } params.value Cookie值
+     * @param { Date | number } params.expires 过期时间
+     * @param { string } params.path 路径，默认当前页
+     * @param { string } params.domain 域
+     * @param { boolean } params.secure 安全标志
      */
     public static set = (params: { name: string, value: string, expires?: Date | number, path?: string, domain?: string, secure?: boolean }) => {
         const { name, value, expires, path, domain, secure = false } = params
@@ -82,8 +82,13 @@ export default class CookieUtil {
     }
 
     /**
-     * 删除单个 cookie
-     * @param params
+     * @description 删除单个 cookie
+     * @param params cookie 参数对象
+     * @param { string } params.name Cookie名称
+     * @param { string } params.path 路径，默认当前页
+     * @param { string } params.domain 域
+     * @param { boolean } params.secure 安全标志
+     * @example CookieUtil.unset({ name: "name", path: "/", domain: "localhost", secure: false })
      */
     public static unset = (params: { name: string, path?: string, domain?: string, secure?: boolean }) => {
         CookieUtil.set({

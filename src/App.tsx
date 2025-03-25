@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { saveToken } from '@/store/slice/userSlice'
+import { getters, saveUserInfo } from '@/store/slice/userSlice'
+import type { RootState } from '@/store/store'
 import RenderRoutes from "@/router/RenderRoutes"
 import useRouter from '@/hooks/useRouter'
 import usePerformanceMonitor from "@/hooks/usePerformanceMonitor"
@@ -19,12 +20,13 @@ const App: React.FC = () => {
 
     // 做登录缓存，可根据需要删除重写
     const dispatch = useDispatch()
-    dispatch(saveToken({
-        token: "token",
-    }))
+    const isLogin = useSelector((state: RootState) => getters.isLogin(state.user))
 
     useEffect(() => {
         console.log("import.meta.env", import.meta.env)
+        /* dispatch(saveUserInfo({
+            token: "token",
+        })) */
     }, [])
 
     return (

@@ -7,8 +7,8 @@ export default class DeepCopy {
      */
     /**
      * 循环递归深复制函数
-     * @param obj T
-     * @returns T
+     * @param { T } obj
+     * @returns { T }
      */
     public static deepCopy = <T>(obj: T): T => {
         if (obj === null || typeof obj !== 'object') {
@@ -32,8 +32,8 @@ export default class DeepCopy {
      */
     /**
      * JSON转换深复制函数
-     * @param obj T
-     * @returns T
+     * @param { T } obj
+     * @returns { T }
      */
     public static deepCopyWithJSON = <T>(obj: T): T => {
 

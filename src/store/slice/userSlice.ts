@@ -1,33 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import CookieUtil from '@/utils/storageUtils/CookieUtil'
-import type { Token } from '../types/userSlice'
+import type { UserInfo } from '../types/userSlice'
+import LocalStorageUtil from '@/utils/storageUtils/LocalStorageUtil'
 
 export const userSlice = createSlice({
     // 用来自动生成 action 中的 type
     name: 'user',
     initialState: {
-        token: CookieUtil.get("token") || "",
+        userInfo: <UserInfo>{
+            token: LocalStorageUtil.getProperty<string>("userInfo", "token", ""),
+        },
     },
     reducers: {
-        saveToken: (state, action: PayloadAction<Token>) => {
-            state.token = action.payload.token
-            CookieUtil.set({
-                name: "token",
-                value: action.payload.token,
-                expires: new Date().getTime() + 30 * 24 * 60 * 60 * 1000,  // 保鲜30天
-            })
+        saveUserInfo: (state, action: PayloadAction<UserInfo>) => {
+            state.userInfo.token = action.payload.token
+            LocalStorageUtil.setItem('userInfo', action.payload)
         },
-        removeToken: (state) => {
-            state.token = ""
-            CookieUtil.unset({ name: "token" })
+        removeUserInfo: (state) => {
+            state.userInfo.token = ""
+            LocalStorageUtil.setItem('userInfo', "")
         },
     },
 })
 
+export const getters = {
+    isLogin: (state: ReturnType<typeof userSlice.getInitialState>) => (!!state.userInfo.token),
+}
+
 export const {
-    saveToken, removeToken,
+    saveUserInfo, removeUserInfo,
 } = userSlice.actions
 
 export default userSlice.reducer

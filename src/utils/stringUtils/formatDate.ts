@@ -1,3 +1,10 @@
+/**
+ * @description 日期格式化
+ * @param { string | Date | number } value 需要格式化的值
+ * @param { string } fmt 日期格式
+ * @returns { string }
+ * @example formatDate(new Date(), 'YYYY/MM/DD hh:mm:ss')
+ */
 const formatDate = (value: string | Date | number, fmt = "YYYY/MM/DD hh:mm:ss"): string => {
     let date: Date
     if (typeof value === "string" && value.constructor === String) {
