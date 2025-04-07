@@ -1,3 +1,6 @@
+/**
+ * tips：存储容量约 4KB
+ */
 export default class CookieUtil {
 
     /**
@@ -60,7 +63,12 @@ export default class CookieUtil {
      * @param { boolean } params.secure 安全标志
      */
     public static set = (params: { name: string, value: string, expires?: Date | number, path?: string, domain?: string, secure?: boolean }) => {
-        const { name, value, expires, path, domain, secure = false } = params
+        /**
+         * 设置 secure 为 true 后，前端将不可通过 js 读取该 cookie，只有后端能读取，避免滥用 cookie 造成资源浪费
+         * 若需缓存“登录状态”等，前端需要通过其他方式存储，如通过localStorage存储{ isLoggedIn: true }等非敏感标志
+         */
+        const httpOnly = import.meta.env.MODE === "production" ? true : false
+        const { name, value, expires, path, domain, secure = httpOnly } = params
 
         let cookieText = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`
 

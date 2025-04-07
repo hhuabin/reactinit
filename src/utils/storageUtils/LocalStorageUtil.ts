@@ -4,6 +4,7 @@
  * LocalStorageUtil 兼容 localStorage，可以使用 localStorage 的所有 API
  * 但是会进行序列化与反序列化，方便存储复杂对象
  * 同时为了方便使用，使用 try...catch 来捕获可能的错误
+ * tips：存储容量约 5MB
  */
 export default class LocalStorageUtil {
 
