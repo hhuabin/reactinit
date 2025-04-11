@@ -3,7 +3,7 @@ import type { NavigateFunction } from 'react-router-dom'
 
 /**
  * 供组件外路由跳转使用
- * 使用 navigator 前请务必先初始化，如在 App.tsx 中调用初始化
+ * 使用 navigator 前请务必先初始化
  */
 
 let navigator: NavigateFunction

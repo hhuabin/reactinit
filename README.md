@@ -15,8 +15,8 @@ CSS：`Less` + `TailWind CSS`
 
 Other Introduction：
 
-1. 全局前置路由守卫 `src/router/RouteGuard`
-2. PC端请卸载 `antd-mobile`，安装 `antd` 即可，同时修改 `src/App.less`
+1. 全局前置路由守卫 `src/router/inedx.tsx`
+2. PC端请卸载 `antd-mobile`，移动端请卸载 `antd` 即可。同时修改 `src/App.less`
 
 
 

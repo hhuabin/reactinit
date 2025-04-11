@@ -3,16 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { getters, saveUserInfo } from '@/store/slice/userSlice'
 import type { RootState } from '@/store/store'
-import RenderRoutes from "@/router/RenderRoutes"
-import useRouter from '@/hooks/useRouter'
+import AppRouter from '@/router'
+
 import usePerformanceMonitor from "@/hooks/usePerformanceMonitor"
 import useProjectAutoUpdate from "@/hooks/useProjectAutoUpdate"
 import "./App.less"
 
 const App: React.FC = () => {
 
-    // 初始化路由Hooks
-    useRouter()
     // 性能监控
     usePerformanceMonitor()
     // 项目自动检测更新
@@ -31,7 +29,7 @@ const App: React.FC = () => {
 
     return (
         <div id="app">
-            <RenderRoutes></RenderRoutes>
+            <AppRouter></AppRouter>
         </div>
     )
 }
