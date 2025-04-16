@@ -1,12 +1,9 @@
-import { Suspense } from 'react'
 import { createHashRouter, redirect, RouterProvider } from 'react-router-dom'
 import type { RouteObject, LoaderFunction, NonIndexRouteObject } from 'react-router-dom'
 
 import store from '@/store/store'
 import { routes } from './router'
 import type { RouteConfig } from './router'
-
-import Loading from "@/components/Loading/Loading"
 
 const createRoutes = (routes: RouteConfig[]): RouteObject[] => {
     return routes.map((route): RouteObject => {
@@ -17,7 +14,7 @@ const createRoutes = (routes: RouteConfig[]): RouteObject[] => {
                 throw redirect("/login")
             }
             document.title = (route.meta?.title as string) || "react"
-            return null
+            return {}
         }
         return {
             path: route.path ?? undefined,
@@ -32,12 +29,14 @@ const createRoutes = (routes: RouteConfig[]): RouteObject[] => {
     })
 }
 
-const AppRouter: React.FC = () => {
-    return (
-        <Suspense fallback={<Loading />}>
-            <RouterProvider router={ createHashRouter(createRoutes(routes)) }></RouterProvider>
-        </Suspense>
-    )
-}
+// 一定要这个赋值步骤，避免重复创建 Router 实例
+const router = createHashRouter(createRoutes(routes))
+
+/**
+ * 禁止使用<RouterProvider router={createHashRouter(createRoutes(routes))}></RouterProvider>写法
+ * AppRouter渲染时都会调用 createHashRouter(createRoutes(routes))，创建一个新的 Router 实例
+ * 导致 React Router 的内部状态（如导航历史、加载状态等）被重置，进而引发页面闪烁、导航失败等问题
+ */
+const AppRouter: React.FC = () => (<RouterProvider router={router}></RouterProvider>)
 
 export default AppRouter
