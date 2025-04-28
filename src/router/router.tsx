@@ -21,6 +21,17 @@ export const routes: RouteConfig[] = [
         },
         children: [
             {
+                path: '/svgicon',
+                lazy: async () => {
+                    const { default: SvgIcon } = await import('@/pages/SvgIcon/SvgIcon')
+                    return { Component: SvgIcon }
+                },
+                meta: {
+                    title: 'svgicon',
+                    auth: false,
+                },
+            },
+            {
                 path: '*',
                 lazy: async () => {
                     const { default: NotFound } = await import('@/pages/NotFound/NotFound')

@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, Space, Toast } from 'antd-mobile'
 
 import { baseRequest } from '@/api/axios'
@@ -8,6 +9,8 @@ import home from './home.module.less'
 import Loading from '@/components/Loading/Loading'
 
 const Home: React.FC = () => {
+
+    const navigate = useNavigate()
 
     const controller = useRef<AbortController>(new AbortController())
 
@@ -48,6 +51,10 @@ const Home: React.FC = () => {
         controller.current = new AbortController()
     }
 
+    const goToSvgIcon = () => {
+        navigate('/svgIcon')
+    }
+
     return (
         <>
             <div className={home.home}>
@@ -67,6 +74,9 @@ const Home: React.FC = () => {
                     </Button>
                     <Button color='primary' fill='outline' onClick={() => fetchRequest()}>
                         fetchRequest
+                    </Button>
+                    <Button color='primary' fill='outline' onClick={() => goToSvgIcon()}>
+                        goToSvgIcon
                     </Button>
                 </Space>
             </div>

@@ -1,0 +1,17 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        {/* <!-- 定义透明度渐变 --> */}
+        <linearGradient id="blackGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            {/* <!-- 起始点：完全不透明 --> */}
+            <stop offset="0%" stopColor="black" stopOpacity="1" />
+            {/* <!-- 结束点：完全透明 --> */}
+            <stop offset="100%" stopColor="black" stopOpacity="0" />
+        </linearGradient>
+    </defs>
+
+    {/* <!-- 动态圆圈，半径是36，弧度是 1/2(141.5) 圆 --> */}
+    <circle cx="50" cy="50" r="36" stroke="url(#blackGradient)" strokeWidth="10" fill="none" strokeDasharray="141.5 141.5" strokeLinecap="round">
+        {/* <!-- 旋转动画 --> */}
+        <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="1.5s" repeatCount="indefinite" />
+    </circle>
+</svg>
