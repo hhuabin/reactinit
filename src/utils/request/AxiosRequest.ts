@@ -10,7 +10,7 @@ import formatDate from '@/utils/stringUtils/formatDate'
 /**
  * AxiosRequest
  * 1. cancelLastRequest：取消上次请求，适合用在请求数据接口，不适合在提交数据接口使用，以避免重复提交
- * 2. cancelLoading：默认开启loading，可使用cancelLoading取消loading
+ * 2. showLoading：可使用showLoading开启请求loading
  * 3. refreshToken：配置token过期的result_code，配置新token请求的url
  * 4. requestRetry 存在间隔 loading 问题，建议修复为只有一个loading
  */
@@ -69,8 +69,8 @@ export default class AxiosRequest {
                 config.signal ??= (this.controller as AbortController).signal
             }
 
-            if (!data.cancelLoading) {
-                if (data.cancelLoading === false) delete data.cancelLoading
+            if (data.showLoading) {
+                delete data.showLoading
                 if (this.timerId) clearTimeout(this.timerId)
                 this.timerId = setTimeout(() => {
                     Toast.show({
@@ -80,8 +80,6 @@ export default class AxiosRequest {
                         duration: 0,
                     })
                 }, 1000)
-            } else {
-                delete data.cancelLoading
             }
 
             // 深拷贝数据，令对象不被改变
@@ -270,25 +268,27 @@ export default class AxiosRequest {
              */
             return new Promise(() => { })
         } else if (axios.isAxiosError(error)) {
-            if (error.response?.status === 403) {
-                errorMessage = "拒绝访问"
-                console.error("Request error: 403 拒绝访问")
-            } else if (error.response?.status === 404) {
+            const status = error.response?.status ?? 0
+            if (error.code === "ERR_NETWORK") {
+                errorMessage = "网络竟然崩溃了"
+                if (!window.navigator.onLine) errorMessage = "网络已断开"
+            } else if (error.code === "ECONNABORTED") {
+                errorMessage = "请求超时"
+            } else if ([401, 403].includes(status)) {
+                errorMessage = "无权限访问，请登录或联系管理员"
+            } else if (status === 404) {
                 errorMessage = "请求资源不存在"
-                console.error("Request error: 404 请求资源不存在")
-            } else if (error.response?.status === 500) {
-                errorMessage = "服务器错误，请稍后重试"
-                console.error("Request error: 500 服务器错误")
-            } else if (error.request) {
-                errorMessage = "没有收到响应，请检查网络"
-                console.error("没有收到响应，请检查网络")
+            } else if (status === 429) {
+                errorMessage = "操作过于频繁"
+            } else if (status >= 500 && status < 600) {
+                errorMessage = "服务暂时不可用，请稍后重试"
             } else {
                 errorMessage = "请求错误，请稍后再试"
-                console.error('请求错误:', error.message)
             }
+            console.error(`Request Error: ${status} ${errorMessage}`)
         }
         console.error(error)
-        // err_msg 字段需要根据src/api/types/public.d 的 PublicAnswer进行自定义
+        // err_msg 字段需要根据src/api/types/public.d 的 PublicAnswer进行自定义，供请求失败提示使用
         return Promise.reject({ ...(error as AxiosError), data: { err_msg: errorMessage } })
     }
 

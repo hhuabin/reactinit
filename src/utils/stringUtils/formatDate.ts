@@ -5,17 +5,21 @@
  * @returns { string }
  * @example formatDate(new Date(), 'YYYY/MM/DD hh:mm:ss')
  */
-const formatDate = (value: string | Date | number, fmt = "YYYY/MM/DD hh:mm:ss"): string => {
+const formatDate = (value: string | Date | number, fmt = "YYYY-MM-DD hh:mm:ss"): string => {
     let date: Date
-    if (typeof value === "string" && value.constructor === String) {
-        // ios 不支持 - 连接故而需要使用 /
-        date = new Date(value.replace(/T/g, ' ').replace(/-/g, '/'))
-    } else if (value instanceof Object && value.constructor === Date) {
-        date = value
-    } else if (typeof value === "number" && value.constructor === Number) {
-        date = new Date(value)
-    } else {
-        console.warn("日期格式化失败，请传入正确的格式")
+    try {
+        if (typeof value === "string" && value.constructor === String) {
+            // ios 不支持 - 连接故而需要使用 /
+            date = new Date(value.replace(/T/g, ' ').replace(/-/g, '/'))
+        } else if (value instanceof Object && value.constructor === Date) {
+            date = value
+        } else if (typeof value === "number" && value.constructor === Number) {
+            date = new Date(value)
+        } else {
+            throw new Error("日期格式化失败，请传入正确的格式")
+        }
+    } catch (error) {
+        console.warn(error)
         return value.toString()
     }
 
@@ -35,17 +39,12 @@ const formatDate = (value: string | Date | number, fmt = "YYYY/MM/DD hh:mm:ss"):
     for (const key in fmtobj) {
         const reg = new RegExp(`(${key})`)
         if (reg.test(fmt)) {
-            const str = fmtobj[key] + '', eleLength = (fmt.match(reg) as RegExpMatchArray)[0].length
-            fmt = fmt.replace(reg, (eleLength === 1 ? str : addLeftZero(str)))
+            const str = fmtobj[key] + ''
+            const eleLength = (fmt.match(reg) as RegExpMatchArray)[0].length
+            fmt = fmt.replace(reg, (eleLength === 1 ? str : str.padStart(2, '0')))
         }
     }
     return fmt
-}
-
-// 给左边加 0
-const addLeftZero = (str: string): string => {
-    if (str.length >= 2) return str
-    return ("00" + str).slice(-2)
 }
 
 export default formatDate

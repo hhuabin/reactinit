@@ -18,7 +18,6 @@ const Home: React.FC = () => {
         cancelRequest()
         const { signal } = controller.current
         baseRequest({
-            cancelLoading: true,
             cancelLastRequest: true,
         }, {
             signal,
