@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "build:dev": "vite build --mode development",
+    "build:dev": "tsc && vite build --mode development",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "major": "yarn version --major --no-git-tag-version",
+    "minor": "yarn version --minor --no-git-tag-version",
+    "patch": "yarn version --patch --no-git-tag-version"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.5",
