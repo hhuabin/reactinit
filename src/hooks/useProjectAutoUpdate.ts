@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect } from 'react'
 
 /**
  * 用于检测项目是否和线上最新版本相同，是否需要更新，仅生产环境生效
@@ -13,8 +13,8 @@ const useProjectAutoUpdate = (projectLink = '/', intervalRefresh = false) => {
 
     // <meta name="version" content="__VERSION__" />
     const versionAndtimestampRegex = /<meta\s+name="(version|timestamp)"\s+content="([^"]+)"\s*\/?>/gi
-    const projectVersion = useRef("")
-    const projectBuildTime = useRef("")
+    const projectVersion = useRef('')
+    const projectBuildTime = useRef('')
     const intervalRefreshTimer = useRef<NodeJS.Timeout | null>(null)
     const REFRESH_INTERVAL = 60000      // 一分钟轮询检查更新一次
 
@@ -33,10 +33,10 @@ const useProjectAutoUpdate = (projectLink = '/', intervalRefresh = false) => {
     const getVersionAndTimeFromLocalHtmlMetaAndStartRefresh = () => {
         const versionMeta = document.querySelector('meta[name="version"]')
         const buildTimeMeta = document.querySelector('meta[name="timestamp"]')
-        projectVersion.current = versionMeta?.getAttribute('content') || ""
-        projectBuildTime.current = buildTimeMeta?.getAttribute('content') || ""
+        projectVersion.current = versionMeta?.getAttribute('content') || ''
+        projectBuildTime.current = buildTimeMeta?.getAttribute('content') || ''
         if (!projectVersion.current || !projectBuildTime.current) {
-            console.warn("useProjectAutoUpdate：当前页面未找到版本信息，请检查是否已配置版本信息；检测项目更新失败，请稍后重试")
+            console.warn('useProjectAutoUpdate：当前页面未找到版本信息，请检查是否已配置版本信息；检测项目更新失败，请稍后重试')
             return
         }
         startCheckRefresh()
@@ -52,21 +52,21 @@ const useProjectAutoUpdate = (projectLink = '/', intervalRefresh = false) => {
         return fetch(link + '?timestamp=' + Date.now())
             .then(response => response.text())
             .then(htmlString => {
-                const result: [string, string] = ["", ""]
+                const result: [string, string] = ['', '']
                 let match: RegExpExecArray | null
                 versionAndtimestampRegex.lastIndex = 0
                 while ((match = versionAndtimestampRegex.exec(htmlString)) !== null) {
                     const name = match[1]
-                    if (name === "version") {
+                    if (name === 'version') {
                         result[0] = match[2]
-                    } else if (name === "timestamp") {
+                    } else if (name === 'timestamp') {
                         result[1] = match[2]
                     }
                 }
                 if (result[0] && result[1]) {
                     return Promise.resolve(result)
                 } else {
-                    return Promise.reject("useProjectAutoUpdate：远程页面未找到版本信息，请检查是否已配置版本信息；检测项目更新失败，请稍后重试")
+                    return Promise.reject('useProjectAutoUpdate：远程页面未找到版本信息，请检查是否已配置版本信息；检测项目更新失败，请稍后重试')
                 }
             })
             .catch(error => {

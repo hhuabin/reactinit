@@ -9,7 +9,7 @@
 export default class LocalStorageUtil {
 
     // 公共前缀。可以为项目存储的 key 添加公共前缀，避免与系统冲突
-    public static STORAGE_PREFIX = ""
+    public static STORAGE_PREFIX = ''
 
     /**
      * @description 对 value 进行序列化，并保存到 localStorage
@@ -24,7 +24,7 @@ export default class LocalStorageUtil {
             const serializedValue = JSON.stringify(value)
             localStorage.setItem(_key, serializedValue)
         } catch (error) {
-            console.error(`Error setting localStorage key "${_key}":`, error)
+            console.error(`Error setting localStorage key '${_key}':`, error)
         }
     }
 
@@ -34,7 +34,7 @@ export default class LocalStorageUtil {
      * @param { any } defaultValue 默认返回值，默认为null
      * @param { boolean } prefixFlag 是否添加公共前缀，默认为 true
      * @returns { T | null } 本地缓存的值或 defaultValue 默认返回值
-     * @example localStorageUtil.getItem<User>("", "")
+     * @example localStorageUtil.getItem<User>('', '')
      */
     public static getItem: {
         <T = any>(key: string, defaultValue?: null, prefixFlag?: boolean): T | null;
@@ -59,7 +59,7 @@ export default class LocalStorageUtil {
             }
             return parsed as T
         } catch (error) {
-            console.error(`Error getting localStorage key "${_key}":`, error)
+            console.error(`Error getting localStorage key '${_key}':`, error)
             return _defaultValue
         }
     }
@@ -94,7 +94,7 @@ export default class LocalStorageUtil {
         try {
             localStorage.removeItem(_key)
         } catch (error) {
-            console.error(`Error removing localStorage key "${_key}":`, error)
+            console.error(`Error removing localStorage key '${_key}':`, error)
         }
     }
 
@@ -102,7 +102,7 @@ export default class LocalStorageUtil {
         try {
             localStorage.clear()
         } catch (error) {
-            console.error(`Error clearing localStorage:`, error)
+            console.error('Error clearing localStorage:', error)
         }
     }
 }

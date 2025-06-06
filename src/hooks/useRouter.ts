@@ -16,7 +16,7 @@ export const navigate = (to: string) => {
     if (navigator) {
         navigator(to)
     } else {
-        console.warn("Navigator not initialized!")
+        console.warn('Navigator not initialized!')
     }
 }
 

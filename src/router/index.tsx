@@ -14,9 +14,9 @@ const createRoutes = (routes: RouteConfig[]): RouteObject[] => {
                 // 公共路由守卫
                 const token = store.getState().user.userInfo.token
                 if (!token && route.meta?.auth) {
-                    throw redirect("/login")
+                    throw redirect('/login')
                 }
-                document.title = (route.meta?.title as string) || "react"
+                document.title = (route.meta?.title as string) || 'react'
                 return {}
             }
             return { loader }

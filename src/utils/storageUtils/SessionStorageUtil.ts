@@ -10,7 +10,7 @@
 export default class SessionStorageUtil {
 
     // 公共前缀。可以为项目存储的 key 添加公共前缀，避免与系统冲突
-    public static STORAGE_PREFIX = ""
+    public static STORAGE_PREFIX = ''
 
     /**
      * @description 对 value 进行序列化，并保存到 sessionStorage
@@ -25,7 +25,7 @@ export default class SessionStorageUtil {
             const serializedValue = JSON.stringify(value)
             sessionStorage.setItem(_key, serializedValue)
         } catch (error) {
-            console.error(`Error setting sessionStorage key "${_key}":`, error)
+            console.error(`Error setting sessionStorage key '${_key}':`, error)
         }
     }
 
@@ -35,7 +35,7 @@ export default class SessionStorageUtil {
      * @param { any } defaultValue 默认返回值，默认为null
      * @param { boolean } prefixFlag 是否添加公共前缀，默认为 true
      * @returns { T | null } 本地缓存的值或 defaultValue 默认返回值
-     * @example SessionStorageUtil.getItem<User>("", "")
+     * @example SessionStorageUtil.getItem<User>('', '')
      */
     public static getItem: {
         <T = any>(key: string, defaultValue?: null, prefixFlag?: boolean): T | null;
@@ -60,7 +60,7 @@ export default class SessionStorageUtil {
             }
             return parsed as T
         } catch (error) {
-            console.error(`Error getting sessionStorage key "${_key}":`, error)
+            console.error(`Error getting sessionStorage key '${_key}':`, error)
             return _defaultValue
         }
     }
@@ -95,7 +95,7 @@ export default class SessionStorageUtil {
         try {
             sessionStorage.removeItem(_key)
         } catch (error) {
-            console.error(`Error removing sessionStorage key "${_key}":`, error)
+            console.error(`Error removing sessionStorage key '${_key}':`, error)
         }
     }
 
@@ -103,7 +103,7 @@ export default class SessionStorageUtil {
         try {
             sessionStorage.clear()
         } catch (error) {
-            console.error(`Error clearing sessionStorage:`, error)
+            console.error('Error clearing sessionStorage:', error)
         }
     }
 }

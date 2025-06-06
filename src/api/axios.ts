@@ -9,8 +9,8 @@ const axiosRequest = new AxiosRequest().getAxiosInstance()
 
 export const baseRequest = (params: PublicParam, config?: AxiosRequestConfig): AxiosPromise<PublicAnswer> => {
     return axiosRequest({
-        url: "/user/postlist",
-        method: "post",
+        url: '/user/postlist',
+        method: 'post',
         ...config,
         data: {
             ...params,
@@ -27,7 +27,7 @@ export const largeFileUpload = (params: { file: FormData }, config?: AxiosReques
         url: 'url',
         method: 'post',
         headers: {
-            'Content-Type': "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
         },
         onUploadProgress: (progressEvent) => {
             // 上传进度监控，此处可移至 config 中

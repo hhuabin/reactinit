@@ -9,7 +9,7 @@ export const userSlice = createSlice({
     name: 'user',
     initialState: {
         userInfo: <UserInfo>{
-            token: LocalStorageUtil.getProperty<string>("userInfo", "token", ""),
+            token: LocalStorageUtil.getProperty<string>('userInfo', 'token', ''),
         },
     },
     reducers: {
@@ -18,8 +18,8 @@ export const userSlice = createSlice({
             LocalStorageUtil.setItem('userInfo', action.payload)
         },
         removeUserInfo: (state) => {
-            state.userInfo.token = ""
-            LocalStorageUtil.setItem('userInfo', "")
+            state.userInfo.token = ''
+            LocalStorageUtil.setItem('userInfo', '')
         },
     },
 })

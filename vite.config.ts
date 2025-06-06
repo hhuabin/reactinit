@@ -11,7 +11,7 @@ export default defineConfig((env: ConfigEnv) => ({
     plugins: [
         react(),
         {
-            name: "inject-version",
+            name: 'inject-version',
             transformIndexHtml(html) {
                 html = html.replace(/__VERSION__/g, version)
                     .replace(/__BUILD_TIME__/g, String(new Date().getTime()))

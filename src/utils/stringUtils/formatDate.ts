@@ -5,18 +5,18 @@
  * @returns { string }
  * @example formatDate(new Date(), 'YYYY/MM/DD hh:mm:ss')
  */
-const formatDate = (value: string | Date | number, fmt = "YYYY-MM-DD hh:mm:ss"): string => {
+const formatDate = (value: string | Date | number, fmt = 'YYYY-MM-DD hh:mm:ss'): string => {
     let date: Date
     try {
-        if (typeof value === "string" && value.constructor === String) {
+        if (typeof value === 'string' && value.constructor === String) {
             // ios 不支持 - 连接故而需要使用 /
             date = new Date(value.replace(/T/g, ' ').replace(/-/g, '/'))
         } else if (value instanceof Object && value.constructor === Date) {
             date = value
-        } else if (typeof value === "number" && value.constructor === Number) {
+        } else if (typeof value === 'number' && value.constructor === Number) {
             date = new Date(value)
         } else {
-            throw new Error("日期格式化失败，请传入正确的格式")
+            throw new Error('日期格式化失败，请传入正确的格式')
         }
     } catch (error) {
         console.warn(error)

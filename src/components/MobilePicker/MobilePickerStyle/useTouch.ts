@@ -1,13 +1,13 @@
-import { useRef } from "react"
+import { useRef } from 'react'
 
 const getDirection = (x: number, y: number) => {
     if (x > y) {
-        return "horizontal"
+        return 'horizontal'
     }
     if (y > x) {
-        return "vertical"
+        return 'vertical'
     }
-    return ""
+    return ''
 }
 
 /**
@@ -24,18 +24,18 @@ const useTouch = () => {
     const deltaY = useRef(0)       // y 轴移动的距离，具有正负（方向）
     const offsetX = useRef(0)      // x 轴移动的距离，无方向
     const offsetY = useRef(0)      // y 轴移动的距离，无方向
-    const direction = useRef("")   // 移动方向
+    const direction = useRef('')   // 移动方向
     const isTap = useRef(true)     // 是否是点击事件，默认是点击，超过距离 TAP_DETECTION_RADIUS 即为滑动
 
-    const isVertical = () => direction.current === "vertical"
-    const isHorizontal = () => direction.current === "horizontal"
+    const isVertical = () => direction.current === 'vertical'
+    const isHorizontal = () => direction.current === 'horizontal'
 
     const reset = () => {
         deltaX.current = 0
         deltaY.current = 0
         offsetX.current = 0
         offsetY.current = 0
-        direction.current = ""
+        direction.current = ''
         isTap.current = true
     }
 

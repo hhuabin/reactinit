@@ -31,9 +31,9 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
         visible = true,
         columns = [],
         defaultIndex = 0,
-        title = "",
-        cancelText = "取消",
-        confirmText = "确定",
+        title = '',
+        cancelText = '取消',
+        confirmText = '确定',
         primaryColor = '#1989fa',
         visibleOptionNum = 6,
     } = props
@@ -127,7 +127,7 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
         let _transformY = transformY
         if (moving.current) {
             const { transform } = window.getComputedStyle(wrapperElementRef.current as HTMLUListElement)
-            _transformY = Number(transform.slice(7, transform.length - 1).split(", ")[5])
+            _transformY = Number(transform.slice(7, transform.length - 1).split(', ')[5])
             updateAnimate(_transformY, 0)
         }
         startOffset.current = _transformY        // 定义滑动开始前的位置
@@ -185,7 +185,7 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
         setTransformY(endTransformY)
         // 获取动画当前的偏移量
         const { transform } = window.getComputedStyle(wrapperElementRef.current as HTMLUListElement)
-        const currentTransformY = transform.slice(7, transform.length - 1).split(", ")[5] || '0'
+        const currentTransformY = transform.slice(7, transform.length - 1).split(', ')[5] || '0'
         const keyframes: Keyframe[] = [
             { transform: `translateY(${currentTransformY}px)` },
             { transform: `translateY(${endTransformY}px)` },
@@ -239,15 +239,15 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
                             className={style['picker-header-cancel-button']}
                             onClick={() => onCancel()}
                         >
-                            { cancelText || "取消" }
+                            { cancelText || '取消' }
                         </button>
-                        <div className={style['picker-header-title']}>{ title || "" }</div>
+                        <div className={style['picker-header-title']}>{ title || '' }</div>
                         <button
                             type='button'
                             className={style['picker-header-confirm-button']}
                             onClick={() => onConfirm()}
                         >
-                            { confirmText || "确定" }
+                            { confirmText || '确定' }
                         </button>
                     </div>
                     <div
@@ -282,7 +282,7 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
                         </div>
                         <div
                             className={style['picker-mask']}
-                            style={{ backgroundSize: "100% " + ((+visibleOptionNum - 1) * COLUMN_HEIGHT / 2) + 'px' }}
+                            style={{ backgroundSize: '100% ' + ((+visibleOptionNum - 1) * COLUMN_HEIGHT / 2) + 'px' }}
                         ></div>
                         <div className={style['picker-frame']}></div>
                     </div>

@@ -122,7 +122,7 @@ export default class AxiosRequest {
                     )
                 } catch (error) {
                     // 刷新 token 接口失败
-                    console.error("refresh-token-error", error)
+                    console.error('refresh-token-error', error)
                     // 需返回原来接口的报错
                     return Promise.reject(response)
                 }
@@ -157,7 +157,7 @@ export default class AxiosRequest {
      */
     private cancelRequest = (controller: AbortController | null) => {
         if (!controller) {
-            console.warn("controller is null")
+            console.warn('controller is null')
             return
         }
         /**
@@ -188,7 +188,7 @@ export default class AxiosRequest {
             setTimeout(() => {
                 const requestRetryNumber = (config.requestRetryNumber || 0)
                 if (+requestRetryNumber > maxRetries) {
-                    console.error("请求重发次数过多", config)
+                    console.error('请求重发次数过多', config)
                     reject(response)
                     return
                 }
@@ -213,16 +213,16 @@ export default class AxiosRequest {
         // 当多个并发请求同时触发时 refreshToken时，只会发起一次请求
         if (this.refreshTokenPromise) return this.refreshTokenPromise
 
-        console.log("refresh-token")
+        console.log('refresh-token')
         store.dispatch(removeUserInfo())
         // 开发者自行修改
-        const refreshToken = "refreshToken"
+        const refreshToken = 'refreshToken'
 
         this.refreshTokenPromise = new Promise<void>((resolve, reject) => {
             // 发起刷新token请求
             this.instance({
                 url: '/user/refreshtoken',
-                method: "post",
+                method: 'post',
                 headers: {
                     Authorization: `Bearer ${refreshToken}`,
                 },
@@ -240,7 +240,7 @@ export default class AxiosRequest {
             })
             .catch((error) => {
                 // 此处可做跳转至登录页
-                // navigate("login")
+                // navigate('login')
                 reject(error)
             })
             .finally(() => {
@@ -256,7 +256,7 @@ export default class AxiosRequest {
         const config = (error as AxiosError).config as CustomAxiosRequestConfig
         this.clearTimeoutTimer(config)
 
-        let errorMessage = "请求失败，请稍后再试"
+        let errorMessage = '请求失败，请稍后再试'
         if (axios.isCancel(error)) {
             console.warn('请求被取消', error.message)
             /**
@@ -267,21 +267,21 @@ export default class AxiosRequest {
             return new Promise(() => { })
         } else if (axios.isAxiosError(error)) {
             const status = error.response?.status ?? 0
-            if (error.code === "ERR_NETWORK") {
-                errorMessage = "网络竟然崩溃了"
-                if (!window.navigator.onLine) errorMessage = "网络已断开"
-            } else if (error.code === "ECONNABORTED") {
-                errorMessage = "请求超时"
+            if (error.code === 'ERR_NETWORK') {
+                errorMessage = '网络竟然崩溃了'
+                if (!window.navigator.onLine) errorMessage = '网络已断开'
+            } else if (error.code === 'ECONNABORTED') {
+                errorMessage = '请求超时'
             } else if ([401, 403].includes(status)) {
-                errorMessage = "无权限访问，请登录或联系管理员"
+                errorMessage = '无权限访问，请登录或联系管理员'
             } else if (status === 404) {
-                errorMessage = "请求资源不存在"
+                errorMessage = '请求资源不存在'
             } else if (status === 429) {
-                errorMessage = "操作过于频繁"
+                errorMessage = '操作过于频繁'
             } else if (status >= 500 && status < 600) {
-                errorMessage = "服务暂时不可用，请稍后重试"
+                errorMessage = '服务暂时不可用，请稍后重试'
             } else {
-                errorMessage = "请求错误，请稍后再试"
+                errorMessage = '请求错误，请稍后再试'
             }
             console.error(`Request Error: ${status} ${errorMessage}`)
         }
