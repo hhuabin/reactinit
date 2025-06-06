@@ -1,0 +1,225 @@
+.picker-popup {
+    --primary-color: #1989fa;
+    --z-index: 999;
+    --animation-duration: 0.3s;
+    --cancel-button-color: #969799;
+    --confirm-button-color: var(--primary-color);
+
+    width: 100%;
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, .55);
+        z-index: var(--z-index);
+        opacity: 1;
+        animation: maskIn var(--animation-duration);
+
+        @keyframes maskIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    }
+    .overlay-hidden {
+        opacity: 0;
+        animation: maskOut var(--animation-duration);
+
+        @keyframes maskOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+    }
+
+    .popup-body {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        background-color: #fff;
+        transform: translateY(0);
+        animation: fadeIn var(--animation-duration);
+        overflow: hidden;
+        z-index: calc(var(--z-index) + 10);
+        user-select: none;
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .picker-header {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 44px;
+            box-sizing: border-box;
+            background-color: #fff;
+            z-index: 10;
+
+            .picker-header-cancel-button,
+            .picker-header-confirm-button {
+                flex: none;
+                height: 100%;
+                background: transparent;
+                padding: 0 16px;
+                border: none;
+                box-sizing: border-box;
+                font: inherit;
+                font-size: 14px;
+                line-height: 22px;
+                outline: none;
+                cursor: pointer;
+                &:active {
+                    opacity: 0.7;
+                }
+            }
+            .picker-header-cancel-button {
+                color: var(--cancel-button-color);
+            }
+            .picker-header-confirm-button {
+                color: var(--confirm-button-color);
+            }
+            .picker-header-title {
+                font-size: 16px;
+                color: #323233;
+                font-weight: 600;
+                line-height: 20px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .picker-body {
+            position: relative;
+            width: 100%;
+            height: 264px;
+
+            .picker-column {
+                width: 100%;
+                height: 100%;
+                font-size: 16px;
+                line-height: 24px;
+                overflow: hidden;
+                cursor: grab;
+
+                .picker-column-wrapper {
+                    height: 100%;
+                    padding: 0;
+                    margin: 0;
+                    list-style: none;
+                    transform: translate3d(0px, 0px, 0px);
+
+                    .picker-column-item {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 44px;
+                        padding: 0 4px;
+                        margin: 0;
+                        box-sizing: border-box;
+                        color: #323233;
+                        cursor: grab;
+    
+                        .line-ellipsis {
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                    }
+                }
+            }
+
+            .picker-mask {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
+                width: 100%;
+                height: 100%;
+                background-image: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .4)),
+                    linear-gradient(0deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .4));
+                background-repeat: no-repeat;
+                background-size: 100% 110px;
+                background-position: top, bottom;
+                pointer-events: none;
+            }
+
+            .picker-frame {
+                position: absolute;
+                top: 50%;
+                left: 16px;
+                right: 16px;
+                height: 44px;
+                transform: translateY(-50%);
+                pointer-events: none;
+                z-index: 2;
+                &::before, &::after {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    width: 100%;
+                    height: 1px;
+                    background-color: #ebedf0;
+                    transform: scaleY(0.5);
+                    pointer-events: none;
+                }
+                &::before {
+                    top: 0;
+                }
+                &::after {
+                    bottom: 0;
+                }
+            }
+        }
+    }
+    .popup-hidden {
+        animation: fadeOut var(--animation-duration);
+        transform: translateY(100%);
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+        }
+    }
+}
+.picker-popup-hidden {
+    display: none;
+    animation: pickerOut var(--animation-duration);
+
+    @keyframes pickerOut {
+        from {
+            display: block;
+        }
+        to {
+            display: none;
+        }
+    }
+}
