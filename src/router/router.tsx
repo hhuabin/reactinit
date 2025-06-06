@@ -1,5 +1,7 @@
 import { redirect, Navigate } from 'react-router-dom'
 
+import { mobileRoute } from './mobileRoute'
+
 import type { RouteConfig } from './types'
 
 export const routes: RouteConfig[] = [
@@ -7,12 +9,28 @@ export const routes: RouteConfig[] = [
         path: '/',
         lazy: async () => {
             const { default: Home } = await import('@/pages/Home/Home')
-            // const RedirectCom = () => (<><Home/><Navigate to="/login" replace /></>)   // 重定向(不可重定向至子路由，子路由使用 index)
+            // const RedirectCom = () => (<><Home/><Navigate to='/login' replace /></>)   // 重定向(不可重定向至子路由，子路由使用 index)
             return { Component: Home }
         },
         meta: {
             auth: false,
         },
+        children: [
+            {
+                index: true,
+                element: <Navigate to='introduce' replace />,
+            },
+            {
+                path: 'introduce',
+                lazy: async () => {
+                    const { default: Login } = await import('@/pages/Introduce/Introduce')
+                    return { Component: Login }
+                },
+                meta: {
+                    auth: false,
+                },
+            },
+        ],
     },
     {
         lazy: async () => {
@@ -20,6 +38,7 @@ export const routes: RouteConfig[] = [
             return { Component: GlobalLayout }
         },
         children: [
+            ...mobileRoute,
             {
                 path: '/svgicon',
                 lazy: async () => {

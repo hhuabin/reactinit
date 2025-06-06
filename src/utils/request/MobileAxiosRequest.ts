@@ -1,6 +1,6 @@
 import axios from 'axios'
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
-import { message } from 'antd'
+import { Toast } from 'antd-mobile'
 
 // import { navigate } from '@/hooks/useRouter'
 import store from '@/store/store'
@@ -26,9 +26,7 @@ type PublicParams = {
 }
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-    loadingSymbol?: symbol;           // loading的取消函数标识
-    timerId?: NodeJS.Timeout;         // loading的定时器
-    requestRetryNumber?: number;      // 请求失败重试次数
+    requestRetryNumber?: number;
 }
 
 export default class AxiosRequest {
@@ -41,7 +39,7 @@ export default class AxiosRequest {
         },
     })
     private controller: AbortController | null = null
-    private loadingMessage = new Map<symbol, () => void>()
+    private timerId: NodeJS.Timeout | null = null
     private refreshTokenPromise: Promise<void> | null = null
     private publicParams: PublicParams = {
         version: '1.0',
@@ -56,7 +54,7 @@ export default class AxiosRequest {
     }
 
     private init = () => {
-        this.instance.interceptors.request.use((config: CustomAxiosRequestConfig) => {
+        this.instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
             const { data = {} } = config
 
             /**
@@ -73,14 +71,15 @@ export default class AxiosRequest {
 
             if (data.showLoading) {
                 delete data.showLoading
-                const loadingSymbol = Symbol('loading')
-                let loadingHandler: () => void
-                const timerId = setTimeout(() => {
-                    loadingHandler = message.loading('loading...', 0)
-                    this.loadingMessage.set(loadingSymbol, loadingHandler)
+                if (this.timerId) clearTimeout(this.timerId)
+                this.timerId = setTimeout(() => {
+                    Toast.show({
+                        icon: 'loading',
+                        maskClickable: false,
+                        content: "loading...",
+                        duration: 0,
+                    })
                 }, 1000)
-                config.loadingSymbol = loadingSymbol
-                config.timerId = timerId
             }
 
             // 深拷贝数据，令对象不被改变
@@ -103,8 +102,7 @@ export default class AxiosRequest {
         }, this.handleRequestError)
 
         this.instance.interceptors.response.use(async (response: AxiosResponse) => {
-            const config: CustomAxiosRequestConfig = response.config
-            this.clearTimeoutTimer(config)
+            this.clearTimerId()
 
             // response.status === 200
             if (response.data.result_code === '0') {
@@ -116,7 +114,7 @@ export default class AxiosRequest {
                     await this.refreshToken()
                     // 重新发送请求，如果此时接口还是报token过期，则会继续请求
                     return this.requestRetry(
-                        config,
+                        response.config,
                         { token: store.getState().user.userInfo.token },
                         response,
                     )
@@ -141,12 +139,17 @@ export default class AxiosRequest {
     /**
      * 清除 loading 定时器
      */
-    private clearTimeoutTimer = (config: CustomAxiosRequestConfig) => {
-        clearTimeout(config.timerId)
-        if (config.loadingSymbol) {
-            const loadingHandler = this.loadingMessage.get(config.loadingSymbol)
-            loadingHandler && loadingHandler()
-            this.loadingMessage.delete(config.loadingSymbol)
+    private clearTimerId = () => {
+        if (this.timerId) {
+            /**
+             * 这里会产生一个问题，在多个请求同时携带loading参数时
+             * 第一个请求成功，则会进入此函数。清空timerId，关闭loadingToast，尽管后续请求失败也会造成关闭
+             * 故而如非特殊需要，请不要在多个请求中（如Promise.all中）同时携带loading参数
+             * 请自行在请求中处理
+             */
+            clearTimeout(this.timerId)
+            Toast.clear()
+            this.timerId = null
         }
     }
 
@@ -253,8 +256,7 @@ export default class AxiosRequest {
 
     // 异常拦截处理器
     private handleRequestError = (error: unknown): Promise<AxiosError> => {
-        const config = (error as AxiosError).config as CustomAxiosRequestConfig
-        this.clearTimeoutTimer(config)
+        this.clearTimerId()
 
         let errorMessage = "请求失败，请稍后再试"
         if (axios.isCancel(error)) {

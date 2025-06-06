@@ -1,0 +1,23 @@
+/* 公共变量样式 */
+:root {
+    --font-family: Source Han Sans CN, Source Han Sans CN;
+    --font-size: 16px;                             /* PC端字体大小 */
+    --theme-duration: 0.2s;                        /* 主题切换动画时长 */
+}
+
+:root {
+    --primary-color: #fff;                       /* 主题色 */
+    --bg-color: #fff;                            /* 背景色 */
+
+    --color-border-bg: #d9d9d9;                  /* 边框背景色 */
+    --color-bg-layout: #f5f5f5;                  /* 背景色 */
+    --color-fill: rgba(0, 0, 0, 0.15);           /* 填充色 */
+    --color-text: rgba(0, 0, 0, 0.88);           /* 默认字体颜色 */
+
+    --item-bg-hover: rgba(0, 0, 0, 0.04);        /* 鼠标滑过背景色 */
+    --item-bg-active: #e6f4ff;                   /* 激活背景色 */
+    --item-bg-active-hover: #bae0ff;             /* 激活背景色 */
+
+    --box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);     /* 阴影 */
+    --box-bottom-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);  /* 阴影 */
+}

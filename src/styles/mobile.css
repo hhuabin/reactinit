@@ -1,0 +1,3 @@
+html[data-model='mobile'] {
+    --font-size: calc(16 * (100vw / 750));         /* 移动端字体大小 */
+}

@@ -1,16 +1,12 @@
-import { message } from 'antd'
-
 export default class FetchRequest {
 
     private baseURL = import.meta.env.VITE_API_BASE_URL
     private controller: AbortController
-    private loadingMessage = new Map<symbol, () => void>()
 
     constructor() {
         this.controller = new AbortController()
     }
 
-    // 更新controller
     private updateController = () => {
         this.controller = new AbortController()
     }
@@ -22,20 +18,10 @@ export default class FetchRequest {
          * 只有携带了 cancelLastRequest 参数的请求才允许被取消，避免取消必要的请求
          * attention：禁止多个并行请求（如Promise.all中）同时携带 cancelLastRequest 参数，会造成只有最后一个请求生效
          */
-        if (data.cancelLastRequest) {
-            delete data.cancelLastRequest
+        if (data.cancelLastFetch) {
+            delete data.cancelLastFetch
             this.cancelFetch(this.controller)
             this.updateController()
-        }
-
-        // 处理loading逻辑
-        let loadingMessage = () => {}
-        let timerId: NodeJS.Timeout
-        if (data.showLoading) {
-            delete data.showLoading
-            timerId = setTimeout(() => {
-                loadingMessage = message.loading('loading...', 0)
-            }, 1000)
         }
 
         const body = data ? JSON.stringify({
@@ -60,19 +46,19 @@ export default class FetchRequest {
         })
         .then(data => {
             if (data.result_code === '0') {
-                clearTimeout(timerId)
-                loadingMessage()
                 return data
             }
             return Promise.reject(data)
         })
         .catch(error => {
-            clearTimeout(timerId)
-            loadingMessage()
-
             if (error.name === 'AbortError') {
-                console.warn('请求被取消', error)
-                return new Promise(() => { })
+                console.log('请求被取消')
+                /**
+                 * 在返回 pendding 状态的时候，要确保请求函数的.catch没有什么必须要处理的逻辑
+                 * 比如清除组件的loading状态、以及函数防抖等
+                 * 若有此类逻辑，该接口不能使用取消请求功能，或者此处返回一个失败状态的 Promise
+                 */
+                return new Promise(() => {})
             } else {
                 return Promise.reject(error)
             }

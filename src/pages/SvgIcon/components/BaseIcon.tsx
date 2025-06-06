@@ -1,20 +1,22 @@
 const BaseIcon: React.FC = () => {
 
+    const Down = (<svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="20,35 50,65 80,35" fill="none" stroke="#333" strokeWidth="8" strokeLinecap="round"></polyline>
+    </svg>)
+
     return (
         <>
             {/* arrow */}
             <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-x-[8px] gap-y-[16px] p-[8px]">
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
-                        <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                            <polyline points="20,35 50,65 80,35" fill="none" stroke="#333" strokeWidth="8" strokeLinecap="round"></polyline>
-                        </svg>
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
+                        { Down }
                     </div>
                     <div className="w-full mt-[12px] text-center break-all">down</div>
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <polyline points="20,65 50,35 80,65" fill="none" stroke="#333" strokeWidth="8" strokeLinecap="round"></polyline>
                         </svg>
@@ -23,7 +25,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <polyline points="65,20 35,50 65,80" fill="none" stroke="#333" strokeWidth="8" strokeLinecap="round"></polyline>
                         </svg>
@@ -32,7 +34,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <polyline points="35,20 65,50 35,80" fill="none" stroke="#333" strokeWidth="8" strokeLinecap="round"></polyline>
                         </svg>
@@ -41,7 +43,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <line x1="50" y1="20" x2="50" y2="75" stroke="#333" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
                             <polyline points="25,50 50,80 75,50" fill="none" stroke="#333" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"></polyline>
@@ -51,7 +53,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <line x1="50" y1="25" x2="50" y2="80" stroke="#333" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
                             <polyline points="25,50 50,20 75,50" fill="none" stroke="#333" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"></polyline>
@@ -61,7 +63,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <line x1="25" y1="50" x2="80" y2="50" stroke="#333" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
                             <polyline points="50,25 20,50 50,75" fill="none" stroke="#333" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"></polyline>
@@ -71,7 +73,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <line x1="20" y1="50" x2="75" y2="50" stroke="#333" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
                             <polyline points="50,25 80,50 50,75" fill="none" stroke="#333" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"></polyline>
@@ -84,7 +86,7 @@ const BaseIcon: React.FC = () => {
             {/*  */}
             <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-x-[8px] gap-y-[16px] p-[8px]">
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             {/* <!-- 描述了一个勾形的路径，从 (20, 50) 开始，经过 (40, 70)，最终到达 (80, 30) --> */}
                             <path d="M20 50L40 70L80 30" stroke="#333" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
@@ -94,7 +96,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             {/*
                                 stroke-dasharray="85"设置路径的虚线长度，尽量和真实的path接近，dur才能准确
@@ -113,7 +115,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <line x1="25" y1="25" x2="75" y2="75" stroke="#333" strokeWidth="8" strokeLinecap="round" />
                             <line x1="75" y1="25" x2="25" y2="75" stroke="#333" strokeWidth="8" strokeLinecap="round" />
@@ -123,7 +125,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <line x1="50" y1="20" x2="50" y2="80" stroke="#333" strokeWidth="8" strokeLinecap="round" />
                             <line x1="20" y1="50" x2="80" y2="50" stroke="#333" strokeWidth="8" strokeLinecap="round" />
@@ -133,7 +135,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             {/* <!-- 感叹号的竖线 --> */}
                             <line x1="50" y1="20" x2="50" y2="60" stroke="#333" strokeWidth="8" strokeLinecap="round" />
@@ -145,7 +147,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             {/* <!-- 圆圈，其他icon类似，有需要加上圆圈即可 --> */}
                             <circle cx="50" cy="50" r="45" stroke="#333" strokeWidth="8" fill="none" strokeLinecap="round" />
@@ -159,7 +161,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="45" cy="45" r="33" fill="none" stroke="#333" strokeWidth="8" strokeLinecap="round"></circle>
                             <line x1="70" y1="70" x2="85" y2="85" stroke="#333" strokeWidth="8" strokeLinecap="round"></line>
@@ -169,7 +171,7 @@ const BaseIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             {/* <!-- 第一个圆点 --> */}
                             <circle cx="25" cy="50" r="6" fill="#333"></circle>

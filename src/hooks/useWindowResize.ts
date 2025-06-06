@@ -1,6 +1,6 @@
-import { useLayoutEffect, useEffect } from "react"
+import { useLayoutEffect, useEffect } from 'react'
 
-import ThrottleDebounce from "@/utils/functionUtils/ThrottleDebounce"
+import ThrottleDebounce from '@/utils/functionUtils/ThrottleDebounce'
 
 /**
  * 监听浏览器窗口变化，实现自适应（大屏使用）
@@ -14,8 +14,8 @@ const useWindowResize = (designWidth = 1920, designHeight = 1080, renderDOM = '#
         const htmlElement = document.documentElement      // html元素
         const htmlClientWidth = htmlElement.clientWidth
         const htmlClientHeight = htmlElement.clientHeight
-        console.log("浏览器可视窗口宽度", htmlElement.clientWidth)
-        console.log("浏览器可视窗口高度", htmlElement.clientHeight)
+        console.log('浏览器可视窗口宽度', htmlElement.clientWidth)
+        console.log('浏览器可视窗口高度', htmlElement.clientHeight)
 
         // 获取挂载元素
         const renderDomElement = document.querySelector(renderDOM)
@@ -54,12 +54,12 @@ const useWindowResize = (designWidth = 1920, designHeight = 1080, renderDOM = '#
 
     useLayoutEffect(() => {
         htmlResize()
-    })
+    }, [])
 
     useEffect(() => {
-        window.addEventListener("resize", listenerFunction)
+        window.addEventListener('resize', listenerFunction)
         return () => {
-            window.removeEventListener("resize", listenerFunction)
+            window.removeEventListener('resize', listenerFunction)
         }
     }, [])
 }

@@ -4,7 +4,7 @@ const LoadingIcon: React.FC = () => {
         <>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-x-[8px] gap-y-[16px] p-[8px]">
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             {/* <!-- 第一个圆点 --> */}
                             <circle cx="25" cy="50" r="4" fill="#333">
@@ -24,7 +24,7 @@ const LoadingIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             {/* <!-- 第一个圆点 --> */}
                             <circle cx="25" cy="50" r="6" fill="#999">
@@ -47,7 +47,7 @@ const LoadingIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             {/* <!-- 白色色背景圆圈 --> */}
                             <circle cx="50" cy="50" r="36" stroke="white" strokeWidth="10" fill="none" strokeLinecap="round" />
@@ -62,7 +62,7 @@ const LoadingIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 {/* <!-- 定义透明度渐变 --> */}

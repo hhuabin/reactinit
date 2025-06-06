@@ -4,7 +4,7 @@ const UserIcon: React.FC = () => {
         <>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-x-[8px] gap-y-[16px] p-[8px]">
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M858.5 763.6
@@ -27,7 +27,7 @@ const UserIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M923 283.6
@@ -49,7 +49,7 @@ const UserIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z
@@ -70,7 +70,7 @@ const UserIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M854.6 289.1c-18.8-43.4-45.7-82.3-79.9-115.7-34.2-33.4-73.9-59.5-118.2-77.8C610.7 76.6 562.1 67 512 67
@@ -96,7 +96,7 @@ const UserIcon: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center w-full">
-                    <div className="w-[50px] h-[50px] border border-[#eee] box-content">
+                    <div className="w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm">
                         <svg width="100%" height="100%" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M924.8 625.7l-65.5-56c3.1-19 4.7-38.4 4.7-57.8
