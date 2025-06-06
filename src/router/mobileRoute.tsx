@@ -18,12 +18,23 @@ export const mobileRoute: RouteConfig[] = [
             {
                 path: 'guide',
                 lazy: async () => {
-                    const { default: MobileHome } = await import('@/pages/mobile/Guide/Guide')
-                    return { Component: MobileHome }
+                    const { default: Guide } = await import('@/pages/mobile/Guide/Guide')
+                    return { Component: Guide }
                 },
                 meta: {
                     auth: false,
                     title: 'guide',
+                },
+            },
+            {
+                path: 'picker',
+                lazy: async () => {
+                    const { default: Picker } = await import('@/pages/mobile/Picker/Picker')
+                    return { Component: Picker }
+                },
+                meta: {
+                    auth: false,
+                    title: 'picker',
                 },
             },
         ],

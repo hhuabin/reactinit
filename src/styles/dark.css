@@ -3,7 +3,9 @@ html[data-theme='dark'] {
     --bg-color: #141414;                         /* 背景色 */
     
     --color-border-bg: #424242;                  /* 边框背景色 */
-    --color-bg-layout: #f5f5f5;                  /* 背景色 */
+    --color-bg-layout: #141414;                  /* 背景色 */
+    --color-bg-container: #1c1c1c;               /* 容器背景色 */
+    --color-container-hover: rgba(255, 255, 255, 0.08);   /* 鼠标滑过容器背景色 */
     --color-fill: rgba(255, 255, 255, 0.18);     /* 填充色 */
     --color-text: rgba(255, 255, 255, 0.85);     /* 默认字体颜色 */
 

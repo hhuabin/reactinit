@@ -64,12 +64,12 @@ const Header: React.FC = () => {
     }
 
     return (
-        <header className='fixed top-0 left-0 flex justify-between w-full h-[64px] bg-[var(--bg-color)]
+        <header className='fixed top-0 left-0 flex justify-between w-full h-[64px] bg-[var(--bg-color)] overflow-hidden
             [box-shadow:var(--box-bottom-shadow)] transition-all ease-[ease] duration-[var(--theme-duration)] z-[1000]'
         >
             <div className='flex items-center px-8 text-[2rem] text-[var(--color-text)] font-bold'>H H U A B I N</div>
 
-            <div className='flex items-center flex-nowrap gap-2 h-full pr-8 box-border'>
+            <div className='hidden md:flex items-center flex-nowrap gap-2 h-full pr-8 box-border'>
                 {/* <button className='inline-flex justify-center items-center w-8 h-8 rounded-md bg-[transparent] hover:bg-[var(--item-bg-hover)]'>
                     <div className='inline-flex justify-center items-center w-4 h-4'>
                         <svg width='100%' height='100%' viewBox='0 0 24 24' fill='var(--color-text)' xmlns='http://www.w3.org/2000/svg'>

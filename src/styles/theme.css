@@ -9,8 +9,10 @@
     --primary-color: #fff;                       /* 主题色 */
     --bg-color: #fff;                            /* 背景色 */
 
-    --color-border-bg: #d9d9d9;                  /* 边框背景色 */
+    --color-border-bg: #e5e5e5;                  /* 边框背景色 */
     --color-bg-layout: #f5f5f5;                  /* 背景色 */
+    --color-bg-container: #fff;                  /* 容器背景色 */
+    --color-container-hover: rgba(0, 0, 0, 0.02);       /* 鼠标滑过容器背景色 */
     --color-fill: rgba(0, 0, 0, 0.15);           /* 填充色 */
     --color-text: rgba(0, 0, 0, 0.88);           /* 默认字体颜色 */
 
