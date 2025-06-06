@@ -21,8 +21,8 @@ module.exports = {
         'prefer-const': ['error'],                         // not use let
         'indent': ['warn', 4, { 'MemberExpression': 'off' }],      // 4 spaces
         'no-tabs': ['warn'],                                       // disabled tab
-        'quotes': ['warn', 'single'],                              // use single quotes
         'no-mixed-spaces-and-tabs': ['warn'],                      // disabled mixed
+        'quotes': ['warn', 'single'],                              // use single quotes
         'keyword-spacing': ['warn', { 'before': true, 'after': true }],                            // add spacing before and after keywords
         'object-curly-spacing': ['warn', 'always'],                // add spacing in object
         'comma-dangle': ['error', 'always-multiline'],             // use , end in object and array
