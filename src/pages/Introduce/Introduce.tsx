@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-06-04 11:42:38
+ * @LastEditors: bin
+ * @LastEditTime: 2025-06-09 10:06:06
+ */
 import { useNavigate } from 'react-router-dom'
 
 import { Modal } from 'antd'
@@ -28,6 +34,10 @@ const Introduce: React.FC = () => {
         navigate('/mobile')
     }
 
+    const goToDeveloping = () => {
+        navigate('/developing')
+    }
+
     return (
         <div className='w-full'>
             <h1 className='w-full py-[100px] text-[4rem] text-center font-bold'>Welcome</h1>
@@ -41,7 +51,7 @@ const Introduce: React.FC = () => {
                         <button type='button' className='w-full h-full' onClick={() => goToMobileGuide()}>移动端<br/>工具</button>
                     </li>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
-                        <button type='button' className='w-full h-full'>test page</button>
+                        <button type='button' className='w-full h-full' onClick={() => goToDeveloping()}>developing</button>
                     </li>
                 </ul>
             </div>

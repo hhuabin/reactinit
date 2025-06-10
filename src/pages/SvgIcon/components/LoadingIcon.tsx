@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-04-29 08:59:30
+ * @LastEditors: bin
+ * @LastEditTime: 2025-06-10 10:06:20
+ */
 const LoadingIcon: React.FC = () => {
 
     return (
@@ -51,8 +57,8 @@ const LoadingIcon: React.FC = () => {
                         <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
                             {/* <!-- 白色色背景圆圈 --> */}
                             <circle cx='50' cy='50' r='36' stroke='white' strokeWidth='10' fill='none' strokeLinecap='round' />
-                            {/* <!-- 黑色动态圆圈，半径是36，弧度是 5/16(88.5) 圆 --> */}
-                            <circle cx='50' cy='50' r='36' stroke='#333' strokeWidth='10' fill='none' strokeDasharray='88.5 194.5' strokeLinecap='round'>
+                            {/* <!-- 黑色动态圆圈，半径是36，周长为226.2 弧度是 5/16(88.5) 圆 --> */}
+                            <circle cx='50' cy='50' r='36' stroke='#333' strokeWidth='10' fill='none' strokeDasharray='70.5 155.7' strokeLinecap='round'>
                                 {/* <!-- 旋转动画 --> */}
                                 <animateTransform attributeName='transform' type='rotate' from='0 50 50' to='360 50 50' dur='1.5s' repeatCount='indefinite' />
                             </circle>

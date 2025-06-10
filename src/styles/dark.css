@@ -1,7 +1,9 @@
 html[data-theme='dark'] {
-    --primary-color: #141414;                    /* 主题色 */
+    --primary-color: #1677ff;                    /* 主题色 */
+    --color-primary-hover: #4096ff;              /* 鼠标滑过主题色 */
     --bg-color: #141414;                         /* 背景色 */
     
+    --color-border: #d9d9d9;                     /* 边框色 */
     --color-border-bg: #424242;                  /* 边框背景色 */
     --color-bg-layout: #141414;                  /* 背景色 */
     --color-bg-container: #1c1c1c;               /* 容器背景色 */

@@ -7,7 +7,7 @@ import { useRef, useEffect } from 'react'
  * vite.config.ts 需要配置自动修改 version meta 标签值为 package.json 的 version
  * vite.config.ts 需要配置自动修改 timestamp meta 标签值为当前时间戳
  * @param { string } projectLink 项目部署于域名下的路径，默认为域名根路径/；如果项目部署于子路径，则需要填写子路径，如 /project/
- * @param { boolean } intervalRefresh 是否定时轮询检查更新，默认为 false
+ * @param { boolean } intervalRefresh 是否定时轮询检查更新，默认为 false，设置为true时，需要注意是否有表单提交页，用户刷新将会导致表单填写数据丢失
  */
 const useProjectAutoUpdate = (projectLink = '/', intervalRefresh = false) => {
 
