@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import MobilePicker from '@/components/MobilePicker'
-import type { PickerConfirmEventParams } from '@/components/MobilePicker'
+import MobilePicker from '@/components/mobile/MobilePicker'
+import type { PickerConfirmEventParams } from '@/components/mobile/MobilePicker'
 
 const pickerColumns = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 

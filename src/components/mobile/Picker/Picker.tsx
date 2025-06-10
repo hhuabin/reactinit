@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom'
 import useTouch from './useTouch'
 import style from './Picker.module.less'
 
-import type { PickerProps } from './Picker.d'
+import type { PickerProps } from './Picker'
 
 const DEFAULT_DURATION = 200         // 默认动画时长
 const INERTIAL_SLIDE_TIME = 300      // 惯性滚动判定时间，在该时间范围内为惯性滚动

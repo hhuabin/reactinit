@@ -16,9 +16,9 @@
         background-color: rgba(0, 0, 0, .55);
         z-index: var(--z-index);
         opacity: 1;
-        animation: maskIn var(--animation-duration);
+        animation: mask-in var(--animation-duration);
 
-        @keyframes maskIn {
+        @keyframes mask-in {
             from {
                 opacity: 0;
             }
@@ -29,9 +29,9 @@
     }
     .overlay-hidden {
         opacity: 0;
-        animation: maskOut var(--animation-duration);
+        animation: mask-out var(--animation-duration);
 
-        @keyframes maskOut {
+        @keyframes mask-out {
             from {
                 opacity: 1;
             }
@@ -50,12 +50,12 @@
         border-top-right-radius: 8px;
         background-color: #fff;
         transform: translateY(0);
-        animation: fadeIn var(--animation-duration);
+        animation: fade-in var(--animation-duration);
         overflow: hidden;
         z-index: calc(var(--z-index) + 10);
         user-select: none;
 
-        @keyframes fadeIn {
+        @keyframes fade-in {
             from {
                 opacity: 0;
                 transform: translateY(100%);
@@ -195,10 +195,10 @@
         }
     }
     .popup-hidden {
-        animation: fadeOut var(--animation-duration);
+        animation: fade-out var(--animation-duration);
         transform: translateY(100%);
 
-        @keyframes fadeOut {
+        @keyframes fade-out {
             from {
                 opacity: 1;
                 transform: translateY(0);
@@ -212,9 +212,9 @@
 }
 .picker-popup-hidden {
     display: none;
-    animation: pickerOut var(--animation-duration);
+    animation: picker-out var(--animation-duration);
 
-    @keyframes pickerOut {
+    @keyframes picker-out {
         from {
             display: block;
         }

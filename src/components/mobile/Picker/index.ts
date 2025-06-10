@@ -4,4 +4,4 @@
  * 建议使用者直接引用 Picker.tsx 和 Picker.d.ts
  */
 export { default } from './Picker'
-export * from './Picker.d'
+export * from './Picker'
