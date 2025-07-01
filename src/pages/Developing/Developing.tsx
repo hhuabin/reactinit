@@ -26,10 +26,11 @@ const Message: React.FC = () => {
     }
 
     const antdShowMessage = () => {
-        message.info('loading...', () => {
+        console.log('antdShowMessage')
+        const { info } = message
+
+        info('loading...', 1, () => {
             console.log('关闭')
-        }, () => {
-            console.log('点击')
         })
         .then((res) => {
             console.log('loading 被关闭了！可以做下一步操作', res)
@@ -37,8 +38,8 @@ const Message: React.FC = () => {
     }
 
     const showMyMessage = () => {
-        myMessage.info('loading...', 0, () => {
-            console.log('关闭')
+        myMessage.info({
+            content: 'loading...',
         })
     }
 

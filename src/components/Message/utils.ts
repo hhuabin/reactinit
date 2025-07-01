@@ -3,6 +3,10 @@ import type { MessageType } from './Message.d'
 
 /**
  * @description 创建一个处于 Pending 状态的 Promise 的可执行函数
+ * 1.为高阶函数提供Promise出口参数
+ * 2.将高阶函数放入Promise中执行
+ * 3.设置函数返回值为高阶函数返回值
+ * 4.将函数返回值中的then()改写Promise的then()
  * @param { Function } openFn 高阶函数：高阶函数在 wrapPromiseFn 的 Promise 中被同步执行
  *  - resolve 在wrapPromiseFn中被定义为将wrapPromiseFn函数的 Pending 状态改为 Fulfilled(Resolved)状态的函数：() => { resolve(true) }
  *  - resolve() 调用，wrapPromiseFn 的 Promise 将进入 Fulfilled（成功）状态，并返回一个值(true)，此时result.then()也会被链式调用
@@ -23,6 +27,8 @@ export const wrapPromiseFn = (openFn: (resolve: VoidFunction) => VoidFunction): 
      */
     const closePromise = new Promise((resolve) => {
         /**
+         * @description 1.为高阶函数提供Promise出口参数
+         * @description 2.将高阶函数放入Promise中执行
          * openFn的参数 resolve 被赋值为() => { resolve(true) }
          * closeFn()被调用（执行openFn的返回值）时，即执行() => { resolve(true) }，即执行resolve(true)
          */
@@ -31,6 +37,9 @@ export const wrapPromiseFn = (openFn: (resolve: VoidFunction) => VoidFunction): 
         })
     })
 
+    /**
+     * @description 3.设置函数返回值为高阶函数返回值
+     */
     const result: MessageType = () => {
         // 调用closeFn，返回Fulfilled(Resolved)状态的Promise
         // (closeFn === null || closeFn === void 0) ? void 0 : closeFn()
@@ -38,6 +47,7 @@ export const wrapPromiseFn = (openFn: (resolve: VoidFunction) => VoidFunction): 
     }
 
     /**
+     * @description 4.将函数返回值中的then()改写Promise的then()
      * 改写result.then()；将其改为closePromise().then()；函数在closePromise()返回时，才会执行
      * @param onfulfilled result.then()的resolve
      * @param onrejected result.then()的reject
