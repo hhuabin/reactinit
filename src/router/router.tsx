@@ -62,6 +62,17 @@ export const routes: RouteConfig[] = [
                 },
             },
             {
+                path: 'test',
+                lazy: async () => {
+                    const { default: Test } = await import('@/pages/Test/Test')
+                    return { Component: Test }
+                },
+                meta: {
+                    title: 'Test',
+                    auth: false,
+                },
+            },
+            {
                 path: '*',
                 lazy: async () => {
                     const { default: NotFound } = await import('@/pages/NotFound/NotFound')
