@@ -39,7 +39,7 @@ const loading = (
         </circle>
     </svg>
 )
-export const getIcon = (noticeType: NoticeType = 'info'): JSX.Element => {
+const getIcon = (noticeType: NoticeType = 'info'): JSX.Element => {
     switch (noticeType) {
     case 'info':
         return info
@@ -55,3 +55,5 @@ export const getIcon = (noticeType: NoticeType = 'info'): JSX.Element => {
         return info
     }
 }
+
+export default getIcon

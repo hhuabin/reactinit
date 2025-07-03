@@ -1,15 +1,12 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react'
-import { createRoot } from 'react-dom/client'
+import { useState, forwardRef, useImperativeHandle } from 'react'
 import type { ForwardedRef } from 'react'
 
 import ConfigProvider from '@/components/ConfigProvider/ConfigProvider'
 
-import style from './Message.module.less'
 import type {
     NoticeType, ConfigOptions, GlobalMessage, ArgsProps, OpenTask, TypeTask, Task, MessageMethods, JointContent,
     MessageType, TypeOpen, MessageInstance, BaseMethods,
 } from './Message.d'
-import { getIcon } from './getIcon'
 import useMessage, { useInternalMessage } from './useMessage'
 import { unstableSetRender } from './reactRender'
 import { wrapPromiseFn } from './utils'
@@ -27,24 +24,27 @@ let taskQueue: Task[] = []
 let defaultGlobalConfig: ConfigOptions = {}
 
 // 获取全局配置
-const getGlobalContext = () => {
+const getGlobalContext = (): ConfigOptions => {
     const { getContainer, duration, rtl, maxCount, top } = defaultGlobalConfig
-    const mergedContainer = getContainer?.() || document.body
+    const mergedContainer = getContainer?.() || document.body   // 设置默认挂载点是 body
     return { getContainer: () => mergedContainer, duration, rtl, maxCount, top }
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-const GlobalHolder = forwardRef((props, ref: ForwardedRef<GlobalHolderRef>) => {
+const GlobalHolder = forwardRef((
+    props: { messageConfig: ConfigOptions; sync: () => void },
+    ref: ForwardedRef<GlobalHolderRef>,
+) => {
     const { messageConfig, sync } = props
 
     // 获取 Message 唯一实例
-    const [api, holder] = useInternalMessage()
+    const [api, holder] = useInternalMessage(messageConfig)
 
     useImperativeHandle(ref, () => {
-        const instance = { ...api }
+        const instance: MessageInstance = { ...api }
         return {
             instance,
-            sync: () => { },
+            sync,
         }
     })
 
@@ -52,16 +52,13 @@ const GlobalHolder = forwardRef((props, ref: ForwardedRef<GlobalHolderRef>) => {
 })
 
 // eslint-disable-next-line react-refresh/only-export-components
-const GlobalHolderWrapper = forwardRef((props, ref: ForwardedRef<GlobalHolderRef>) => {
+const GlobalHolderWrapper = forwardRef((props: unknown, ref: ForwardedRef<GlobalHolderRef>) => {
     const [messageConfig, setMessageConfig] = useState(getGlobalContext)
 
+    // 把 messageConfig.getContainer 设置成 document.body
     const sync = () => { setMessageConfig(getGlobalContext) }
 
-    const dom = React.createElement(GlobalHolder, {
-        ref,
-        sync,
-        messageConfig,
-    })
+    const dom = <GlobalHolder ref={ref} sync={sync} messageConfig={messageConfig} />
 
     return (
         <ConfigProvider theme='dark'>
@@ -69,43 +66,6 @@ const GlobalHolderWrapper = forwardRef((props, ref: ForwardedRef<GlobalHolderRef
         </ConfigProvider>
     )
 })
-
-const messageList = (messages: ArgsProps[]) => (
-    <>
-        {
-            messages.map((message, index) => (
-                <div className={style['message-notice-wrapper']} key={index}>
-                    <div className={style['message-notice']}>
-                        <div className={style['ant-message-notice-content']}>
-                            <div className={style['ant-message-custom-content']}>
-                                <span className={style['message-icon']}>
-                                    {getIcon(message.type)}
-                                </span>
-                                <span>{message.content}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ))
-        }
-    </>
-)
-
-const render = (messages: ArgsProps[]) => {
-    const holderFragment = document.createDocumentFragment()
-    const container = document.createElement('div')
-    container.className = style['message']
-    holderFragment.appendChild(container)
-    document.body.appendChild(holderFragment)
-
-    const root = createRoot(container)
-    root.render(messageList(messages))
-
-    return {
-        render: root.render,
-        unmount: root.unmount,
-    }
-}
 
 // 刷新提示列表
 const flushNotice = () => {
@@ -125,27 +85,14 @@ const flushNotice = () => {
             const { instance, sync } = node || {}
 
             // React 18 test env will throw if call immediately in ref
-            if (!message!.instance && instance) {
-                message!.instance = instance
-                message!.sync = sync
-                flushNotice()
-            }
+            Promise.resolve().then(() => {
+                if (!message!.instance && instance) {
+                    message!.instance = instance
+                    message!.sync = sync
+                    flushNotice()
+                }
+            })
         }} />, holderFragment)
-        /* reactRender(<div className={style['message']}>
-            <div className={style['message-notice-wrapper']}>
-                <div className={style['message-notice']}>
-                    <div className={style['ant-message-notice-content']}>
-                        <div className={style['ant-message-custom-content']}>
-                            <span className={style['message-icon']}>
-                                {getIcon('success')}
-                            </span>
-                            <span>nihao</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>, holderFragment) */
-
         return
     }
 
