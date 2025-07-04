@@ -29,7 +29,7 @@ const Message: React.FC = () => {
         console.log('antdShowMessage')
         const { info } = message
 
-        info('loading...', 1, () => {
+        info('loading...', 0, () => {
             console.log('关闭')
         })
         .then((res) => {
@@ -38,9 +38,14 @@ const Message: React.FC = () => {
     }
 
     const showMyMessage = () => {
-        myMessage.info({
+        const closFn = myMessage.info({
+            key: 'my-message',
             content: 'loading...',
         })
+        console.log('关闭函数', closFn)
+        /* setTimeout(() => {
+            closFn()
+        }, 2000) */
     }
 
     const antdShowSuccess = () => {
@@ -48,6 +53,10 @@ const Message: React.FC = () => {
         .then(() => {
             console.log('success')
         })
+    }
+
+    const destoryMyMessage = () => {
+        myMessage.destroy('my-message')
     }
 
     const messageContent = (noticeType: NoticeType = 'info') => (
@@ -111,6 +120,14 @@ const Message: React.FC = () => {
                     onClick={() => showMyMessage()}
                 >
                     <span>showMyMessage</span>
+                </button>
+                <button
+                    type='button'
+                    className='px-4 border border-[var(--color-border)] rounded-md text-[1em] bg-[var(--bg-color)]
+                    text-[var(--color-text)] leading-8 hover:border-[var(--color-primary-hover)] hover:text-[var(--color-primary-hover)]'
+                    onClick={() => destoryMyMessage()}
+                >
+                    <span>destoryMyMessage</span>
                 </button>
             </div>
         </>

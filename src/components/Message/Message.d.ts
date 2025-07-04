@@ -16,8 +16,8 @@ export interface ArgsProps {
     type?: NoticeType;                    // 消息类型
     icon?: React.ReactNode;               // 自定义图标
     key?: string | number;                // 当前提示的唯一标志
-    style?: React.CSSProperties;          // 自定义内联样式
-    className?: string;                   // 自定义 CSS class
+    // style?: React.CSSProperties;          // 自定义内联样式
+    // className?: string;                   // 自定义 CSS class
     onClose?: () => void;                 // 消息通知关闭时进行调用的回调函数
     /**
      * 消息通知点击时的回调函数

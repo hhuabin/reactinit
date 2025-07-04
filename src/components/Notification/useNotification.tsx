@@ -1,6 +1,8 @@
 import { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 import type { ForwardedRef } from 'react'
 import { createPortal } from 'react-dom'
+import type { NoticeType } from '../Message'
+import getIcon from './getIcon'
 
 import './Message.less'
 
@@ -11,6 +13,8 @@ interface NotificationConfig {
 
 interface OpenConfig {
     key: React.Key;
+    icon?: React.ReactNode;
+    type?: NoticeType;
     content?: React.ReactNode;
     duration?: number | null;
     onClose?: VoidFunction;
@@ -56,9 +60,12 @@ const Notifications = forwardRef((props: NotificationsProps, ref: ForwardedRef<N
 
     useImperativeHandle(ref, () => ({
         open: (config) => {
+            console.log('Notifications open', config, configList)
             // 添加 config 进入队列
             setConfigList((configList) => {
                 const clone = [...configList]
+
+                // Replace if exist
                 const configIndex = clone.findIndex((item) => item.key === config.key)
                 if (configIndex >= 0) {
                     // configList 存在 config.key
@@ -67,7 +74,8 @@ const Notifications = forwardRef((props: NotificationsProps, ref: ForwardedRef<N
                     // 添加进入队列
                     clone.push(config)
                 }
-                console.log('configList', setConfigList)
+                console.log('Notifications clone', clone)
+
                 return clone
             })
         },
@@ -85,39 +93,46 @@ const Notifications = forwardRef((props: NotificationsProps, ref: ForwardedRef<N
         setConfigList((list) => list.filter((item) => item.key !== key))
     }
 
-    const onAllNoticeRemoved = () => {
-
-    }
-
     if (!container) return null
 
-    return createPortal(
-        <div className='message'>
-            {
-                configList.map((message, index) => (
-                    <div className='message-notice-wrapper' key={index}>
-                        <div className='message-notice'>
-                            <div className='ant-message-notice-content'>
-                                <div className='ant-message-custom-content'>
-                                    <span className='message-icon'>
-                                    </span>
-                                    <span>{message.content}</span>
+
+    if (!!configList.length) {
+        return createPortal(
+            <div className='message'>
+                {
+                    configList.map((config, index) => (
+                        <div className='message-notice-wrapper' key={index}>
+                            <div className='message-notice'>
+                                <div className='ant-message-notice-content'>
+                                    <div className='ant-message-custom-content'>
+                                        {
+                                            config.icon
+                                                ? config.icon
+                                                : (
+                                                    config.type && <span className='message-icon'>
+                                                        { getIcon(config.type) }
+                                                    </span>
+                                                )
+                                        }
+                                        <span>{config.content}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                ))
-            }
-        </div>,
-        container,
-    )
+                    ))
+                }
+            </div>,
+            container,
+        )
+    } else {
+        return (<></>)
+    }
 })
 
 const useNotification = (rootConfig: NotificationConfig = {}): [NotificationAPI, React.ReactElement] => {
 
     const {
         getContainer = () => document.body,
-        ...shareConfig
     } = rootConfig
 
     const [container, setContainer] = useState<HTMLElement | ShadowRoot>()
@@ -142,7 +157,6 @@ const useNotification = (rootConfig: NotificationConfig = {}): [NotificationAPI,
                 case 'open':
                     notificationsRef.current!.open(task.config)
                     break
-
                 case 'close':
                     notificationsRef.current!.close(task.key)
                     break

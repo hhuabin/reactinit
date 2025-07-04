@@ -58,7 +58,7 @@ export const useInternalMessage = (messageConfig?: HolderProps): readonly [Messa
         }
 
         const open = (config: ArgsProps): MessageType => {
-            console.log('useInternalMessage open', config, holderRef.current)
+            console.log('useInternalMessage open', config)
 
             if (!holderRef.current) {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -67,22 +67,22 @@ export const useInternalMessage = (messageConfig?: HolderProps): readonly [Messa
                 return fakeResult
             }
 
-            const { content, icon, type, key, onClose, ...restConfig } = config
+            const { key, onClose, ...restConfig } = config
             let mergedKey: React.Key = key!
             if (mergedKey === undefined || mergedKey === null) {
                 keyIndex += 1
                 mergedKey = `message-${keyIndex}`
             }
+            console.warn('useInternalMessage mergedKey', mergedKey)
             // 根据 type 给 message 添加 icon
-            const TypeContent: React.ReactNode = (<>
+            /* const TypeContent: React.ReactNode = (<>
                 {content}
-            </>)
+            </>) */
 
             return wrapPromiseFn((resolve: VoidFunction) => {
                 holderRef.current!.open({
                     ...restConfig,
                     key: mergedKey,
-                    content: TypeContent,
                     onClose: () => {
                         onClose?.()
                         resolve()

@@ -18,16 +18,23 @@ interface GlobalHolderRef {
 
 let message: GlobalMessage | null = null
 
-// 需要维护的消息队列
 // eslint-disable-next-line prefer-const
-let taskQueue: Task[] = []
-let defaultGlobalConfig: ConfigOptions = {}
+let taskQueue: Task[] = []          // 任务队列，用于接收任务队列，接收成功进行渲染，渲染完成即可删除该任务队列
+let defaultGlobalConfig: ConfigOptions = {}       // 全局配置
 
 // 获取全局配置
 const getGlobalContext = (): ConfigOptions => {
     const { getContainer, duration, rtl, maxCount, top } = defaultGlobalConfig
     const mergedContainer = getContainer?.() || document.body   // 设置默认挂载点是 body
     return { getContainer: () => mergedContainer, duration, rtl, maxCount, top }
+}
+
+// 设置全局配置，此代码中只有 message.config() 使用
+const setMessageGlobalConfig = (config: ConfigOptions) => {
+    // 自定义全局配置
+    defaultGlobalConfig = { ...defaultGlobalConfig, ...config }
+    // Trigger sync for it
+    message?.sync?.()
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -42,6 +49,14 @@ const GlobalHolder = forwardRef((
 
     useImperativeHandle(ref, () => {
         const instance: MessageInstance = { ...api }
+
+        Object.keys(instance).forEach((method) => {
+            instance[method as keyof MessageInstance] = (...args: any[]) => {
+                sync()
+                return (api as any)[method](...args)
+            }
+        })
+
         return {
             instance,
             sync,
@@ -58,7 +73,26 @@ const GlobalHolderWrapper = forwardRef((props: unknown, ref: ForwardedRef<Global
     // 把 messageConfig.getContainer 设置成 document.body
     const sync = () => { setMessageConfig(getGlobalContext) }
 
+    // 获取 Message 唯一实例
+    // const [api, holder] = useInternalMessage(messageConfig)
+
     const dom = <GlobalHolder ref={ref} sync={sync} messageConfig={messageConfig} />
+
+    /* useImperativeHandle(ref, () => {
+        const instance: MessageInstance = { ...api }
+
+        Object.keys(instance).forEach((method) => {
+            instance[method as keyof MessageInstance] = (...args: any[]) => {
+                sync()
+                return (api as any)[method](...args)
+            }
+        })
+
+        return {
+            instance,
+            sync,
+        }
+    }) */
 
     return (
         <ConfigProvider theme='dark'>
@@ -118,6 +152,7 @@ const flushNotice = () => {
                 break
             }
             default: {
+                console.log('flushNotice task', task)
                 const closeFn = message!.instance![type as NoticeType](...task.args)
 
                 closeFn?.then(task.resolve)
@@ -126,14 +161,9 @@ const flushNotice = () => {
             }
         }
     })
-}
 
-// 设置全局配置
-const setMessageGlobalConfig = (config: ConfigOptions) => {
-    // 自定义全局配置
-    defaultGlobalConfig = { ...defaultGlobalConfig, ...config }
-    // Trigger sync for it
-    message?.sync?.()
+    // Clean up，任务队列渲染完成需要清除，不然会造成重复渲染
+    taskQueue = []
 }
 
 const open = (config: ArgsProps): MessageType => {
