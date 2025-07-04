@@ -31,5 +31,6 @@ module.exports = {
         'no-multiple-empty-lines': ['warn', { 'max': 2 }],         // max 2 empty lines in file
         'eol-last': ['error', 'always'],                           // file end of empty line
         'max-lines': ['warn', 300],                                // maximum 300 of lines per file
+        'no-extra-boolean-cast': 'off',                            // allow !! and Boolean()
     },
 }
