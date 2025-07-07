@@ -5,7 +5,7 @@ import { Toast } from 'antd-mobile'
 // import { navigate } from '@/hooks/useRouter'
 import store from '@/store/store'
 import { saveUserInfo, removeUserInfo } from '@/store/slice/userSlice'
-import formatDate from '@/utils/stringUtils/formatDate'
+import { formatDate } from '@/utils/stringUtils/dateUtils'
 import HTTP_STATUS_CODES from './httpStatusCodes'
 
 /**
