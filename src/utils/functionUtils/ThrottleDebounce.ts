@@ -6,7 +6,7 @@ export default class ThrottleDebounce {
     // private static lastTime = Date.now()
 
     /**
-     * 防抖函数： 一个需要频繁触发的函数，在规定时间内触发，只让最后一次生效，前面的不生效
+     * @description 防抖函数： 一个需要频繁触发的函数，在规定时间内触发，只让最后一次生效，前面的不生效
      * @param { Function } callback 回调函数
      * @param {number } delay 延迟时间
      * @param { boolean } immediate 立即执行
@@ -50,7 +50,7 @@ export default class ThrottleDebounce {
     }
 
     /**
-     * 函数节流：一个函数执行完后只有大于设定时间才会再次执行第二次  (节约浏览器资源)
+     * @description 函数节流：一个函数执行完后只有大于设定时间才会再次执行第二次  (节约浏览器资源)
      * @param { Function } callback 回调函数
      * @param { number } delay 延迟时间
      * @returns { Function } throttled节流函数

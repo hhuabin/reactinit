@@ -6,7 +6,7 @@ export default class DeepCopy {
      * 缺点：实现起来较复杂，容易出错，特别是处理循环引用和其他边缘情况时需要额外逻辑
      */
     /**
-     * 循环递归深复制函数
+     * @description 循环递归深复制函数
      * @param { T } obj
      * @returns { T }
      */
@@ -31,7 +31,7 @@ export default class DeepCopy {
      * 缺点：不支持函数、undefined、Date、RegExp 等特殊对象。使用 JSON.stringify() 会丢失这些值
      */
     /**
-     * JSON转换深复制函数
+     * @description JSON转换深复制函数
      * @param { T } obj
      * @returns { T }
      */

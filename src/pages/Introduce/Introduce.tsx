@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-04 11:42:38
  * @LastEditors: bin
- * @LastEditTime: 2025-06-09 10:06:06
+ * @LastEditTime: 2025-07-09 15:33:50
  */
 import { useNavigate } from 'react-router-dom'
 
@@ -15,10 +15,6 @@ const Introduce: React.FC = () => {
     const navigate = useNavigate()
 
     const { isMobile } = useDeviceType()
-
-    const goToSvgIcon = () => {
-        navigate('/svgicon')
-    }
 
     const goToMobileGuide = () => {
         if (!isMobile) {
@@ -34,10 +30,6 @@ const Introduce: React.FC = () => {
         navigate('/mobile')
     }
 
-    const goToDeveloping = () => {
-        navigate('/developing')
-    }
-
     return (
         <div className='w-full'>
             <h1 className='w-full py-[100px] text-[4rem] text-center font-bold'>Welcome</h1>
@@ -45,13 +37,16 @@ const Introduce: React.FC = () => {
             <div className='flex justify-center w-full'>
                 <ul role='list' className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-10 max-w-full px-10 text-[3rem] text-center'>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
-                        <button type='button' className='w-full h-full' onClick={() => goToSvgIcon()}>svg</button>
+                        <button type='button' className='w-full h-full' onClick={() => navigate('/svgicon')}>svg</button>
                     </li>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
                         <button type='button' className='w-full h-full' onClick={() => goToMobileGuide()}>移动端<br/>工具</button>
                     </li>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
-                        <button type='button' className='w-full h-full' onClick={() => goToDeveloping()}>developing</button>
+                        <button type='button' className='w-full h-full' onClick={() => navigate('/developing')}>Developing</button>
+                    </li>
+                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
+                        <button type='button' className='w-full h-full' onClick={() => navigate('/timezoneTime')}>TimezoneTime</button>
                     </li>
                 </ul>
             </div>

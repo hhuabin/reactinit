@@ -1,161 +1,219 @@
 /**
- * @description 日期格式化
- * @param { string | Date | number } value 需要格式化的值
- * @param { string } fmt 日期格式
- * @returns { string }
- * @example formatDate(new Date(), 'YYYY/MM/DD hh:mm:ss')
+ * new Date()：不同时区的同一时刻 new Date() 是不一样，比如中国是 08:00，日本是 09:00
+ *  不同时区 new Date('2025/07/07').getTime() 的值是并不一样，并非某一固定时刻
+ * Date.now()：不同时区的同一时刻 Date.now() 是一样的（比如中国的 08:00 和日本的 09:00时，Date.now() 是一样的）
+ *  Date.now() 是一个固定的时刻
  */
-export const formatDate = (value: string | Date | number, fmt = 'YYYY-MM-DD hh:mm:ss'): string => {
-    let date: Date
-    try {
-        if (typeof value === 'string' && value.constructor === String) {
-            // ios 不支持 - 连接故而需要使用 /
-            date = new Date(value.replace(/T/g, ' ').replace(/-/g, '/'))
-        } else if (value instanceof Object && value.constructor === Date) {
-            date = value
-        } else if (typeof value === 'number' && value.constructor === Number) {
-            date = new Date(value)
-        } else {
-            throw new Error('日期格式化失败，请传入正确的格式')
-        }
-        if (isNaN(date.getTime())) throw new Error('日期格式化失败，请传入正确的格式')
-    } catch (error) {
-        console.error(error)
-        return value.toString()
+
+/**
+ * @description 通过 某时区某时间 获取该时刻的 时间戳
+ * @example getTimestampByTimeAndOffset(new Date(), -480) 获取北京时间2025-07-07 17:00:00的时间戳
+ * @param date 指定时间，默认值：new Date()
+ * @param offsetMinutes 指定时区相对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：东八区（北京） -480
+ * @returns { number } 时间戳
+ */
+export const getTimestampByTimeAndOffset = (
+    date: string | Date = new Date(),
+    offsetMinutes: number = -480,
+): number => {
+
+    if (typeof date === 'string' && date.constructor === String) {
+        // ios 不支持 - 连接故而需要使用 /
+        date = new Date(date.replace(/T/g, ' ').replace(/-/g, '/'))
     }
 
-    const weekList = ['日', '一', '二', '三', '四', '五', '六']
-    const fmtobj: Record<string, string> = {
-        'M+': String(date.getMonth() + 1),
-        'D+': String(date.getDate()),
-        'h+': String(date.getHours()),
-        'm+': String(date.getMinutes()),
-        's+': String(date.getSeconds()),
-        'w+': weekList[date.getDay()],
+    // 获取当前时区该时间的时间戳
+    const localTimestamp = (date as Date).getTime()
+    if (isNaN(localTimestamp)) {
+        throw new Error('Invalid time string')
     }
-    if (/(Y+)/.test(fmt)) {
-        const yearLength = (fmt.match(/(Y+)/) as RegExpMatchArray)[0].length
-        fmt = fmt.replace(/(Y+)/, String(date.getFullYear()).substring(4 - yearLength))
-    }
-    for (const key in fmtobj) {
-        const reg = new RegExp(`(${key})`)
-        if (reg.test(fmt)) {
-            const str = fmtobj[key]
-            const eleLength = (fmt.match(reg) as RegExpMatchArray)[0].length
-            fmt = fmt.replace(reg, (eleLength === 1 ? str : str.padStart(2, '0')))
-        }
-    }
-    return fmt
+    // 计算当前时区与目标时区“反向”偏移值差
+    const calcOffset = new Date().getTimezoneOffset() - offsetMinutes
+
+    return localTimestamp - calcOffset * 60 * 1000
 }
 
 /**
- * 获取当前时区指定时间的对应的北京时间
- * @param date 日期，默认值：当前时刻
- * @param fmt 返回的日期格式，默认值：YYYY-MM-DD hh:mm:ss
- * @returns { string } YYYY-MM-DD hh:mm:ss
+ * @description 通过 当前时区某时间 获取 某时区时间
+ * @example getDateStrByTimeAndCurrentOffset(new Date(), -480) 获取当前时区的此刻的北京时间
+ * @param date 日期，默认值：当前时区该时刻
+ * @param offsetMinutes 指定时区相对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：当前时区 new Date().getTimezoneOffset()
+ * @param fmt 日期格式，默认值：YYYY-MM-DD hh:mm:ss
+ * @returns { string } 日期字符串
  */
-export const getBeijingTime = (date: string | Date | number = new Date(), fmt = 'YYYY-MM-DD hh:mm:ss'): string => {
-    try {
+export const getDateStrByTimeAndCurrentOffset = (
+    date: string | Date | number = new Date(),
+    offsetMinutes: number = new Date().getTimezoneOffset(),
+    fmt = 'YYYY-MM-DD hh:mm:ss',
+): string => {
+    // 可以直接调用以下函数
+    return getDateStrByTimeAndOffset(date, new Date().getTimezoneOffset(), offsetMinutes, fmt)
+    /* try {
         if (typeof date === 'string' && date.constructor === String) {
             // ios 不支持 - 连接故而需要使用 /
             date = new Date(date.replace(/T/g, ' ').replace(/-/g, '/'))
-        // eslint-disable-next-line no-empty
-        } else if (date instanceof Object && date.constructor === Date) {
-            // do nothing
         } else if (typeof date === 'number' && date.constructor === Number) {
             date = new Date(date)
+        } else if (date instanceof Object && date.constructor === Date) {
+            // do nothing
         } else {
-            throw new Error('getBeijingTime date 参数错误')
+            throw new Error('Invalid date value')
         }
-        if (isNaN(date.getTime())) throw new Error('getBeijingTime date 参数错误')
+        if (isNaN(date.getTime())) throw new Error('Invalid date value')
     } catch (error) {
         console.error(error)
         return date.toString()
     }
 
-    // 2. 转换为北京时间（UTC+8）
-    const beijingTime = new Date(date.getTime() + (8 * 60 * 60 * 1000))
-
-    // 3. 格式化为 YYYY-MM-DD hh:mm:ss
-    const fmtobj: Record<string, string> = {
-        'M+': String(beijingTime.getUTCMonth() + 1),
-        'D+': String(beijingTime.getUTCDate()),
-        'h+': String(beijingTime.getUTCHours()),
-        'm+': String(beijingTime.getUTCMinutes()),
-        's+': String(beijingTime.getUTCSeconds()),
+    if (offsetMinutes < -840 || offsetMinutes > 720) {
+        throw new Error('Invalid offsetMinutes value')
     }
-    if (/(Y+)/.test(fmt)) {
-        const yearLength = (fmt.match(/(Y+)/) as RegExpMatchArray)[0].length
-        fmt = fmt.replace(/(Y+)/, String(beijingTime.getUTCFullYear()).substring(4 - yearLength))
+
+    // 1. 转换为其他时区时间
+    const targetTime = new Date(date.getTime() - offsetMinutes * 60 * 1000)
+
+    // 2. 格式化为 YYYY-MM-DD hh:mm:ss
+    const fmtobj: Record<string, string> = {
+        'Y+': String(targetTime.getUTCFullYear()),
+        'M+': String(targetTime.getUTCMonth() + 1),
+        'D+': String(targetTime.getUTCDate()),
+        'h+': String(targetTime.getUTCHours()),
+        'm+': String(targetTime.getUTCMinutes()),
+        's+': String(targetTime.getUTCSeconds()),
+        'mss': String(targetTime.getUTCMilliseconds()),
     }
     for (const key in fmtobj) {
         const reg = new RegExp(`(${key})`)
         if (reg.test(fmt)) {
-            const str = fmtobj[key]
-            const eleLength = (fmt.match(reg) as RegExpMatchArray)[0].length
-            fmt = fmt.replace(reg, (eleLength === 1 ? str : str.padStart(2, '0')))
+            let str = fmtobj[key]     // 获取对应的值
+            const eleLength = (fmt.match(reg) as RegExpMatchArray)[0].length   // 获取匹配的字符串的长度
+            str = str.padStart(eleLength, '0').slice(-eleLength)               // 填充字符串
+            fmt = fmt.replace(reg, str)
+        }
+    }
+    return fmt */
+}
+
+/**
+ * @description 通过 任意时区时间 获取 某时区时间
+ * @example getDateStrByTimeAndOffset(new Date(), new Date().getTimezoneOffset(), -480) 获取当前时区的此刻的北京时间
+ * @param { string | Date | number } currentDate 任意时区时间，默认值：new Date()
+ * @param { number } currentTimezoneOffset 任意时区对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：new Date ().getTimezoneOffset()
+ * @param { number } targetTimezoneOffset 目标时区对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：东八区（北京） -480
+ * @param fmt 日期格式，默认值：YYYY-MM-DD hh:mm:ss
+ * @returns { string } 日期字符串
+ */
+export const getDateStrByTimeAndOffset = (
+    date: string | Date | number = new Date(),
+    timezoneOffset: number = new Date().getTimezoneOffset(),
+    targetTimezoneOffset: number = -480,
+    fmt = 'YYYY-MM-DD hh:mm:ss',
+): string => {
+    // 定义给定时区时间的时间戳
+    let dateUTCTimestamp: number
+    try {
+        if (typeof date === 'string' && date.constructor === String) {
+            // 根据给定时区时间 获取该时间的时间戳
+            dateUTCTimestamp = getTimestampByTimeAndOffset(date, timezoneOffset)
+        } else if (typeof date === 'number' && date.constructor === Number) {
+            dateUTCTimestamp = date
+        } else if (date instanceof Object && date.constructor === Date) {
+            dateUTCTimestamp = getTimestampByTimeAndOffset(date, timezoneOffset)
+        } else {
+            throw new Error('Invalid date value')
+        }
+    } catch (error) {
+        console.error(error)
+        return date.toString()
+    }
+
+    if (timezoneOffset < -840 || timezoneOffset > 720) {
+        throw new Error('Invalid timezoneOffset value')
+    } else if (targetTimezoneOffset < -840 || targetTimezoneOffset > 720) {
+        throw new Error('Invalid targetTimezoneOffset value')
+    }
+
+    // 1. 通过中时区时间，转换为目标时区时间
+    const targetTime = new Date(dateUTCTimestamp - targetTimezoneOffset * 60 * 1000)
+
+    // 2. 格式化为 YYYY-MM-DD hh:mm:ss:mss
+    const fmtobj: Record<string, string> = {
+        'Y+': String(targetTime.getUTCFullYear()),
+        'M+': String(targetTime.getUTCMonth() + 1),
+        'D+': String(targetTime.getUTCDate()),
+        'h+': String(targetTime.getUTCHours()),
+        'm+': String(targetTime.getUTCMinutes()),
+        's+': String(targetTime.getUTCSeconds()),
+        'mss': String(targetTime.getUTCMilliseconds()),
+    }
+    for (const key in fmtobj) {
+        const reg = new RegExp(`(${key})`)
+        if (reg.test(fmt)) {
+            let str = fmtobj[key]     // 获取对应的值
+            const eleLength = (fmt.match(reg) as RegExpMatchArray)[0].length   // 获取匹配的字符串的长度
+            str = str.padStart(eleLength, '0').slice(-eleLength)               // 填充字符串
+            fmt = fmt.replace(reg, str)
         }
     }
     return fmt
 }
 
-
 /**
- * 判断当前时区时间是否早于目标时区时间
- * @example isEarlierInTimezone(Date.now(), new Date().getTimezoneOffset(), '2025-07-07 17:00:00', -480)
- * @param { string | Date | number } currentTime 当前时区时间，默认值：Date.now()
- * @param { number } currentTimezoneOffset 当前时区对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：new Date().getTimezoneOffset()
- * @param { string | Date | number } targetTime 目标时区时间，默认值：Date.now()
- * @param { number } targettimezoneOffset 目标时区对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：东八区（北京） -480
- * @returns { boolean } true早于目标时间，false晚于或等于目标时间
+ * @description 对比两个时区的时间先后
+ * @example compareTimezoneTime(new Date(), new Date().getTimezoneOffset(), '2025-07-07 17:00:00', -480) 判断当前时区此刻是否早于北京时间的2025-07-07 17:00:00
+ * @param { string | Date | number } currentDate 当前时区时间，默认值：new Date()
+ * @param { number } currentTimezoneOffset 当前时区对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：new Date ().getTimezoneOffset()
+ * @param { string | Date | number } targetDate 目标时区时间，默认值：new Date()
+ * @attention targetDate 建议传 string 类型的参数，因为 new Date()、Date.now() 都是相对于当前时区获得，该情况下 targetTimezoneOffset 只能指定为当前时区
+ * @param { number } targetTimezoneOffset 目标时区对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：东八区（北京） -480
+ * @returns { -1 | 0 | 1 } -1 早于目标时间，0 等于目标时间，1 晚于或等于目标时间
  */
-export const isEarlierInTimezone = (
-    currentTime: string | Date | number = Date.now(),
-    currentTimezoneOffset: number = new Date().getTimezoneOffset(),     // 当前时区相对于 UTC 的“反向”偏移值
-    targetTime: string | Date | number = Date.now(),
-    targettimezoneOffset: number = -480,         // 默认是东八区对于 UTC 的“反向”偏移值
-): boolean => {
-    if (typeof currentTime === 'string' && currentTime.constructor === String) {
-        // ios 不支持 - 连接故而需要使用 /
-        currentTime = new Date(currentTime.replace(/T/g, ' ').replace(/-/g, '/'))
-    // eslint-disable-next-line no-empty
-    } else if (currentTime instanceof Object && currentTime.constructor === Date) {
-        // do nothing
-    } else if (typeof currentTime === 'number' && currentTime.constructor === Number) {
-        currentTime = new Date(currentTime)
+export const compareTimezoneTime = (
+    currentDate: string | Date | number = new Date(),
+    currentTimezoneOffset: number = new Date().getTimezoneOffset(),
+    targetDate: string | Date | number = new Date(),
+    targetTimezoneOffset: number = -480,
+): -1 | 0 | 1 => {
+
+    if (currentTimezoneOffset < -840 || currentTimezoneOffset > 720) {
+        throw new Error('Invalid currentTimezoneOffset value')
+    } else if (targetTimezoneOffset < -840 || targetTimezoneOffset > 720) {
+        throw new Error('Invalid targetTimezoneOffset value')
+    }
+
+    // 定义时间戳
+    let currentUTCTimestamp, targetUTCTimestamp
+
+    if (typeof currentDate === 'string' && currentDate.constructor === String) {
+        // 获取该时区时间的时间戳
+        currentUTCTimestamp = getTimestampByTimeAndOffset(currentDate, currentTimezoneOffset)
+    } else if (typeof currentDate === 'number' && currentDate.constructor === Number) {
+        currentUTCTimestamp = currentDate
+    } else if (currentDate instanceof Object && currentDate.constructor === Date) {
+        currentUTCTimestamp = getTimestampByTimeAndOffset(currentDate, currentTimezoneOffset)
     } else {
-        throw new Error('isEarlierInTimezone currentTime 参数错误')
+        throw new Error('Invalid currentDate value')
     }
 
-    if (typeof targetTime === 'string' && targetTime.constructor === String) {
-        // ios 不支持 - 连接故而需要使用 /
-        targetTime = new Date(targetTime.replace(/T/g, ' ').replace(/-/g, '/'))
-    // eslint-disable-next-line no-empty
-    } else if (targetTime instanceof Object && targetTime.constructor === Date) {
-        // do nothing
-    } else if (typeof targetTime === 'number' && targetTime.constructor === Number) {
-        targetTime = new Date(targetTime)
+    if (typeof targetDate === 'string' && targetDate.constructor === String) {
+        targetUTCTimestamp = getTimestampByTimeAndOffset(targetDate, targetTimezoneOffset)
+    } else if (typeof targetDate === 'number' && targetDate.constructor === Number) {
+        targetUTCTimestamp = targetDate
+    } else if (targetDate instanceof Object && targetDate.constructor === Date) {
+        targetUTCTimestamp = getTimestampByTimeAndOffset(targetDate, targetTimezoneOffset)
     } else {
-        throw new Error('isEarlierInTimezone targetTime 参数错误')
+        throw new Error('Invalid targetDate value')
     }
 
-    if (targettimezoneOffset < -840 || targettimezoneOffset > 720) {
-        throw new Error('isEarlierInTimezone targettimezoneOffset 参数错误')
-    } else if (currentTimezoneOffset < -840 || currentTimezoneOffset > 720) {
-        throw new Error('isEarlierInTimezone currentTimezoneOffset 参数错误')
-    }
-
-    // 1. 将当前时间转换为 UTC 时间戳（自动计算时区偏移）
-    const currentUTCTimestamp = currentTime.getTime() + (currentTimezoneOffset * 60 * 1000)
-    // 2. 将目标时间转换为 UTC 时间戳（自动计算时区偏移）
-    const targetUTCTimestamp = targetTime.getTime() + (targettimezoneOffset * 60 * 1000)
-
-    if (isNaN(currentUTCTimestamp) || isNaN(targetUTCTimestamp)) {
-        throw new Error('isEarlierInTimezone 日期参数错误')
-    }
+    // 对比时间戳 即可得出先后时间
     if (currentUTCTimestamp - targetUTCTimestamp < 0) {
         // 早于目标时间
-        return true
+        return -1
+    } else if (currentUTCTimestamp - targetUTCTimestamp === 0) {
+        // 等于目标时间
+        return 0
+    } else {
+        // 晚于目标时间
+        return 1
     }
-    return false
 }

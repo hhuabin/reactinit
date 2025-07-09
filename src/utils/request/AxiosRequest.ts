@@ -5,11 +5,11 @@ import { message } from 'antd'
 // import { navigate } from '@/hooks/useRouter'
 import store from '@/store/store'
 import { saveUserInfo, removeUserInfo } from '@/store/slice/userSlice'
-import { formatDate } from '@/utils/stringUtils/dateUtils'
+import { getDateStrByTimeAndCurrentOffset } from '@/utils/stringUtils/dateUtils'
 import HTTP_STATUS_CODES from './httpStatusCodes'
 
 /**
- * AxiosRequest
+ * @description AxiosRequest
  * 1. cancelLastRequest：取消上次请求，适合用在请求数据接口，不适合在提交数据接口使用，以避免重复提交
  * 2. showLoading：可使用showLoading开启请求loading
  * 3. refreshToken：配置token过期的result_code，配置新token请求的url
@@ -93,7 +93,7 @@ export default class AxiosRequest {
             }
             publicParams.requestSerial = requestSerial
             // timestamp 请求时间
-            const timestamp: string = formatDate(new Date(), 'YYYY-MM-DD hh:mm:ss')
+            const timestamp: string = getDateStrByTimeAndCurrentOffset()
             publicParams.timestamp = timestamp
 
             publicParams.token = store.getState().user.userInfo.token

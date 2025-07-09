@@ -51,6 +51,17 @@ export const routes: RouteConfig[] = [
                 },
             },
             {
+                path: '/timezoneTime',
+                lazy: async () => {
+                    const { default: TimezoneTime } = await import('@/pages/TimezoneTime/TimezoneTime')
+                    return { Component: TimezoneTime }
+                },
+                meta: {
+                    title: 'timezone',
+                    auth: false,
+                },
+            },
+            {
                 path: 'developing',
                 lazy: async () => {
                     const { default: Developing } = await import('@/pages/Developing/Developing')
