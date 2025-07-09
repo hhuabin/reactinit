@@ -73,7 +73,7 @@ export const getDateStrByTimeAndCurrentOffset = (
     const targetTime = new Date(date.getTime() - offsetMinutes * 60 * 1000)
 
     // 2. 格式化为 YYYY-MM-DD hh:mm:ss
-    const fmtobj: Record<string, string> = {
+    const dateFmtObj: Record<string, string> = {
         'Y+': String(targetTime.getUTCFullYear()),
         'M+': String(targetTime.getUTCMonth() + 1),
         'D+': String(targetTime.getUTCDate()),
@@ -82,13 +82,13 @@ export const getDateStrByTimeAndCurrentOffset = (
         's+': String(targetTime.getUTCSeconds()),
         'mss': String(targetTime.getUTCMilliseconds()),
     }
-    for (const key in fmtobj) {
+    for (const key in dateFmtObj) {
         const reg = new RegExp(`(${key})`)
         if (reg.test(fmt)) {
-            let str = fmtobj[key]     // 获取对应的值
-            const eleLength = (fmt.match(reg) as RegExpMatchArray)[0].length   // 获取匹配的字符串的长度
-            str = str.padStart(eleLength, '0').slice(-eleLength)               // 填充字符串
-            fmt = fmt.replace(reg, str)
+            let dateValue = dateFmtObj[key]       // 获取对应的值
+            const fmtStrLength = (fmt.match(reg) as RegExpMatchArray)[0].length         // 获取匹配的字符串的长度
+            dateValue = dateValue.padStart(fmtStrLength, '0').slice(-fmtStrLength)      // 填充字符串
+            fmt = fmt.replace(reg, dateValue)
         }
     }
     return fmt */
@@ -137,7 +137,7 @@ export const getDateStrByTimeAndOffset = (
     const targetTime = new Date(dateUTCTimestamp - targetTimezoneOffset * 60 * 1000)
 
     // 2. 格式化为 YYYY-MM-DD hh:mm:ss:mss
-    const fmtobj: Record<string, string> = {
+    const dateFmtObj: Record<string, string> = {
         'Y+': String(targetTime.getUTCFullYear()),
         'M+': String(targetTime.getUTCMonth() + 1),
         'D+': String(targetTime.getUTCDate()),
@@ -146,13 +146,13 @@ export const getDateStrByTimeAndOffset = (
         's+': String(targetTime.getUTCSeconds()),
         'mss': String(targetTime.getUTCMilliseconds()),
     }
-    for (const key in fmtobj) {
+    for (const key in dateFmtObj) {
         const reg = new RegExp(`(${key})`)
         if (reg.test(fmt)) {
-            let str = fmtobj[key]     // 获取对应的值
-            const eleLength = (fmt.match(reg) as RegExpMatchArray)[0].length   // 获取匹配的字符串的长度
-            str = str.padStart(eleLength, '0').slice(-eleLength)               // 填充字符串
-            fmt = fmt.replace(reg, str)
+            let dateValue = dateFmtObj[key]       // 获取对应的值
+            const fmtStrLength = (fmt.match(reg) as RegExpMatchArray)[0].length         // 获取匹配的字符串的长度
+            dateValue = dateValue.padStart(fmtStrLength, '0').slice(-fmtStrLength)      // 填充字符串
+            fmt = fmt.replace(reg, dateValue)
         }
     }
     return fmt
