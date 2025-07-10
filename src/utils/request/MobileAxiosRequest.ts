@@ -2,6 +2,8 @@ import axios from 'axios'
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import { Toast } from 'antd-mobile'
 
+import { version as packageVersion } from '@/../package.json'
+
 // import { navigate } from '@/hooks/useRouter'
 import store from '@/store/store'
 import { saveUserInfo, removeUserInfo } from '@/store/slice/userSlice'
@@ -30,7 +32,7 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
     requestRetryNumber?: number;
 }
 
-export default class AxiosRequest {
+export default class MobileAxiosRequest {
     private instance: AxiosInstance = axios.create({
         baseURL: import.meta.env.VITE_API_BASE_URL,
         timeout: 60000,
@@ -43,7 +45,7 @@ export default class AxiosRequest {
     private timerId: NodeJS.Timeout | null = null
     private refreshTokenPromise: Promise<void> | null = null
     private publicParams: PublicParams = {
-        version: '1.0',
+        version: packageVersion,
         charset: 'UTF-8',
         req_source: 'PROJECT',
         system: 'H5',

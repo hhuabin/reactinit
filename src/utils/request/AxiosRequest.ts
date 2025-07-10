@@ -2,6 +2,8 @@ import axios from 'axios'
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import { message } from 'antd'
 
+import { version as packageVersion } from '@/../package.json'
+
 // import { navigate } from '@/hooks/useRouter'
 import store from '@/store/store'
 import { saveUserInfo, removeUserInfo } from '@/store/slice/userSlice'
@@ -45,7 +47,7 @@ export default class AxiosRequest {
     private loadingMessage = new Map<symbol, () => void>()
     private refreshTokenPromise: Promise<void> | null = null
     private publicParams: PublicParams = {
-        version: '1.0',
+        version: packageVersion,
         charset: 'UTF-8',
         req_source: 'PROJECT',
         system: 'H5',

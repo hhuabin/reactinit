@@ -1,4 +1,4 @@
-export default class FetchRequest {
+export default class MobileFetchRequest {
 
     private baseURL = import.meta.env.VITE_API_BASE_URL
     private controller: AbortController
