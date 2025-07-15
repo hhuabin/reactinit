@@ -25,6 +25,7 @@
                 opacity: 1;
             }
         }
+        
         .message-notice {
             box-sizing: border-box;
 
@@ -56,14 +57,19 @@
         }
     }
 
-    .message-notice-wrapper-hidden {
+    .message-notice-wrapper-leave {
+        overflow: hidden;
+        animation: message-move-out 300ms forwards;
+
         @keyframes message-move-out {
             from {
-                max-height: 0;
+                display: block;
+                max-height: 56px;
                 padding: 8px;
                 opacity: 1;
             }
             to {
+                display: none;
                 max-height: 0;
                 padding: 0;
                 opacity: 0;

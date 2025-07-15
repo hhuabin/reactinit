@@ -2,29 +2,28 @@ import React, { useRef, forwardRef, useImperativeHandle } from 'react'
 import type { ForwardedRef } from 'react'
 
 import { wrapPromiseFn } from './utils'
-import type { ArgsProps, ConfigOptions, MessageType, MessageInstance, NoticeType, MessageMethods, TypeOpen } from './Message.d'
+import type { ArgsProps, ConfigOptions, MessageType, MessageInstance, NoticeType, MessageMethods, TypeOpen, OpenTask } from './Message.d'
 
-import useNotification from '@/components/Notification/useNotification'
+import useNotification from './useNotification'
+import type { NotificationsRef } from './useNotification'
 
 type HolderProps = ConfigOptions & {
     onAllRemoved?: VoidFunction;
 }
 
-interface OpenConfig extends ArgsProps { }
-
-interface HolderRef {
+/* interface HolderRef {
     open: (config: OpenConfig) => void;
     close: (key: React.Key) => void;
     destroy: () => void;
-}
+} */
 
 const DEFAULT_OFFSET = 8
-const DEFAULT_DURATION = 3
+const DEFAULT_DURATION = 3000
 
-let keyIndex = 0
+let keyIndex = 0      // message key
 
 // eslint-disable-next-line react-refresh/only-export-components
-const Holder = forwardRef((props: HolderProps, ref: ForwardedRef<HolderRef>) => {
+const Holder = forwardRef((props: HolderProps, ref: ForwardedRef<NotificationsRef>) => {
     const {
         top,
         prefixCls: staticPrefixCls,
@@ -36,20 +35,26 @@ const Holder = forwardRef((props: HolderProps, ref: ForwardedRef<HolderRef>) => 
         onAllRemoved,
     } = props
 
-    const [api, holder] = useNotification({
+    const [notificationAPI, holder] = useNotification({
         getContainer: staticGetContainer,
         duration,
     })
 
     useImperativeHandle(ref, () => ({
-        ...api,
+        ...notificationAPI,    // 只有 open、close、destroy 三个方法
     }))
 
     return holder
 })
 
+/**
+ * @description 创建 Message 实例
+ * @param { HolderProps } messageConfig message全局配置；默认值：Message.tsx 的 getGlobalContext()
+ * @attention message.open() / message.info()... 方法不会给 messageConfig 传值，而是直接调用 useInternalMessage().open()
+ * @returns { readonly [MessageInstance, React.ReactElement] }
+ */
 export const useInternalMessage = (messageConfig?: HolderProps): readonly [MessageInstance, React.ReactElement] => {
-    const holderRef = useRef<HolderRef>(null)
+    const holderRef = useRef<NotificationsRef>(null)
 
     const wrapAPI = ((): MessageInstance => {
 
@@ -57,9 +62,16 @@ export const useInternalMessage = (messageConfig?: HolderProps): readonly [Messa
             holderRef.current?.close(key)
         }
 
+        /**
+         * @description 将 open 函数代理到 holderRef.current.open
+         * @param { ArgsProps } config 传入 holderRef.current.open() 方法的参数
+         * info、success...等方法都代理到 open ，故 ArgsProps 是 holderRef.current.open() 唯一参数类型
+         * @returns { MessageType }
+         */
         const open = (config: ArgsProps): MessageType => {
             console.log('useInternalMessage open', config)
 
+            // Holder 未注册成功时，返回一个空函数
             if (!holderRef.current) {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const fakeResult: any = () => {}
@@ -109,20 +121,18 @@ export const useInternalMessage = (messageConfig?: HolderProps): readonly [Messa
         } as MessageInstance
 
         const keys: NoticeType[] = ['info', 'success', 'warning', 'error', 'loading']
-        // 处理 'info', 'success', 'warning', 'error', 'loading'，转接到 open
-        keys.forEach(type => {
-            const typeOpen: TypeOpen = (jointContent, duration?: number | VoidFunction, onClose?: VoidFunction) => {
-                console.log('useInternalMessage typeOpen', jointContent, duration, onClose)
+        // 将 'info', 'success', 'warning', 'error', 'loading'方法，转接到 open
+        keys.forEach((type: NoticeType) => {
 
-                let config: ArgsProps
+            clone[type] = (jointContent, duration?: number | VoidFunction, onClose?: VoidFunction) => {
+
+                let config: OpenTask['config']    // 即 ArgsProps
                 // 判断 jointContent 是 React.ReactNode 还是 ArgsProps
                 if (jointContent && typeof jointContent === 'object' && 'content' in jointContent) {
                     // jointContent 是 ArgsProps
                     config = jointContent
                 } else {
-                    config = {
-                        content: jointContent,
-                    }
+                    config = { content: jointContent }
                 }
                 // 合并配置
                 let mergedDuration: number | undefined
@@ -137,12 +147,10 @@ export const useInternalMessage = (messageConfig?: HolderProps): readonly [Messa
                 return open({
                     onClose: mergedOnClose,
                     duration: mergedDuration,
-                    ...config,        // onClose、duration以 config 为准
+                    ...config,        // onClose、duration 以 config 里的为准
                     type,
                 })
             }
-
-            clone[type] = typeOpen
         })
 
         return clone

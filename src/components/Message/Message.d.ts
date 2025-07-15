@@ -1,5 +1,6 @@
 export type NoticeType = 'info' | 'success' | 'error' | 'warning' | 'loading'
 
+// message.config() 的参数类型
 export interface ConfigOptions {
     top?: string | number;                // 消息距离顶部的位置
     duration?: number;                    // 默认自动关闭延时，单位秒，默认值 3
@@ -10,12 +11,13 @@ export interface ConfigOptions {
     rtl?: boolean;                        // 是否开启 RTL 模式
 }
 
+// message.open() 的参数类型
 export interface ArgsProps {
     content: React.ReactNode;             // 消息内容
     duration?: number;                    // 自动关闭的延时，单位秒。设为 0 时不自动关闭，默认值 3
     type?: NoticeType;                    // 消息类型
     icon?: React.ReactNode;               // 自定义图标
-    key?: string | number;                // 当前提示的唯一标志
+    key?: React.Key;                // 当前提示的唯一标志
     // style?: React.CSSProperties;          // 自定义内联样式
     // className?: string;                   // 自定义 CSS class
     onClose?: () => void;                 // 消息通知关闭时进行调用的回调函数
@@ -24,6 +26,9 @@ export interface ArgsProps {
      */
     // onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
+
+// message.info()... 的参数类型
+export type JointContent = React.ReactNode | ArgsProps
 
 interface OpenTask {
     type: 'open';
@@ -50,8 +55,6 @@ export type Task =
         skipped?: boolean;   // 跳过当前任务，默认为 undefined
     }
 
-export type JointContent = React.ReactNode | ArgsProps
-
 /**
  * @descCN 函数用于关闭消息通知，函数中有.then()方法，可以被调用
  */
@@ -59,6 +62,7 @@ export interface MessageType extends PromiseLike<boolean> {
     (): void;
 }
 
+// message.info() / message.success()... 的函数类型
 export type TypeOpen = {
     /**
      * @param { number } duration 消息通知持续显示的时间

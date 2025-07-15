@@ -1,4 +1,10 @@
-import { useState, forwardRef, useImperativeHandle } from 'react'
+/**
+ * 基本理念：创建代理(useInternalMessage)，代理message所有(config、useMessage除外)的方法
+ * 1. 函数给 message 注册方法open、info...等方法，方法中将参数视作 task 添加进 taskQueue 中------open() / typeOpen()
+ * 2. 执行 flushNotice()，消费 taskQueue，消费成功后删除 taskQueue------执行flushNotice()
+ * 3. flushNotice() 的循环中设置代理，open、info...等方法会转成代理的调用------flushNotice => taskQueue.forEach
+ */
+import { useState, forwardRef, useImperativeHandle, useEffect } from 'react'
 import type { ForwardedRef } from 'react'
 
 import ConfigProvider from '@/components/ConfigProvider/ConfigProvider'
@@ -38,22 +44,35 @@ const setMessageGlobalConfig = (config: ConfigOptions) => {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-const GlobalHolder = forwardRef((
-    props: { messageConfig: ConfigOptions; sync: () => void },
-    ref: ForwardedRef<GlobalHolderRef>,
-) => {
-    const { messageConfig, sync } = props
+const GlobalHolderWrapper = forwardRef((props: unknown, ref: ForwardedRef<GlobalHolderRef>) => {
+    // useState(getGlobalContext) 惰性初始化
+    // React 检测到你传的是一个函数，而不是一个普通值，它会在初始化时执行这个函数一次，把返回值当作初始值
+    const [messageConfig, setMessageConfig] = useState<ConfigOptions>(getGlobalContext)
 
-    // 获取 Message 唯一实例
-    const [api, holder] = useInternalMessage(messageConfig)
+    // 把 messageConfig.getContainer 设置成 document.body
+    const sync = () => { setMessageConfig(getGlobalContext()) }
+
+    // 获取 Message 实例，与 message.useMessage 一样
+    const [messageInstance, holder] = useInternalMessage(messageConfig)
+
+    // const dom = <GlobalHolder ref={ref} sync={sync} messageConfig={messageConfig} />
+
+    // 执行同步函数获取全局配置
+    useEffect(sync, [])
 
     useImperativeHandle(ref, () => {
-        const instance: MessageInstance = { ...api }
+        const instance: MessageInstance = { ...messageInstance }
 
+        /**
+         * 重写 instance 的方法
+         * 确保每次调用方法前调用 sync ，获取最新的全局配置
+         */
         Object.keys(instance).forEach((method) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             instance[method as keyof MessageInstance] = (...args: any[]) => {
                 sync()
-                return (api as any)[method](...args)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                return (messageInstance as any)[method](...args)
             }
         })
 
@@ -63,40 +82,9 @@ const GlobalHolder = forwardRef((
         }
     })
 
-    return holder
-})
-
-// eslint-disable-next-line react-refresh/only-export-components
-const GlobalHolderWrapper = forwardRef((props: unknown, ref: ForwardedRef<GlobalHolderRef>) => {
-    const [messageConfig, setMessageConfig] = useState(getGlobalContext)
-
-    // 把 messageConfig.getContainer 设置成 document.body
-    const sync = () => { setMessageConfig(getGlobalContext) }
-
-    // 获取 Message 唯一实例
-    // const [api, holder] = useInternalMessage(messageConfig)
-
-    const dom = <GlobalHolder ref={ref} sync={sync} messageConfig={messageConfig} />
-
-    /* useImperativeHandle(ref, () => {
-        const instance: MessageInstance = { ...api }
-
-        Object.keys(instance).forEach((method) => {
-            instance[method as keyof MessageInstance] = (...args: any[]) => {
-                sync()
-                return (api as any)[method](...args)
-            }
-        })
-
-        return {
-            instance,
-            sync,
-        }
-    }) */
-
     return (
         <ConfigProvider theme='dark'>
-            { dom }
+            { holder }
         </ConfigProvider>
     )
 })
@@ -105,14 +93,16 @@ const GlobalHolderWrapper = forwardRef((props: unknown, ref: ForwardedRef<Global
 const flushNotice = () => {
     // 如果此时 message 还没有挂载，挂载 message 最外层
     if (!message) {
+        // 创建空标签
         const holderFragment = document.createDocumentFragment()
         message = {
             fragment: holderFragment,
         }
 
+        // 获取渲染函数
         const reactRender = unstableSetRender()
 
-        // TODO 写入 message.instance
+        // 渲染 GlobalHolderWrapper 组件
         reactRender(<GlobalHolderWrapper ref={(node) => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -139,11 +129,14 @@ const flushNotice = () => {
         if (!skipped) {
             switch (task.type) {
             case 'open': {
+                // 获取关闭函数
                 const closeFn = message!.instance!.open({
                     // ...defaultGlobalConfig,
                     ...task.config,
                 })
+                // 给关闭函数的出口设置 open / typeOpen 的出口函数
                 closeFn?.then(task.resolve)
+                // 设置 open / typeOpen 的出口函数
                 task.setCloseFn(closeFn)
                 break
             }
@@ -166,18 +159,21 @@ const flushNotice = () => {
     taskQueue = []
 }
 
+// message.open
 const open = (config: ArgsProps): MessageType => {
+    // 创建 closeFn.then() 调用
     const result: MessageType = wrapPromiseFn((resolve: VoidFunction) => {
         let closeFn: VoidFunction
 
         const task: OpenTask = {
             type: 'open',
             config,
-            resolve,
+            resolve,      // 将resolve作为参数传递给task，flushNotice 将会使用
             setCloseFn: (fn) => {
                 closeFn = fn
             },
         }
+        // 添加该该任务进入队列
         taskQueue.push(task)
 
         // 返回函数用于关闭info
@@ -201,6 +197,7 @@ const open = (config: ArgsProps): MessageType => {
     return result
 }
 
+// message['success', 'info', 'warning', 'error', 'loading'] 的函数
 const typeOpen = (type: NoticeType, args: Parameters<TypeOpen>): MessageType => {
     /**
      * @description 将需要执行的代码，放入 Promise 中，同时提供 Promise 的 Fulfilled（成功）状态出口方法 resolve()
@@ -228,7 +225,7 @@ const typeOpen = (type: NoticeType, args: Parameters<TypeOpen>): MessageType => 
         // 返回函数用于关闭info
         return () => {
             if (closeFn) {
-                // 执行关闭函数
+                // 执行关闭函数，此处将会是message.instance.open()的关闭函数
                 closeFn()
             } else {
                 /**
@@ -257,8 +254,8 @@ const destroy: BaseMethods['destroy'] = (key) => {
 const baseStaticMethods: BaseMethods = {
     open,
     destroy,
-    config: setMessageGlobalConfig,
-    useMessage,
+    config: setMessageGlobalConfig,   // 设置全局配置
+    useMessage,                       // 获取 Hooks 的 MessageInstance 实例
 }
 
 const methods: (keyof MessageMethods)[] = ['success', 'info', 'warning', 'error', 'loading']
