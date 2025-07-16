@@ -1,3 +1,6 @@
+/**
+ * 参考源码：notification/src/hooks/useNotification.tsx
+ */
 import { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 import type { ForwardedRef } from 'react'
 import { createPortal } from 'react-dom'
@@ -36,6 +39,32 @@ interface NotificationsProps {
 
 let uniqueKey = 0      // 唯一key
 
+// 合并对象
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mergeConfig = <T = any>(...objList: Partial<T>[]): T => {
+    const clone: T = {} as T
+
+    objList.forEach((obj) => {
+        if (obj) {
+            Object.keys(obj).forEach((key) => {
+                const val = obj[key as keyof T]
+
+                if (val !== undefined) {
+                    clone[key as keyof T] = val
+                }
+            })
+        }
+    })
+
+    return clone
+}
+
+/**
+ * @description 作用
+ * 1. 维护消息列表 configList
+ * 2. 渲染消息列表
+ * 3. 消息列表 configList 将会被 <NoticeList /> 监控
+ */
 // eslint-disable-next-line react-refresh/only-export-components
 const Notifications = forwardRef((props: NotificationsProps, ref: ForwardedRef<NotificationsRef>) => {
     const { container } = props
@@ -43,7 +72,6 @@ const Notifications = forwardRef((props: NotificationsProps, ref: ForwardedRef<N
     const [configList, setConfigList] = useState<(ArgsProps & { visible: boolean })[]>([])
 
     const onNoticeClose = (key: React.Key) => {
-        // 动画执行后，将 item 删除
         const config = configList.find((item) => item.key === key)
         config?.onClose?.()
         setConfigList((list) => list.filter((item) => item.key !== key))
@@ -51,7 +79,6 @@ const Notifications = forwardRef((props: NotificationsProps, ref: ForwardedRef<N
 
     useImperativeHandle(ref, () => ({
         open: (config: ArgsProps) => {
-            console.log('Notifications open', config, configList)
             // 添加 config 进入队列
             setConfigList((configList) => {
                 const clone = [...configList]
@@ -65,7 +92,6 @@ const Notifications = forwardRef((props: NotificationsProps, ref: ForwardedRef<N
                     // 添加进入队列
                     clone.push({ ...config, visible: true })
                 }
-                console.log('Notifications clone', clone)
 
                 return clone
             })
@@ -74,7 +100,6 @@ const Notifications = forwardRef((props: NotificationsProps, ref: ForwardedRef<N
             onNoticeClose(key)
         },
         destroy: () => {
-            console.log('Notifications destroy')
             setConfigList([])
         },
     }))
@@ -85,19 +110,7 @@ const Notifications = forwardRef((props: NotificationsProps, ref: ForwardedRef<N
         <NoticeList
             configList={configList}
             onNoticeClose={onNoticeClose}
-        >
-            {/* <div className='message'>
-                {
-                    configList.map((config) => (
-                        <Notice
-                            key={config.key}
-                            config={config}
-                            onNoticeClose={onNoticeClose}
-                        ></Notice>
-                    ))
-                }
-            </div> */}
-        </NoticeList>,
+        ></NoticeList>,
         container,
     )
 })
@@ -108,7 +121,8 @@ const useNotification = (
 
     const {
         getContainer = () => document.body,
-    } = rootConfig
+        ...shareConfig
+    } = rootConfig        // 获取 message.config() 的参数
 
     const [container, setContainer] = useState<HTMLElement | ShadowRoot>()
     const notificationsRef = useRef<NotificationsRef>(null)
@@ -152,14 +166,11 @@ const useNotification = (
     }, [taskQueue])
 
     const open: NotificationAPI['open'] = (config: ArgsProps) => {
-        console.log('useNotification open', config)
-
-        let mergedKey: React.Key = config.key || ''
-        if (!mergedKey) {
-            mergedKey = `notification-${uniqueKey}`
+        const mergedConfig = mergeConfig<ArgsProps>(shareConfig, config)
+        if (!mergedConfig.key) {
+            mergedConfig.key = `notification-${uniqueKey}`
             uniqueKey += 1
         }
-        const mergedConfig: ArgsProps = { ...config, key: mergedKey }
 
         setTaskQueue((queue) => [...queue, { type: 'open', config: mergedConfig }])
     }

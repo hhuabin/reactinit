@@ -1,4 +1,5 @@
 /**
+ * 参考源码：ant-design/components/message/index.tsx
  * 基本理念：创建代理(useInternalMessage)，代理message所有(config、useMessage除外)的方法
  * 1. 函数给 message 注册方法open、info...等方法，方法中将参数视作 task 添加进 taskQueue 中------open() / typeOpen()
  * 2. 执行 flushNotice()，消费 taskQueue，消费成功后删除 taskQueue------执行flushNotice()
@@ -43,14 +44,23 @@ const setMessageGlobalConfig = (config: ConfigOptions) => {
     message?.sync?.()
 }
 
+/**
+ * @description 作用：套在全局组件 <ConfigProvider> 壳中，并且方法调用前都执行 sync()
+ * 生成 messageInstance 实例，将实例方法暴露出去
+ * 并将其包括在全局组件 <ConfigProvider> 中
+ */
 // eslint-disable-next-line react-refresh/only-export-components
 const GlobalHolderWrapper = forwardRef((props: unknown, ref: ForwardedRef<GlobalHolderRef>) => {
     // useState(getGlobalContext) 惰性初始化
     // React 检测到你传的是一个函数，而不是一个普通值，它会在初始化时执行这个函数一次，把返回值当作初始值
     const [messageConfig, setMessageConfig] = useState<ConfigOptions>(getGlobalContext)
+    console.log('-------------GlobalHolderWrapper-------------')
 
     // 把 messageConfig.getContainer 设置成 document.body
-    const sync = () => { setMessageConfig(getGlobalContext()) }
+    const sync = () => {
+        console.log('-------sync--------')
+        setMessageConfig(getGlobalContext())
+    }
 
     // 获取 Message 实例，与 message.useMessage 一样
     const [messageInstance, holder] = useInternalMessage(messageConfig)
@@ -89,7 +99,10 @@ const GlobalHolderWrapper = forwardRef((props: unknown, ref: ForwardedRef<Global
     )
 })
 
-// 刷新提示列表
+/**
+ * 消费消息队列
+ * 将消息队列的方法代理到 message 实例中
+ */
 const flushNotice = () => {
     // 如果此时 message 还没有挂载，挂载 message 最外层
     if (!message) {
@@ -131,12 +144,12 @@ const flushNotice = () => {
             case 'open': {
                 // 获取关闭函数
                 const closeFn = message!.instance!.open({
-                    // ...defaultGlobalConfig,
+                    ...defaultGlobalConfig,
                     ...task.config,
                 })
-                // 给关闭函数的出口设置 open / typeOpen 的出口函数
+                // 链式调用关闭函数，message 实例关闭函数调用后调用用户定义的 .then()
                 closeFn?.then(task.resolve)
-                // 设置 open / typeOpen 的出口函数
+                // 设置 open / typeOpen 的 closeFn 函数赋值，方便外部调用关闭函数
                 task.setCloseFn(closeFn)
                 break
             }
@@ -145,7 +158,6 @@ const flushNotice = () => {
                 break
             }
             default: {
-                console.log('flushNotice task', task)
                 const closeFn = message!.instance![type as NoticeType](...task.args)
 
                 closeFn?.then(task.resolve)

@@ -1,8 +1,11 @@
+/**
+ * 参考源码：notification/src/Notice.tsx
+ */
 import { useState, useEffect, forwardRef } from 'react'
 
 import type { ArgsProps } from './Message.d'
 import renderIcon from './renderIcon'
-import './Notification.less'
+import './NoticeList.less'
 
 type NoticeListProps = {
     configList: (ArgsProps & { visible: boolean })[];
@@ -17,6 +20,9 @@ type NoticeProps = {
 
 const DEFAULT_DURATION = 3000
 
+/**
+ * @description 执行关闭动画；倒计时结束关闭消息
+ */
 const Notice: React.FC<NoticeProps> = (props) => {
 
     const { notice } = props
@@ -40,7 +46,6 @@ const Notice: React.FC<NoticeProps> = (props) => {
         }
         return () => {
             // 销毁时清除定时器
-            console.error('销毁时清除定时器')
             if (timer) clearTimeout(timer)
         }
     }, [])
@@ -79,18 +84,18 @@ const Notice: React.FC<NoticeProps> = (props) => {
 }
 
 /**
- * 采用观察者模式，当 props.configList 变化时，同步改变 noticeList 状态
+ * @description 作用：采用 观察者模式 ，监控 props.configList
+ * 当 configList 变化时，同步改变 noticeList 状态
+ * 当 configList 原来的消息被删除时，noticeList 的对应元素添加 { visible: false }
+ * 当 visible = false 时，<Notice /> 执行关闭动画，动画完成时，删除 noticeList 的对应元素
  */
 const NoticeList: React.FC<NoticeListProps> = (props) => {
 
     const { configList } = props
 
-
     const [noticeList, setNoticeList] = useState<NoticeListProps['configList']>([])
 
     useEffect(() => {
-        console.warn('-----------configList==========', configList, noticeList)
-        // console.warn('compareConfigListAndNoticeList', configList, noticeList)
         if (!configList.length) {
             // 当传入值为空，关闭全部通知
             closeAllNotice()
@@ -117,7 +122,6 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
         configList: NoticeListProps['configList'],
         noticeList: NoticeListProps['configList'],
     ): NoticeListProps['configList'] => {
-        console.warn('compareConfigListAndNoticeList', configList, noticeList)
         const resultList: NoticeListProps['configList'] = []              // 存放返回结果
         const usedKeys = new Set()         // 存储已经被添加到 resultList 的 key
 
@@ -219,20 +223,24 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
         setNoticeList(noticeList => noticeList.filter(item => item.key !== key))
     }
 
-    return (
-        <div className="message">
-            {
-                noticeList.map(notice => (
-                    <Notice
-                        key={notice.key}
-                        notice={notice}
-                        onNoticeClose={onNoticeClose}
-                        onNoticeDelete={deleteNotice}
-                    ></Notice>
-                ))
-            }
-        </div>
-    )
+    if (!!noticeList) {
+        return (
+            <div className="message">
+                {
+                    noticeList.map(notice => (
+                        <Notice
+                            key={notice.key}
+                            notice={notice}
+                            onNoticeClose={onNoticeClose}
+                            onNoticeDelete={deleteNotice}
+                        ></Notice>
+                    ))
+                }
+            </div>
+        )
+    } else {
+        return (<></>)
+    }
 }
 
 export default NoticeList

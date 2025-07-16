@@ -1,3 +1,6 @@
+/**
+ * 参考源码：ant-design/components/message/useMessage.tsx
+ */
 import React, { useRef, forwardRef, useImperativeHandle } from 'react'
 import type { ForwardedRef } from 'react'
 
@@ -11,12 +14,6 @@ type HolderProps = ConfigOptions & {
     onAllRemoved?: VoidFunction;
 }
 
-/* interface HolderRef {
-    open: (config: OpenConfig) => void;
-    close: (key: React.Key) => void;
-    destroy: () => void;
-} */
-
 const DEFAULT_OFFSET = 8
 const DEFAULT_DURATION = 3000
 
@@ -26,8 +23,8 @@ let keyIndex = 0      // message key
 const Holder = forwardRef((props: HolderProps, ref: ForwardedRef<NotificationsRef>) => {
     const {
         top,
-        prefixCls: staticPrefixCls,
-        getContainer: staticGetContainer,
+        prefixCls,
+        getContainer,
         maxCount,
         duration = DEFAULT_DURATION,
         rtl,
@@ -36,7 +33,7 @@ const Holder = forwardRef((props: HolderProps, ref: ForwardedRef<NotificationsRe
     } = props
 
     const [notificationAPI, holder] = useNotification({
-        getContainer: staticGetContainer,
+        getContainer,
         duration,
     })
 
@@ -54,6 +51,8 @@ const Holder = forwardRef((props: HolderProps, ref: ForwardedRef<NotificationsRe
  * @returns { readonly [MessageInstance, React.ReactElement] }
  */
 export const useInternalMessage = (messageConfig?: HolderProps): readonly [MessageInstance, React.ReactElement] => {
+    console.log('--------useInternalMessage----------', messageConfig);
+
     const holderRef = useRef<NotificationsRef>(null)
 
     const wrapAPI = ((): MessageInstance => {
@@ -69,8 +68,6 @@ export const useInternalMessage = (messageConfig?: HolderProps): readonly [Messa
          * @returns { MessageType }
          */
         const open = (config: ArgsProps): MessageType => {
-            console.log('useInternalMessage open', config)
-
             // Holder 未注册成功时，返回一个空函数
             if (!holderRef.current) {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -85,11 +82,6 @@ export const useInternalMessage = (messageConfig?: HolderProps): readonly [Messa
                 keyIndex += 1
                 mergedKey = `message-${keyIndex}`
             }
-            console.warn('useInternalMessage mergedKey', mergedKey)
-            // 根据 type 给 message 添加 icon
-            /* const TypeContent: React.ReactNode = (<>
-                {content}
-            </>) */
 
             return wrapPromiseFn((resolve: VoidFunction) => {
                 holderRef.current!.open({
