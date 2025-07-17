@@ -2,13 +2,13 @@ export type NoticeType = 'info' | 'success' | 'error' | 'warning' | 'loading'
 
 // message.config() 的参数类型
 export interface ConfigOptions {
-    top?: string | number;                // 消息距离顶部的位置
+    // top?: string | number;                // 消息距离顶部的位置
     duration?: number;                    // 默认自动关闭延时，单位秒，默认值 3
     prefixCls?: string;                   // 消息节点的 className 前缀
     getContainer?: () => HTMLElement;     // 配置渲染节点的输出位置，默认为 () => document.body
-    transitionName?: string;              //
-    maxCount?: number;                    // 最大显示数，超过限制时，最早的消息会被自动关闭
-    rtl?: boolean;                        // 是否开启 RTL 模式
+    // transitionName?: string;              //
+    // maxCount?: number;                    // 最大显示数，超过限制时，最早的消息会被自动关闭
+    // rtl?: boolean;                        // 是否开启 RTL 模式，文字从左边开始读
 }
 
 // message.open() 的参数类型
@@ -17,7 +17,7 @@ export interface ArgsProps {
     duration?: number;                    // 自动关闭的延时，单位秒。设为 0 时不自动关闭，默认值 3
     type?: NoticeType;                    // 消息类型
     icon?: React.ReactNode;               // 自定义图标
-    key?: React.Key;                // 当前提示的唯一标志
+    key?: React.Key;                      // 当前提示的唯一标志
     // style?: React.CSSProperties;          // 自定义内联样式
     // className?: string;                   // 自定义 CSS class
     onClose?: () => void;                 // 消息通知关闭时进行调用的回调函数
@@ -25,6 +25,11 @@ export interface ArgsProps {
      * 消息通知点击时的回调函数
      */
     // onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
+}
+
+// 用于显示用的单个消息类型
+export interface MessageConfig extends ConfigOptions, ArgsProps {
+    key: React.Key;                       // 这里的key已经被默认赋值过了，不再是可选值
 }
 
 // message.info()... 的参数类型
@@ -88,7 +93,8 @@ export interface MessageMethods {
     loading: TypeOpen;
 }
 
-export interface MessageInstance extends MessageMethods, BaseMethods {}
+export interface MessageInstance extends MessageMethods, Pick<BaseMethods, 'open' | 'destroy'> {}
+export interface BaseStaticMethods extends MessageMethods, BaseMethods {}
 
 export interface GlobalMessage {
   fragment: DocumentFragment;

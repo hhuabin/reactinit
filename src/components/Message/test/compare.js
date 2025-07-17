@@ -1,4 +1,7 @@
-const a = [
+/**
+ * 测试 compareConfigListAndNoticeList 方法
+ */
+const messageConfigList = [
     { key: '1', value: 'a.1' },
     { key: '3', value: 'a.3' },
     { key: '5', value: 'a.5' },
@@ -6,7 +9,7 @@ const a = [
     { key: '7', value: 'a.7' },
 ]
 
-const b = [
+const noticeList = [
     { key: '1', value: 'b.1' },
     { key: '2', value: 'b.2' },
     { key: '3', value: 'b.3' },
@@ -14,13 +17,16 @@ const b = [
     { key: '5', value: 'b.5' },
 ]
 
-const compareConfigListAndNoticeList = (configList, noticeList) => {
+const compareConfigListAndNoticeList = (
+    messageConfigList,
+    noticeList,
+) => {
     const resultList = []              // 存放返回结果
     const usedKeys = new Set()         // 存储已经被添加到 resultList 的 key
 
-    const configMap = new Map(configList.map(item => [item.key, item]))
+    const configMap = new Map(messageConfigList.map(item => [item.key, item]))
     const noticeMap = new Map(noticeList.map(item => [item.key, item]))
-    const configKeys = configList.map(item => item.key)
+    const configKeys = messageConfigList.map(item => item.key)
     const noticeKeys = noticeList.map(item => item.key)
     const configListLengtgh = configKeys.length
     const noticeListLength = noticeKeys.length
@@ -28,7 +34,7 @@ const compareConfigListAndNoticeList = (configList, noticeList) => {
     /**
      * @description 添加 noticeList 到 resultList 中
      * 新的数组中必须保留全部 noticeKeys
-     * 遍历 noticeKeys ，将 resultList 中不存在的元素加上 visible: false
+     * 遍历 noticeKeys ，将 resultList 中不存在的元素加上 isClose: true
      */
     const configKeySet = new Set(configKeys)
     for (let i = 0; i < noticeListLength; i++) {
@@ -37,7 +43,7 @@ const compareConfigListAndNoticeList = (configList, noticeList) => {
             resultList.push(configMap.get(noticeKeys[i]))
         } else {
             // 新数组中不存在，关闭
-            resultList.push({ ...noticeMap.get(noticeKeys[i]), visible: false })
+            resultList.push({ ...noticeMap.get(noticeKeys[i]), isClose: true })
         }
         usedKeys.add(noticeKeys[i])
     }
@@ -45,7 +51,7 @@ const compareConfigListAndNoticeList = (configList, noticeList) => {
     /**
      * @description 遍历 configList，将新出现的 config 添加进 resultList 对应位置
      */
-    let configListHead = 0        // configList 的头指针
+    let configListHead = 0        // messageConfigList 的头指针
     let insertStartIndex = 0      // 记录在 resultList 中查找 config 的开始索引，加速 resultList 的查找速度
     for (let configIndex = 0; configIndex <= configListLengtgh; configIndex++) {
         /**
@@ -56,7 +62,7 @@ const compareConfigListAndNoticeList = (configList, noticeList) => {
             // 若头指针与检查元素下表不相等，则存在新元素需要添加
             if (configListHead < configIndex) {
                 // 获取新元素
-                const newConfig = configList.slice(configListHead, configIndex)
+                const newConfig = messageConfigList.slice(configListHead, configIndex)
                 // 从开始查找下标开始查找，将 newConfig 插入到 resultList 中
                 for (let j = insertStartIndex; j <= resultList.length; j++) {
                     if (resultList[j].key === configKeys[configIndex]) {
@@ -71,17 +77,17 @@ const compareConfigListAndNoticeList = (configList, noticeList) => {
                 }
                 configListHead = configIndex + 1
             } else {
-                // 没有新元素需要添加，移动 configList 头指针
+                // 没有新元素需要添加，移动 messageConfigList 头指针
                 configListHead++
             }
         }
-        // 将处于 configList 末尾的新元素全部添加到 resultList 中
+        // 将处于 messageConfigList 末尾的新元素全部添加到 resultList 中
         if (configIndex === configListLengtgh && configListHead < configIndex) {
-            resultList.push(...configList.slice(configListHead))
+            resultList.push(...messageConfigList.slice(configListHead))
         }
     }
 
     return resultList
 }
 
-console.log(compareConfigListAndNoticeList(a, b))
+console.log(compareConfigListAndNoticeList(messageConfigList, noticeList))

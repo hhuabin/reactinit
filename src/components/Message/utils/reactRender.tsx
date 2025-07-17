@@ -16,8 +16,8 @@ export type RenderType = (
 
 /**
  * @descCN React 18 的 render 方法
- * @param node
- * @param container
+ * @param { React.ReactElement } node
+ * @param { ContainerType } container
  * @returns
  */
 export const render = (node: React.ReactElement, container: ContainerType) => {
@@ -45,6 +45,9 @@ export const defaultReactRender: RenderType = (node: React.ReactElement, contain
 
 let unstableRender: RenderType = defaultReactRender
 
+/**
+ * 渲染函数
+ */
 export function unstableSetRender(render?: RenderType) {
     if (render) {
         unstableRender = render

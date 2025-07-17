@@ -11,17 +11,23 @@ import type { ForwardedRef } from 'react'
 import ConfigProvider from '@/components/ConfigProvider/ConfigProvider'
 
 import type {
-    NoticeType, ConfigOptions, GlobalMessage, ArgsProps, OpenTask, TypeTask, Task, MessageMethods, JointContent,
-    MessageType, TypeOpen, MessageInstance, BaseMethods,
+    NoticeType, ConfigOptions, ArgsProps,
+    OpenTask, TypeTask, Task,
+    MessageType, TypeOpen,
+    BaseMethods, MessageMethods,
+    MessageInstance, BaseStaticMethods,
+    GlobalMessage,
 } from './Message.d'
 import useMessage, { useInternalMessage } from './useMessage'
-import { unstableSetRender } from './reactRender'
-import { wrapPromiseFn } from './utils'
+import { unstableSetRender } from './utils/reactRender'
+import { wrapPromiseFn } from './utils/utils'
 
 interface GlobalHolderRef {
     instance: MessageInstance;
     sync: () => void;
 }
+
+const DEFAULT_DURATION = 3000
 
 let message: GlobalMessage | null = null
 
@@ -31,9 +37,10 @@ let defaultGlobalConfig: ConfigOptions = {}       // 全局配置
 
 // 获取全局配置
 const getGlobalContext = (): ConfigOptions => {
-    const { getContainer, duration, rtl, maxCount, top } = defaultGlobalConfig
+    // const { getContainer, duration = DEFAULT_DURATION, rtl, maxCount, top } = defaultGlobalConfig
+    const { getContainer, duration = DEFAULT_DURATION, prefixCls='bin' } = defaultGlobalConfig
     const mergedContainer = getContainer?.() || document.body   // 设置默认挂载点是 body
-    return { getContainer: () => mergedContainer, duration, rtl, maxCount, top }
+    return { getContainer: () => mergedContainer, duration, prefixCls }
 }
 
 // 设置全局配置，此代码中只有 message.config() 使用
@@ -54,11 +61,9 @@ const GlobalHolderWrapper = forwardRef((props: unknown, ref: ForwardedRef<Global
     // useState(getGlobalContext) 惰性初始化
     // React 检测到你传的是一个函数，而不是一个普通值，它会在初始化时执行这个函数一次，把返回值当作初始值
     const [messageConfig, setMessageConfig] = useState<ConfigOptions>(getGlobalContext)
-    console.log('-------------GlobalHolderWrapper-------------')
 
     // 把 messageConfig.getContainer 设置成 document.body
     const sync = () => {
-        console.log('-------sync--------')
         setMessageConfig(getGlobalContext())
     }
 
@@ -93,10 +98,11 @@ const GlobalHolderWrapper = forwardRef((props: unknown, ref: ForwardedRef<Global
     })
 
     return (
-        <ConfigProvider theme='dark'>
+        <ConfigProvider>
             { holder }
         </ConfigProvider>
     )
+    // return holder
 })
 
 /**
@@ -267,7 +273,7 @@ const baseStaticMethods: BaseMethods = {
     open,
     destroy,
     config: setMessageGlobalConfig,   // 设置全局配置
-    useMessage,                       // 获取 Hooks 的 MessageInstance 实例
+    useMessage,                       // 获取 Hooks 的 MessageInstance 实例；const [messageApi, contextHolder] = message.useMessage()
 }
 
 const methods: (keyof MessageMethods)[] = ['success', 'info', 'warning', 'error', 'loading']
@@ -278,6 +284,6 @@ const messageMethods: MessageMethods = methods.reduce((prev, type) => {
     return prev
 }, {} as MessageMethods)
 
-const staticMethods = { ...baseStaticMethods, ...messageMethods }
+const staticMethods: BaseStaticMethods = { ...baseStaticMethods, ...messageMethods }
 
 export default staticMethods

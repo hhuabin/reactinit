@@ -3,6 +3,10 @@ import { useState, useLayoutEffect, useEffect, useRef } from 'react'
 import { SunOutlined, MoonOutlined } from '@ant-design/icons'
 import { Popover } from 'antd'
 
+import { message } from '@/components/Message'
+import type { NoticeType } from '@/components/Message'
+import { randomIntInRange } from '@/utils/functionUtils/mathUtils'
+
 type Theme = 'light' | 'dark'
 
 const Header: React.FC = () => {
@@ -63,11 +67,20 @@ const Header: React.FC = () => {
         setTheme(_theme || theme === 'light' ? 'dark' : 'light')
     }
 
+    const handleClickName = () => {
+        const messageType = ['info', 'success', 'error', 'warning', 'loading']
+        const randonNumber = randomIntInRange(0, messageType.length - 1)
+        message.open({
+            type: messageType[randonNumber] as NoticeType,
+            content: '死鬼！不要点我',
+        })
+    }
+
     return (
         <header className='fixed top-0 left-0 flex justify-between w-full h-[64px] bg-[var(--bg-color)] overflow-hidden
             [box-shadow:var(--box-bottom-shadow)] transition-all ease-[ease] duration-[var(--theme-duration)] z-[1000]'
         >
-            <div className='flex items-center px-8 text-[2rem] text-[var(--color-text)] font-bold'>H H U A B I N</div>
+            <div className='flex items-center px-8 text-[2rem] text-[var(--color-text)] font-bold cursor-pointer' onClick={() => handleClickName()}>H H U A B I N</div>
 
             <div className='hidden md:flex items-center flex-nowrap gap-2 h-full pr-8 box-border'>
                 {/* <button className='inline-flex justify-center items-center w-8 h-8 rounded-md bg-[transparent] hover:bg-[var(--item-bg-hover)]'>

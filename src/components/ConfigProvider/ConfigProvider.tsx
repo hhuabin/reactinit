@@ -1,5 +1,5 @@
-import { useState, useContext } from 'react'
-import { defaultConfig, setConfigContext, ConfigContext } from './context'
+import { useContext, useMemo } from 'react'
+import { ConfigContext } from './context'
 import type { ConfigConsumerProps } from './context'
 
 const { Provider, Consumer } = ConfigContext
@@ -16,8 +16,10 @@ const ConfigProvider: React.FC<ConfigProviderProps> = (props) => {
 
     const context = useContext(ConfigContext)
 
+    const mergeConfig: ConfigConsumerProps = useMemo(() => ({ ...context, ...config }), [context, config])
+
     return (
-        <Provider value={{ ...context, ...config }}>
+        <Provider value={mergeConfig}>
             { children }
         </Provider>
     )

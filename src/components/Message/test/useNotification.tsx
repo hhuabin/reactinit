@@ -1,13 +1,14 @@
 /**
+ * 已弃用，功能合并到 useMessage 中，简化组件结构
  * 参考源码：notification/src/hooks/useNotification.tsx
  */
 import { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 import type { ForwardedRef } from 'react'
 import { createPortal } from 'react-dom'
 
-import type { ConfigOptions, ArgsProps } from './Message.d'
+import type { ConfigOptions, ArgsProps } from '../Message.d'
 
-import NoticeList from './NoticeList'
+import NoticeList from '../NoticeList'
 
 interface OpenTask {
     type: 'open';
@@ -41,7 +42,7 @@ let uniqueKey = 0      // 唯一key
 
 // 合并对象
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mergeConfig = <T = any>(...objList: Partial<T>[]): T => {
+const mergeConfig = <T extends object>(...objList: Partial<T>[]): T => {
     const clone: T = {} as T
 
     objList.forEach((obj) => {
@@ -108,7 +109,7 @@ const Notifications = forwardRef((props: NotificationsProps, ref: ForwardedRef<N
 
     return createPortal(
         <NoticeList
-            configList={configList}
+            messageConfigList={configList as any}
             onNoticeClose={onNoticeClose}
         ></NoticeList>,
         container,

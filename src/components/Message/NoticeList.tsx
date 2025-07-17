@@ -1,19 +1,24 @@
 /**
  * 参考源码：notification/src/Notice.tsx
  */
-import { useState, useEffect, forwardRef } from 'react'
+import { useState, useEffect, useContext } from 'react'
 
-import type { ArgsProps } from './Message.d'
-import renderIcon from './renderIcon'
-import './NoticeList.less'
+import { ConfigContext } from '@/components/ConfigProvider/context'
+import type { MessageConfig } from './Message.d'
+import renderIcon from './utils/renderIcon'
+import './style/message.less'
+
+type NoticeConfig = MessageConfig & {
+    isClose?: boolean;
+}
 
 type NoticeListProps = {
-    configList: (ArgsProps & { visible: boolean })[];
-    onNoticeClose?: (key: React.Key) => void;
+    messageConfigList: MessageConfig[];           // 被监控的消息列表
+    onNoticeClose?: (key: React.Key) => void;     // 删除消息函数
 }
 
 type NoticeProps = {
-    notice: NoticeListProps['configList'][number];
+    notice: NoticeConfig;
     onNoticeClose?: (key: React.Key) => void;       // 隐藏该通知，触发关闭动画
     onNoticeDelete?: (key: React.Key) => void;      // 删除该通知
 }
@@ -27,21 +32,24 @@ const Notice: React.FC<NoticeProps> = (props) => {
 
     const { notice } = props
 
+    const globalConfig = useContext(ConfigContext)
+
     useEffect(() => {
+
         const { duration } = notice
-        console.warn('duration', duration)
+
         let timer: NodeJS.Timeout | null = null
         if (!duration && duration !== 0) {
             if (timer) clearTimeout(timer)
             timer = setTimeout(() => {
-                props.onNoticeClose?.(notice.key!)
+                props.onNoticeClose?.(notice.key)
             }, DEFAULT_DURATION)
         } else if (duration === 0) {
             // 0 表示持久通知
         } else if (duration > 0) {
             if (timer) clearTimeout(timer)
             timer = setTimeout(() => {
-                props.onNoticeClose?.(notice.key!)
+                props.onNoticeClose?.(notice.key)
             }, duration)
         }
         return () => {
@@ -52,30 +60,39 @@ const Notice: React.FC<NoticeProps> = (props) => {
 
     // 动画执行完毕，删除该元素
     const onAnimationEnd = (event: React.AnimationEvent<HTMLDivElement>) => {
-        console.log('---------onAnimationEnd----------', event.animationName)
-        if (event.animationName === 'message-move-out') {
-            props.onNoticeDelete?.(notice.key!)
+        if (event.animationName === 'bin-message-move-out') {
+            props.onNoticeDelete?.(notice.key)
         }
     }
 
     return (
         <div
-            className={'message-notice-wrapper' + (notice.visible ? '' : ' message-notice-wrapper-leave')}
+            className={'bin-message-notice-wrapper' + (notice.isClose ? ' bin-message-notice-wrapper-leave' : '')}
             onAnimationEnd={(e) => onAnimationEnd(e)}
         >
-            <div className='message-notice'>
-                <div className='ant-message-notice-content'>
-                    <div className='ant-message-custom-content'>
+            <div className='bin-message-notice'>
+                <div
+                    className='bin-message-notice-content'
+                    style={{
+                        backgroundColor: globalConfig.theme === 'dark' ? '#1f1f1f' : '',
+                    }}
+                >
+                    <div className='bin-message-custom-content'>
                         {
                             notice.icon
                                 ? notice.icon
                                 : (
-                                    notice.type && <span className='message-icon'>
-                                        { renderIcon(notice.type) }
-                                    </span>
+                                    notice.type && (
+                                        <span className='bin-message-icon'>
+                                            { renderIcon(notice.type) }
+                                        </span>
+                                    )
                                 )
                         }
-                        <span>{notice.content}</span>
+                        <span
+                            className='bin-message-content'
+                            style={{ color: globalConfig.theme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '' }}
+                        >{notice.content}</span>
                     </div>
                 </div>
             </div>
@@ -84,58 +101,58 @@ const Notice: React.FC<NoticeProps> = (props) => {
 }
 
 /**
- * @description 作用：采用 观察者模式 ，监控 props.configList
- * 当 configList 变化时，同步改变 noticeList 状态
- * 当 configList 原来的消息被删除时，noticeList 的对应元素添加 { visible: false }
+ * @description 作用：采用 观察者模式 ，监控 props.messageConfigList
+ * 当 messageConfigList 变化时，同步改变 noticeList 状态
+ * 当 messageConfigList 原来的消息被删除时，noticeList 的对应元素添加 { isClose: true }
  * 当 visible = false 时，<Notice /> 执行关闭动画，动画完成时，删除 noticeList 的对应元素
  */
 const NoticeList: React.FC<NoticeListProps> = (props) => {
 
-    const { configList } = props
+    const { messageConfigList } = props
 
-    const [noticeList, setNoticeList] = useState<NoticeListProps['configList']>([])
+    const [noticeList, setNoticeList] = useState<NoticeConfig[]>([])
 
     useEffect(() => {
-        if (!configList.length) {
+        if (!messageConfigList.length) {
             // 当传入值为空，关闭全部通知
             closeAllNotice()
         } else if (!noticeList.length) {
             // 当通知列表为空，直接赋值即可
-            setNoticeList(configList)
+            setNoticeList(messageConfigList)
         } else {
             /**
              * 当两个列表都有值时，精细对比
              * 该方案为核心 diff 函数
              */
-            const resultList = compareConfigListAndNoticeList(configList, noticeList)
+            const resultList = compareConfigListAndNoticeList(messageConfigList, noticeList)
             setNoticeList(resultList)
         }
-    }, [props.configList])
+    }, [props.messageConfigList])
 
     /**
      * @description 对比合并提示消息列表
-     * @param { NoticeListProps['configList'] } configList 新消息列表
-     * @param { NoticeListProps['configList'] } noticeList 旧消息列表
-     * @returns { NoticeListProps['configList'] } 新的消息列表
+     * @param { MessageConfig[] } messageConfigList 新消息列表
+     * @param { MessageConfig[] } noticeList 旧消息列表
+     * @returns { MessageConfig[] } 新的消息列表
      */
     const compareConfigListAndNoticeList = (
-        configList: NoticeListProps['configList'],
-        noticeList: NoticeListProps['configList'],
-    ): NoticeListProps['configList'] => {
-        const resultList: NoticeListProps['configList'] = []              // 存放返回结果
+        messageConfigList: MessageConfig[],
+        noticeList: NoticeConfig[],
+    ): NoticeConfig[] => {
+        const resultList: NoticeConfig[] = []              // 存放返回结果
         const usedKeys = new Set()         // 存储已经被添加到 resultList 的 key
 
-        const configMap = new Map(configList.map(item => [item.key!, item]))
-        const noticeMap = new Map(noticeList.map(item => [item.key!, item]))
-        const configKeys = configList.map(item => item.key!)
-        const noticeKeys = noticeList.map(item => item.key!)
+        const configMap = new Map(messageConfigList.map(item => [item.key, item]))
+        const noticeMap = new Map(noticeList.map(item => [item.key, item]))
+        const configKeys = messageConfigList.map(item => item.key)
+        const noticeKeys = noticeList.map(item => item.key)
         const configListLengtgh = configKeys.length
         const noticeListLength = noticeKeys.length
 
         /**
          * @description 添加 noticeList 到 resultList 中
          * 新的数组中必须保留全部 noticeKeys
-         * 遍历 noticeKeys ，将 resultList 中不存在的元素加上 visible: false
+         * 遍历 noticeKeys ，将 resultList 中不存在的元素加上 isClose: true
          */
         const configKeySet = new Set(configKeys)
         for (let i = 0; i < noticeListLength; i++) {
@@ -144,7 +161,7 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
                 resultList.push(configMap.get(noticeKeys[i])!)
             } else {
                 // 新数组中不存在，关闭
-                resultList.push({ ...noticeMap.get(noticeKeys[i])!, visible: false })
+                resultList.push({ ...noticeMap.get(noticeKeys[i])!, isClose: true })
             }
             usedKeys.add(noticeKeys[i])
         }
@@ -152,7 +169,7 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
         /**
          * @description 遍历 configList，将新出现的 config 添加进 resultList 对应位置
          */
-        let configListHead = 0        // configList 的头指针
+        let configListHead = 0        // messageConfigList 的头指针
         let insertStartIndex = 0      // 记录在 resultList 中查找 config 的开始索引，加速 resultList 的查找速度
         for (let configIndex = 0; configIndex <= configListLengtgh; configIndex++) {
             /**
@@ -163,7 +180,7 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
                 // 若头指针与检查元素下表不相等，则存在新元素需要添加
                 if (configListHead < configIndex) {
                     // 获取新元素
-                    const newConfig = configList.slice(configListHead, configIndex)
+                    const newConfig = messageConfigList.slice(configListHead, configIndex)
                     // 从开始查找下标开始查找，将 newConfig 插入到 resultList 中
                     for (let j = insertStartIndex; j <= resultList.length; j++) {
                         if (resultList[j]!.key === configKeys[configIndex]) {
@@ -178,19 +195,20 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
                     }
                     configListHead = configIndex + 1
                 } else {
-                    // 没有新元素需要添加，移动 configList 头指针
+                    // 没有新元素需要添加，移动 messageConfigList 头指针
                     configListHead++
                 }
             }
-            // 将处于 configList 末尾的新元素全部添加到 resultList 中
+            // 将处于 messageConfigList 末尾的新元素全部添加到 resultList 中
             if (configIndex === configListLengtgh && configListHead < configIndex) {
-                resultList.push(...configList.slice(configListHead))
+                resultList.push(...messageConfigList.slice(configListHead))
             }
         }
 
         return resultList
     }
 
+    // 直接删除messageConfigList的消息，触发noticeList的关闭函数
     const onNoticeClose = (key: React.Key) => {
         props.onNoticeClose?.(key)
         closeNotice(key)
@@ -200,7 +218,7 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
     const closeAllNotice = () => {
         setNoticeList(noticeList => {
             if (!noticeList.length) return noticeList
-            const clone = noticeList.map(item => ({ ...item, visible: false }))
+            const clone = noticeList.map(item => ({ ...item, isClose: true }))
             return clone
         })
     }
@@ -210,7 +228,7 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
         setNoticeList(noticeList => {
             const clone = noticeList.map(item => {
                 if (item.key === key) {
-                    return { ...item, visible: false }
+                    return { ...item, isClose: true }
                 }
                 return item
             })
@@ -218,14 +236,14 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
         })
     }
 
-    // 删除单个通知
+    // 删除 noticeList 单个通知
     const deleteNotice = (key: React.Key) => {
         setNoticeList(noticeList => noticeList.filter(item => item.key !== key))
     }
 
-    if (!!noticeList) {
+    if (!!noticeList.length) {
         return (
-            <div className="message">
+            <div className="bin-message">
                 {
                     noticeList.map(notice => (
                         <Notice
