@@ -1,9 +1,3 @@
-/**
- * @Author: bin
- * @Date: 2025-06-04 11:42:38
- * @LastEditors: bin
- * @LastEditTime: 2025-07-09 15:33:50
- */
 import { useNavigate } from 'react-router-dom'
 
 import { Modal } from 'antd'
@@ -39,14 +33,17 @@ const Introduce: React.FC = () => {
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
                         <button type='button' className='w-full h-full' onClick={() => navigate('/svgicon')}>svg</button>
                     </li>
-                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
+                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
                         <button type='button' className='w-full h-full' onClick={() => goToMobileGuide()}>移动端<br/>工具</button>
                     </li>
-                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
-                        <button type='button' className='w-full h-full' onClick={() => navigate('/developing')}>Developing</button>
-                    </li>
-                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
+                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
                         <button type='button' className='w-full h-full' onClick={() => navigate('/timezoneTime')}>TimezoneTime</button>
+                    </li>
+                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
+                        <button type='button' className='w-full h-full' onClick={() => navigate('/bigfile')}>大文件分片上传</button>
+                    </li>
+                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
+                        <button type='button' className='w-full h-full' onClick={() => navigate('/developing')}>Developing</button>
                     </li>
                 </ul>
             </div>

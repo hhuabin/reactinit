@@ -12,7 +12,7 @@ export default class MobileFetchRequest {
     }
 
     // eslint-disable-next-line
-    public sendRequest = async <T = any>(url: string, data: any = {}, options?: RequestInit): Promise<T> => {
+    public sendRequest = <T = any>(url: string, data: any = {}, options?: RequestInit): Promise<T> => {
         /**
          * 是否取消上次请求，适合用在请求数据接口，不适合在提交数据接口使用，以避免重复提交
          * 只有携带了 cancelLastRequest 参数的请求才允许被取消，避免取消必要的请求
