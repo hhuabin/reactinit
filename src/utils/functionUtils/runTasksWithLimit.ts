@@ -11,6 +11,7 @@ export type TaskResult<T> =
  * 泛型 T 定义的是参数 tasks 的类型，因为我们需要从 tasks 的类型推导出结果类型，故而需要定义 tasks 的泛型
  * @param { TaskFn<any>[] } tasks Promise 任务列表
  * @param { number } limit 并发任务数量
+ * @param { number } maxRetries 任务执行失败后重试次数，默认为0
  * @returns 全部任务成功时按任务顺序返回所有结果，否则返回第一个失败的错误
  * 该情况 .then() 成功 / 失败状态和 .catch() 都可能会执行
  */
@@ -18,14 +19,32 @@ export const runTasksWithLimitFailFast = <T extends (() => Promise<any>)[]>(
     // 保持传入参数的“元组精度”并允许 as const 修饰的只读数组被正确推导，使用 tasks: T 的话，结果会被推导为宽泛数组
     tasks: readonly [...T],
     limit: number,
+    maxRetries = 0,
 ): Promise<{[K in keyof T]: T[K] extends () => Promise<infer R> ? R : never}> => {
     return new Promise((resolve, reject) => {
-        const results = [] as {[K in keyof T]: T[K] extends () => Promise<infer R> ? R : never}
+        // const results = [] as {[K in keyof T]: T[K] extends () => Promise<infer R> ? R : never}
+        const results = new Array(tasks.length) as {[K in keyof T]: T[K] extends () => Promise<infer R> ? R : never}
         let currentIndex = 0
         let running = 0
         let finished = 0
         let aborted = false // 控制调度中止
 
+        const retryWrapper = async (task: typeof tasks[number], retries = maxRetries) => {
+            let lastError: any
+            for (let i = 0; i < retries; i++) {
+                try {
+                    return await task()
+                } catch (err) {
+                    lastError = err
+                    if (i >= retries) {
+                        throw err
+                    }
+                }
+            }
+            throw lastError
+        }
+
+        // TODO 失败重发
         const run = () => {
             if (finished === tasks.length) {
                 resolve(results)
@@ -36,7 +55,7 @@ export const runTasksWithLimitFailFast = <T extends (() => Promise<any>)[]>(
                 const i = currentIndex++
                 running++
 
-                tasks[i]()
+                retryWrapper(tasks[i])
                 .then(result => {
                     // 按顺序收集正确结果
                     results[i] = result
@@ -67,6 +86,7 @@ export const runTasksWithLimitFailFast = <T extends (() => Promise<any>)[]>(
  * 泛型 T 定义的是参数 tasks 的类型，因为我们需要从 tasks 的类型推导出结果类型，故而需要定义 tasks 的泛型
  * @param { TaskFn<any>[] } tasks Promise 任务列表
  * @param { number } limit 并发任务数量
+ * @param { number } maxRetries 任务执行失败后重试次数，默认为0
  * @returns 无论成功失败，全部执行完成后按任务顺序返回状态和结果
  * 该情况只有 .then() 成功状态会执行，故而给予了 status 去判断成功 / 失败状态
  */
@@ -74,12 +94,29 @@ export const runTasksWithLimitSettled = <T extends (() => Promise<any>)[]>(
     // 保持传入参数的“元组精度”并允许 as const 修饰的只读数组被正确推导，使用 tasks: T 的话，结果会被推导为宽泛数组
     tasks: readonly [...T],
     limit: number,
+    maxRetries = 0,
 ): Promise<{[K in keyof T]: T[K] extends () => Promise<infer R> ? TaskResult<R> : never}> => {
     return new Promise((resolve, reject) => {
-        const results = [] as {[K in keyof T]: T[K] extends () => Promise<infer R> ? TaskResult<R> : never}
+        // const results = [] as {[K in keyof T]: T[K] extends () => Promise<infer R> ? TaskResult<R> : never}
+        const results = new Array(tasks.length) as {[K in keyof T]: T[K] extends () => Promise<infer R> ? TaskResult<R> : never}
         let currentIndex = 0
         let running = 0
         let finished = 0
+
+        const retryWrapper = async (task: typeof tasks[number], retries = maxRetries) => {
+            let lastError: any
+            for (let i = 0; i < retries; i++) {
+                try {
+                    return await task()
+                } catch (err) {
+                    lastError = err
+                    if (i >= retries) {
+                        throw err
+                    }
+                }
+            }
+            throw lastError
+        }
 
         const run = () => {
             if (finished === tasks.length) {
@@ -91,7 +128,7 @@ export const runTasksWithLimitSettled = <T extends (() => Promise<any>)[]>(
                 const i = currentIndex++
                 running++
 
-                tasks[i]()
+                retryWrapper(tasks[i])
                 .then(result => {
                     // 按顺序收集正确结果
                     results[i] = {
