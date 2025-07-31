@@ -40,13 +40,13 @@ export const routes: RouteConfig[] = [
         children: [
             ...mobileRoute,
             {
-                path: '/svgicon',
+                path: '/fetchStream',
                 lazy: async () => {
-                    const { default: SvgIcon } = await import('@/pages/SvgIcon/SvgIcon')
-                    return { Component: SvgIcon }
+                    const { default: FetchStreamResponse } = await import('@/pages/FetchStreamResponse/FetchStreamResponse')
+                    return { Component: FetchStreamResponse }
                 },
                 meta: {
-                    title: 'svgicon',
+                    title: 'fetchStream',
                     auth: false,
                 },
             },
@@ -69,6 +69,17 @@ export const routes: RouteConfig[] = [
                 },
                 meta: {
                     title: 'timezone',
+                    auth: false,
+                },
+            },
+            {
+                path: '/svgicon',
+                lazy: async () => {
+                    const { default: SvgIcon } = await import('@/pages/SvgIcon/SvgIcon')
+                    return { Component: SvgIcon }
+                },
+                meta: {
+                    title: 'svgicon',
                     auth: false,
                 },
             },

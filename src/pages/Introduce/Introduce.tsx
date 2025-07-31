@@ -30,17 +30,20 @@ const Introduce: React.FC = () => {
 
             <div className='flex justify-center w-full'>
                 <ul role='list' className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-10 max-w-full px-10 text-[3rem] text-center'>
-                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
-                        <button type='button' className='w-full h-full' onClick={() => navigate('/svgicon')}>svg</button>
-                    </li>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
                         <button type='button' className='w-full h-full' onClick={() => goToMobileGuide()}>移动端<br/>工具</button>
+                    </li>
+                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
+                        <button type='button' className='w-full h-full' onClick={() => navigate('/fetchStream')}>fetch流式数据获取</button>
                     </li>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
                         <button type='button' className='w-full h-full' onClick={() => navigate('/timezoneTime')}>TimezoneTime</button>
                     </li>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
                         <button type='button' className='w-full h-full' onClick={() => navigate('/bigfile')}>大文件分片上传</button>
+                    </li>
+                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
+                        <button type='button' className='w-full h-full' onClick={() => navigate('/svgicon')}>svg</button>
                     </li>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
                         <button type='button' className='w-full h-full' onClick={() => navigate('/developing')}>Developing</button>

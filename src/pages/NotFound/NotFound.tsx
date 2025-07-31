@@ -19,7 +19,7 @@ const NotFound: React.FC = () => {
                 <div className='mt-[30px] text-[14px]'>
                     <button
                         type='button'
-                        className='px-4 border border-[var(--color-border)] rounded-md text-[1em] bg-[var(--bg-color)]
+                        className='px-4 border border-[var(--color-border)] rounded-md text-[1em] bg-[var(--bg-color)] select-none
                         text-[var(--color-text)] leading-8 hover:border-[var(--color-primary-hover)] hover:text-[var(--color-primary-hover)]'
                         onClick={() => goToRootPath()}
                     >
