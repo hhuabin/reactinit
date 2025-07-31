@@ -4,13 +4,13 @@ import {
     mergeFileChunks,
 } from './'
 import { runTasksWithLimitFailFast } from '@/utils/functionUtils/runTasksWithLimit'
-import type { FileChunk } from './worker.d'
+import type { FileChunk } from './createChunk.d'
 
 /**
  * @description 并发上传所有文件分片
  * @param { string } uploadUrl 上传地址
  * @param { FileChunk[] } fileChunks 齐全的文件分片的数组
- * @param { number } limit 上传并发数，默认为 5，任务失败重发次数默认为 3，需要修改请看代码
+ * @param { number } limit 上传并发数，默认为 5，不建议上传并发数大于 6。任务失败重发次数默认为 3，需要修改请看代码
  * @returns { Promise<any[]> } 接口的 Promise.all() 结果
  */
 export const uploadFileChunks = async (
@@ -18,6 +18,9 @@ export const uploadFileChunks = async (
     fileChunks: FileChunk[],
     limit = 5,
 ) => {
+    if (limit > 6) {
+        console.warn('不建议上传并发数大于 6')
+    }
     const uploadQueue = fileChunks.map(chunk => {
         return () => uploadSingleChunk(uploadUrl, chunk)
     })
@@ -51,7 +54,7 @@ const uploadSingleChunk = async (uploadUrl: string, fileChunk: FileChunk): Promi
     })
     .then((response: Response) => {
         if (!response.ok) return Promise.reject(response)
-        response.json()
+        response.formData()
     })
     .then(data => {
         return data

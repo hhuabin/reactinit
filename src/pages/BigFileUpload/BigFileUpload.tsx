@@ -83,20 +83,27 @@ const BigFileUpload: React.FC = () => {
     return (
         <div className='w-full h-full p-4'>
             <div className='w-full'>
-                <div className='w-full'>请选择文件（支持任意文件类型）</div>
-                <input type='file' onChange={(event) => getFile(event)} />
+                <div
+                    className='relative w-[300px] h-16 rounded-sm border border-[var(--color-border)] [box-shadow:var(--box-bottom-shadow)]
+                        hover:bg-[var(--item-bg-hover)] cursor-pointer'
+                >
+                    <input type='file' className='absolute w-full h-full opacity-0 cursor-pointer' onChange={(event) => getFile(event)} />
+                    <div className='flex justify-center items-center w-full h-full'>选择文件（支持任意文件类型）</div>
+                </div>
             </div>
 
-            <div className='w-full'>
+            <div className='flex w-full mt-4'>
                 <div className='w-full'>
-                    <div className='w-full'>选择文件后回显图片</div>
-
-                    <img src={imgFile} alt="" />
+                    <div className='w-full p-2 box-border'>图片文件回显：</div>
+                    <div className='w-[750px] min-h-64 rounded-sm border border-[var(--color-border)] [box-shadow:var(--box-bottom-shadow)]'>
+                        <img src={imgFile} className='w-full h-auto' alt="" />
+                    </div>
                 </div>
                 <div className='w-full'>
-                    <div className='w-full'>切片后回显的图片</div>
-
-                    <img src={sliceImgFile} alt="" />
+                    <div className='w-full p-2 box-border'>切片后回显的图片：</div>
+                    <div className='w-[750px] min-h-64 rounded-sm border border-[var(--color-border)] [box-shadow:var(--box-bottom-shadow)]'>
+                        <img src={sliceImgFile} className='w-full h-auto' alt="" />
+                    </div>
                 </div>
             </div>
         </div>

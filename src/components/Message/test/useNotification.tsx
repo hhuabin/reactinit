@@ -47,11 +47,11 @@ const mergeConfig = <T extends object>(...objList: Partial<T>[]): T => {
 
     objList.forEach((obj) => {
         if (obj) {
-            Object.keys(obj).forEach((key) => {
-                const val = obj[key as keyof T]
+            (Object.keys(obj) as Array<keyof T>).forEach((key) => {
+                const val = obj[key]
 
                 if (val !== undefined) {
-                    clone[key as keyof T] = val
+                    clone[key] = val as T[keyof T]
                 }
             })
         }

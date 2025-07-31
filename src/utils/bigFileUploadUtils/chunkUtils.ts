@@ -1,10 +1,10 @@
 /**
- * @description chunkUtils基本原理：对大文件进行切片，并且计算分片的哈希
+ * @file chunkUtils基本原理：对大文件进行切片，并且计算分片的哈希
  * 该工具函数不计算整个文件的哈希，如有需要请查看 singleFileHash
  */
 import { mergeSort } from '@/utils/functionUtils/sortUtils'
-import createChunk from './worker.js'
-import type { FileChunk } from './worker.d'
+import createChunk from './createChunk'
+import type { FileChunk } from './createChunk.d'
 
 /**
  * 文件分片配置选项
@@ -15,7 +15,7 @@ interface FileChunkOptions {
 }
 
 const CHUNK_SIZE = 5 * 1024 * 1024             // 5MB
-const THREAD_COUNT = window.navigator.hardwareConcurrency || 4      // 默认并发数为当前计算机内核数量
+const THREAD_COUNT = Math.floor(window.navigator.hardwareConcurrency / 2) || 4      // 默认并发数为当前计算机最大线程数量 / 2
 
 /**
  * @description 单线程文件切片，建议20M以下文件使用

@@ -1,5 +1,5 @@
 /**
- * @description 1. 二路归并排序，该方法会 改变原数组 也可以返回新的数组
+ * @description 1. 二路归并排序，该方法会 改变原数组
  * @param { T[] } array 需要排序的数组
  * @param { Function } compareFn 排序规则，a - b 为增序，b - a 为降序
  * @returns { T[] } 排序后的数组
@@ -7,7 +7,7 @@
  * @example mergeSort(array, ({ index: a }, { index: b }) => a - b)
  * @tips 时间复杂度：O(nlog2n)、空间复杂度：O(n)
  */
-export const mergeSort = <T>(array: T[], compareFn: (a: T, b: T) => number): T[] => {
+export const mergeSort = <T>(array: T[], compareFn: (a: T, b: T) => number) => {
     const copy = new Array<T>(array.length)
 
     const sort = (left: number, right: number) => {
@@ -35,12 +35,11 @@ export const mergeSort = <T>(array: T[], compareFn: (a: T, b: T) => number): T[]
     }
 
     sort(0, array.length - 1)
-    return copy
 }
 
 
 /**
- * @description 2. 快速排序，该方法会 改变原数组 也可以返回新的数组
+ * @description 2. 快速排序，该方法会 改变原数组
  * @param { T[] } array 需要排序的数组
  * @param { Function } compareFn 排序规则，a - b 为增序，b - a 为降序
  * @returns { T[] } 排序后的数组
@@ -49,36 +48,30 @@ export const mergeSort = <T>(array: T[], compareFn: (a: T, b: T) => number): T[]
  * @tips 时间复杂度：O(nlog2n)，最坏复杂度O(n^2)、空间复杂度：O(n)，最坏复杂度O(nlog2n)
  * @tips 当每次的基准值都是中间的时候，速度最优，当总体是有序的，速度最差
  */
-export const quickSort = <T>(array: T[], compareFn: (a: T, b: T) => number): T[] => {
-    const copy = new Array<T>(array.length)
+export const quickSort = <T>(array: T[], compareFn: (a: T, b: T) => number) => {
     const sort = (low: number, high: number) => {
-        const temp = array[low]
-        let i = low, j = high
+        if (low >= high) return
 
-        while (i < j) {
-            // 对比右侧
-            while (i < j && compareFn(temp, array[j]) <= 0) j--
+        const mid = Math.floor((low + high) / 2)
+        const midValue = array[mid]
 
-            if (i < j) {
-                array[i] = array[j]
+        // 先将 midValue 移到末尾，方便分区
+        ;[array[mid], array[high]] = [array[high], array[mid]]
+
+        let i = low
+        for (let j = low; j < high; j++) {
+            if (compareFn(array[j], midValue) < 0) {
+                [array[i], array[j]] = [array[j], array[i]]
                 i++
             }
-
-            // 对比左侧
-            while (i < j && compareFn(array[i], temp) < 0) i++
-
-            if (i < j) {
-                array[j] = array[i]
-                j--
-            }
         }
-        array[i] = temp
-        if (low < i) sort(low, i - 1)
-        if (i < high) sort(j + 1, high)
+
+        // 最后将 midValue 放到 i 的位置
+        [array[i], array[high]] = [array[high], array[i]]
+
+        sort(low, i - 1)
+        sort(i + 1, high)
     }
 
     sort(0, array.length - 1)
-    console.log(array)
-
-    return array
 }
