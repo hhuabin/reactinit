@@ -8,9 +8,11 @@ export default class ThrottleDebounce {
     /**
      * @description 防抖函数： 一个需要频繁触发的函数，在规定时间内触发，只让最后一次生效，前面的不生效
      * @param { Function } callback 回调函数
-     * @param {number } delay 延迟时间
+     * @param { number } delay 延迟时间
      * @param { boolean } immediate 立即执行
      * @returns { Function } debounced防抖函数
+     * @example const debounced = useCallback(ThrottleDebounce.debounce(() => {}, 1000), [dependencies])
+     * @tips 使用 useCallback 缓存函数避免内存泄漏
      */
     public static debounce = <T>(callback: (...args: Array<T>) => void, delay = 500, immediate = false) => {
         // 一个函数绑定一个 timerId 可以分开执行
@@ -54,6 +56,8 @@ export default class ThrottleDebounce {
      * @param { Function } callback 回调函数
      * @param { number } delay 延迟时间
      * @returns { Function } throttled节流函数
+     * @example const debounced = useCallback(ThrottleDebounce.throttle(() => {}, 1000), [dependencies])
+     * @tips 使用 useCallback 缓存函数避免内存泄漏
      */
     public static throttle = <T>(callback: (...args: Array<T>) => void, delay = 200) => {
         // let lastTime = Date.now()
