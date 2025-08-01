@@ -26,10 +26,10 @@ const Introduce: React.FC = () => {
 
     return (
         <div className='w-full'>
-            <h1 className='w-full py-[100px] text-[4rem] text-center font-bold'>Welcome</h1>
+            <h1 className='w-full py-16 text-[4rem] text-center font-bold'>Welcome</h1>
 
             <div className='flex justify-center w-full'>
-                <ul role='list' className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-10 max-w-full px-10 text-[3rem] text-center'>
+                <ul role='list' className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-10 max-w-full px-10 py-6 text-[3rem] text-center'>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
                         <button type='button' className='w-full h-full' onClick={() => goToMobileGuide()}>移动端<br/>工具</button>
                     </li>

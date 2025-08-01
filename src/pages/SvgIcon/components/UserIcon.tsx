@@ -2,9 +2,11 @@ const UserIcon: React.FC = () => {
 
     return (
         <>
-            <div className='grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-x-[8px] gap-y-[16px] p-[8px]'>
+            <div className='grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-x-[8px] gap-y-[16px] p-[8px] text-[var(--color-text)]'>
                 <div className='flex flex-col items-center w-full'>
-                    <div className='w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm'>
+                    <div className='flex justify-center items-center w-[50px] h-[50px] border border-[var(--color-border)] box-content
+                        bg-[var(--bg-color)] [box-shadow:var(--box-bottom-shadow)] hover:bg-[var(--item-bg-hover)]'
+                    >
                         <svg width='100%' height='100%' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'>
                             <path
                                 d='M858.5 763.6
@@ -18,7 +20,7 @@ const UserIcon: React.FC = () => {
                                     M512 534c-45.9 0-89.1-17.9-121.6-50.4S340 407.9 340 362
                                     c0-45.9 17.9-89.1 50.4-121.6S466.1 190 512 190
                                     s89.1 17.9 121.6 50.4S684 316.1 684 362c0 45.9-17.9 89.1-50.4 121.6S557.9 534 512 534z'
-                                fill='#333'
+                                fill='currentColor'
                             >
                             </path>
                         </svg>
@@ -27,7 +29,9 @@ const UserIcon: React.FC = () => {
                 </div>
 
                 <div className='flex flex-col items-center w-full'>
-                    <div className='w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm'>
+                    <div className='flex justify-center items-center w-[50px] h-[50px] border border-[var(--color-border)] box-content
+                        bg-[var(--bg-color)] [box-shadow:var(--box-bottom-shadow)] hover:bg-[var(--item-bg-hover)]'
+                    >
                         <svg width='100%' height='100%' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'>
                             <path
                                 d='M923 283.6
@@ -40,7 +44,7 @@ const UserIcon: React.FC = () => {
                                     20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z
                                     M512 814.8S156 586.7 156 385.5 C156 283.6 240.3 201 344.3 201 c73.1 0 136.5 40.8 167.7 100.4
                                     C543.2 241.8 606.6 201 679.7 201 c104 0 188.3 82.6 188.3 184.5 0 201.2-356 429.3-356 429.3z'
-                                fill='#333'
+                                fill='currentColor'
                             >
                             </path>
                         </svg>
@@ -49,28 +53,32 @@ const UserIcon: React.FC = () => {
                 </div>
 
                 <div className='flex flex-col items-center w-full'>
-                    <div className='w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm'>
+                    <div className='flex justify-center items-center w-[50px] h-[50px] border border-[var(--color-border)] box-content
+                        bg-[var(--bg-color)] [box-shadow:var(--box-bottom-shadow)] hover:bg-[var(--item-bg-hover)]'
+                    >
                         <svg width='100%' height='100%' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'>
                             <path
                                 d='M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z
                                     m0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z'
-                                fill='#333'
+                                fill='currentColor'
                             ></path>
                             <path
                                 d='M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6
                                     c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80
                                     c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48
                                     c4.4 0 8-3.6 8-8v-22.7c0-19.7 12.4-37.7 30.9-44.8 59-22.7 97.1-74.7 97.1-132.5 0.1-39.3-17.1-76-48.3-103.3z'
-                                fill='#333'
+                                fill='currentColor'
                             ></path>
-                            <path d='M512 732m-40 0a40 40 0 1 0 80 0 40 40 0 1 0-80 0Z' fill='#333'></path>
+                            <path d='M512 732m-40 0a40 40 0 1 0 80 0 40 40 0 1 0-80 0Z' fill='currentColor'></path>
                         </svg>
                     </div>
                     <div className='w-full mt-[12px] text-center break-all'>question</div>
                 </div>
 
                 <div className='flex flex-col items-center w-full'>
-                    <div className='w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm'>
+                    <div className='flex justify-center items-center w-[50px] h-[50px] border border-[var(--color-border)] box-content
+                        bg-[var(--bg-color)] [box-shadow:var(--box-bottom-shadow)] hover:bg-[var(--item-bg-hover)]'
+                    >
                         <svg width='100%' height='100%' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'>
                             <path
                                 d='M854.6 289.1c-18.8-43.4-45.7-82.3-79.9-115.7-34.2-33.4-73.9-59.5-118.2-77.8C610.7 76.6 562.1 67 512 67
@@ -80,14 +88,14 @@ const UserIcon: React.FC = () => {
                                     C867.1 572 884 501.8 884 431.1c0-49.2-9.9-97-29.4-142z
                                     M512 880.2c-65.9-41.9-300-207.8-300-449.1 0-77.9 31.1-151.1 87.6-206.3C356.3 169.5 431.7 139 512 139
                                     s155.7 30.5 212.4 85.9C780.9 280 812 353.2 812 431.1c0 241.3-234.1 407.2-300 449.1z'
-                                fill='#333'
+                                fill='currentColor'
                             >
                             </path>
                             <path
                                 d='M512 263c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176z
                                     m79.2 255.2C570 539.3 541.9 551 512 551c-29.9 0-58-11.7-79.2-32.8C411.7 497 400 468.9 400 439c0-29.9 11.7-58 32.8-79.2
                                     C454 338.6 482.1 327 512 327c29.9 0 58 11.6 79.2 32.8C612.4 381 624 409.1 624 439c0 29.9-11.6 58-32.8 79.2z'
-                                fill='#333'
+                                fill='currentColor'
                             >
                             </path>
                         </svg>
@@ -96,7 +104,9 @@ const UserIcon: React.FC = () => {
                 </div>
 
                 <div className='flex flex-col items-center w-full'>
-                    <div className='w-[50px] h-[50px] border border-[#eee] box-content bg-[#fff] shadow-sm'>
+                    <div className='flex justify-center items-center w-[50px] h-[50px] border border-[var(--color-border)] box-content
+                        bg-[var(--bg-color)] [box-shadow:var(--box-bottom-shadow)] hover:bg-[var(--item-bg-hover)]'
+                    >
                         <svg width='100%' height='100%' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'>
                             <path
                                 d='M924.8 625.7l-65.5-56c3.1-19 4.7-38.4 4.7-57.8
@@ -117,14 +127,14 @@ const UserIcon: React.FC = () => {
                                     c11.3-26.1 25.6-50.7 42.6-73.6l93.4 33.2 31.4-25.9c23.7-19.5 50.2-34.9 78.7-45.7l37.9-14.3 17.9-97.2
                                     c28.1-3.2 56.8-3.2 85 0l17.9 97 38.1 14.3c28.7 10.8 55.4 26.2 79.3 45.8l31.4 25.8 92.8-32.9c17 22.9 31.2 47.6 42.6 73.6
                                     L781.8 426l6.5 39.9z'
-                                fill='#333'
+                                fill='currentColor'
                             >
                             </path>
                             <path
                                 d='M512 326c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176z
                                     m79.2 255.2 C570 602.3 541.9 614 512 614c-29.9 0-58-11.7-79.2-32.8C411.7 560 400 531.9 400 502c0-29.9 11.7-58 32.8-79.2
                                     C454 401.6 482.1 390 512 390c29.9 0 58 11.6 79.2 32.8C612.3 444 624 472.1 624 502c0 29.9-11.7 58-32.8 79.2z'
-                                fill='#333'
+                                fill='currentColor'
                             >
                             </path>
                         </svg>
