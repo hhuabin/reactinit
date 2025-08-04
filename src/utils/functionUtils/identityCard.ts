@@ -76,7 +76,7 @@ const validateSecondIdCard = (idCardNumber: string): boolean => {
     const checkCodes = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2']
 
     // 计算校验码
-    const sum = weights.reduce((prev, current, index) => prev + current * +idCardNumber[index], 0)
+    const sum = weights.reduce((prev, current, index) => prev + current * +idCardNumber.charAt(index), 0)
     const checkCode = checkCodes[sum % 11]
 
     // 验证校验码
