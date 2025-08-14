@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 
 import useTouch from './useTouch'
-import style from './MobilePicker.module.less'
+import styles from './MobilePicker.module.less'
 
 import type { PickerProps } from './MobilePicker.d'
 
@@ -194,44 +194,44 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
     return createPortal(
         <>
             <div
-                className={style['picker-popup'] + ' ' + (visible ? '' : style['picker-popup-hidden'])}
+                className={styles['picker-popup'] + ' ' + (visible ? '' : styles['picker-popup-hidden'])}
                 style={{ '--primary-color': primaryColor } as React.CSSProperties}
             >
-                <div role='button' className={style['overlay'] + ' ' + (visible ? '' : style['overlay-hidden'])}
+                <div role='button' className={styles['overlay'] + ' ' + (visible ? '' : styles['overlay-hidden'])}
                     onClick={() => onClickMask()}
                 ></div>
 
-                <div className={style['popup-body'] + ' ' + (visible ? '' : style['popup-hidden'])}>
-                    <div className={style['picker-header']}>
+                <div className={styles['popup-body'] + ' ' + (visible ? '' : styles['popup-hidden'])}>
+                    <div className={styles['picker-header']}>
                         <button
                             type='button'
-                            className={style['picker-header-cancel-button']}
+                            className={styles['picker-header-cancel-button']}
                             onClick={() => onCancel()}
                         >
                             { cancelText || '取消' }
                         </button>
-                        <div className={style['picker-header-title']}>{ title || '' }</div>
+                        <div className={styles['picker-header-title']}>{ title || '' }</div>
                         <button
                             type='button'
-                            className={style['picker-header-confirm-button']}
+                            className={styles['picker-header-confirm-button']}
                             onClick={() => onConfirm()}
                         >
                             { confirmText || '确定' }
                         </button>
                     </div>
                     <div
-                        className={style['picker-body']}
+                        className={styles['picker-body']}
                         style={{ height: (+visibleOptionNum * COLUMN_HEIGHT) + 'px' }}
                     >
                         <div
-                            className={style['picker-column']}
+                            className={styles['picker-column']}
                             onTouchStart={onTouchStart}
                             onTouchMove={onTouchMove}
                             onTouchEnd={onTouchEnd}
                         >
                             <ul
                                 ref={wrapperElementRef}
-                                className={style['picker-column-wrapper']}
+                                className={styles['picker-column-wrapper']}
                                 style={{
                                     transform: `translateY(${transformY}px)`,
                                     transitionDuration: `${transitionDuration}ms`,
@@ -243,12 +243,12 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
                                     <li
                                         role='button'
                                         tabIndex={index}
-                                        className={style['picker-column-item']}
+                                        className={styles['picker-column-item']}
                                         key={index}
                                         onClick={() => onClickOption(index)}
                                         style={{ color: ((index == currentIndex() && transitionDuration !== 1000) ? 'var(--primary-color)' : '') }}
                                     >
-                                        <div className={style['line-ellipsis']}>
+                                        <div className={styles['line-ellipsis']}>
                                             { typeof item === 'string' ? item.toString() : item.label }
                                         </div>
                                     </li>
@@ -256,10 +256,10 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
                             </ul>
                         </div>
                         <div
-                            className={style['picker-mask']}
+                            className={styles['picker-mask']}
                             style={{ backgroundSize: '100% ' + ((+visibleOptionNum - 1) * COLUMN_HEIGHT / 2) + 'px' }}
                         ></div>
-                        <div className={style['picker-frame']}></div>
+                        <div className={styles['picker-frame']}></div>
                     </div>
                 </div>
             </div>

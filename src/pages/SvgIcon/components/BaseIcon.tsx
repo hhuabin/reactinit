@@ -8,8 +8,25 @@ const BaseIcon: React.FC = () => {
                     <div className='flex justify-center items-center w-[50px] h-[50px] border border-[var(--color-border)] box-content
                         bg-[var(--bg-color)] [box-shadow:var(--box-bottom-shadow)] hover:bg-[var(--item-bg-hover)]'
                     >
+                        <svg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+                            <defs>
+                                <linearGradient id='grad1' x1='0%' y1='0%' x2='100%' y2='100%'>
+                                    <stop offset='0%' stopColor='currentColor' stopOpacity='0' />
+                                    <stop offset='100%' stopColor='currentColor' stopOpacity='1' />
+                                </linearGradient>
+                            </defs>
+                            <rect x='20' y='30' width='60' height='40' rx='10' ry='10' fill='url(#grad1)' stroke='currentColor' strokeWidth='4'></rect >
+                        </svg>
+                    </div>
+                    <div className='w-full mt-[12px] text-center break-all'>自定义</div>
+                </div>
+
+                <div className='flex flex-col items-center w-full'>
+                    <div className='flex justify-center items-center w-[50px] h-[50px] border border-[var(--color-border)] box-content
+                        bg-[var(--bg-color)] [box-shadow:var(--box-bottom-shadow)] hover:bg-[var(--item-bg-hover)]'
+                    >
                         <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
-                            <polyline points='20,35 50,65 80,35' fill='none' stroke='currentColor' strokeWidth='8' strokeLinecap='round'></polyline>
+                            <polyline points='20,35 50,65 80,35' fill='none' stroke='currentColor' strokeWidth='8' strokeLinecap='round' strokeLinejoin='round'></polyline>
                         </svg>
                     </div>
                     <div className='w-full mt-[12px] text-center break-all'>down</div>
@@ -20,7 +37,7 @@ const BaseIcon: React.FC = () => {
                         bg-[var(--bg-color)] [box-shadow:var(--box-bottom-shadow)] hover:bg-[var(--item-bg-hover)]'
                     >
                         <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
-                            <polyline points='20,65 50,35 80,65' fill='none' stroke='currentColor' strokeWidth='8' strokeLinecap='round'></polyline>
+                            <polyline points='20,65 50,35 80,65' fill='none' stroke='currentColor' strokeWidth='8' strokeLinecap='round' strokeLinejoin='round'></polyline>
                         </svg>
                     </div>
                     <div className='w-full mt-[12px] text-center break-all'>up</div>
@@ -31,7 +48,7 @@ const BaseIcon: React.FC = () => {
                         bg-[var(--bg-color)] [box-shadow:var(--box-bottom-shadow)] hover:bg-[var(--item-bg-hover)]'
                     >
                         <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
-                            <polyline points='65,20 35,50 65,80' fill='none' stroke='currentColor' strokeWidth='8' strokeLinecap='round'></polyline>
+                            <polyline points='65,20 35,50 65,80' fill='none' stroke='currentColor' strokeWidth='8' strokeLinecap='round' strokeLinejoin='round'></polyline>
                         </svg>
                     </div>
                     <div className='w-full mt-[12px] text-center break-all'>left</div>
@@ -42,7 +59,7 @@ const BaseIcon: React.FC = () => {
                         bg-[var(--bg-color)] [box-shadow:var(--box-bottom-shadow)] hover:bg-[var(--item-bg-hover)]'
                     >
                         <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
-                            <polyline points='35,20 65,50 35,80' fill='none' stroke='currentColor' strokeWidth='8' strokeLinecap='round'></polyline>
+                            <polyline points='35,20 65,50 35,80' fill='none' stroke='currentColor' strokeWidth='8' strokeLinecap='round' strokeLinejoin='round'></polyline>
                         </svg>
                     </div>
                     <div className='w-full mt-[12px] text-center break-all'>right</div>

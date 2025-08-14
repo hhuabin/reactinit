@@ -2,8 +2,10 @@ import { useNavigate } from 'react-router-dom'
 import type { NavigateFunction } from 'react-router-dom'
 
 /**
- * 供组件外路由跳转使用
+ * @description react-router-dom路由跳转封装，供组件外路由跳转使用
  * 使用 navigator 前请务必先初始化
+ * 1. useRouter()
+ * 2. navigate('/')
  */
 
 let navigator: NavigateFunction

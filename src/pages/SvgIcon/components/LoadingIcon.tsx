@@ -1,9 +1,3 @@
-/**
- * @Author: bin
- * @Date: 2025-04-29 08:59:30
- * @LastEditors: bin
- * @LastEditTime: 2025-08-01 17:08:30
- */
 const LoadingIcon: React.FC = () => {
 
     return (
@@ -39,17 +33,17 @@ const LoadingIcon: React.FC = () => {
                             {/* <!-- 第一个圆点 --> */}
                             <circle cx='25' cy='50' r='6' fill='#999'>
                                 <animate attributeName='cx' values='25;50;25' dur='1s' repeatCount='indefinite' begin='0s' />
-                                <animate attributeName='fill' values='#999;#333;#999' dur='1s' repeatCount='indefinite' begin='0s' />
+                                <animate attributeName='fill' values='#999;currentColor;#999' dur='1s' repeatCount='indefinite' begin='0s' />
                             </circle>
                             {/* <!-- 第二个圆点 --> */}
                             <circle cx='50' cy='50' r='6' fill='#999'>
                                 <animate attributeName='r' values='6;9;6' dur='1s' repeatCount='indefinite' begin='0s' />
-                                <animate attributeName='fill' values='#999;#333;#999' dur='1s' repeatCount='indefinite' begin='0s' />
+                                <animate attributeName='fill' values='#999;currentColor;#999' dur='1s' repeatCount='indefinite' begin='0s' />
                             </circle>
                             {/* <!-- 第三个圆点 --> */}
                             <circle cx='75' cy='50' r='6' fill='#999'>
                                 <animate attributeName='cx' values='75;50;75' dur='1s' repeatCount='indefinite' begin='0s' />
-                                <animate attributeName='fill' values='#999;#333;#999' dur='1s' repeatCount='indefinite' begin='0s' />
+                                <animate attributeName='fill' values='#999;currentColor;#999' dur='1s' repeatCount='indefinite' begin='0s' />
                             </circle>
                         </svg>
                     </div>
@@ -82,9 +76,9 @@ const LoadingIcon: React.FC = () => {
                                 {/* <!-- 定义透明度渐变 --> */}
                                 <linearGradient id='blackGradient' x1='0%' y1='0%' x2='100%' y2='0%'>
                                     {/* <!-- 起始点：完全不透明 --> */}
-                                    <stop offset='0%' stopColor='#333' stopOpacity='1' />
+                                    <stop offset='0%' stopColor='currentColor' stopOpacity='1' />
                                     {/* <!-- 结束点：完全透明 --> */}
-                                    <stop offset='100%' stopColor='#333' stopOpacity='0' />
+                                    <stop offset='100%' stopColor='currentColor' stopOpacity='0' />
                                 </linearGradient>
                             </defs>
 
