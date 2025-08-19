@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 
 import { Upload as AntdUpload } from 'antd'
 import type { UploadFile as AntdUploadFile } from 'antd'
+import type { GetProp, UploadProps } from 'antd'
 
-import Upload from '@/components/Upload/Upload'
-import type { UploadFile } from '@/components/Upload/Upload'
+import { Upload } from '@/components/Upload'
+import type { UploadFile } from '@/components/Upload'
 
 
 const Developing: React.FC = () => {
@@ -13,7 +14,7 @@ const Developing: React.FC = () => {
         {
             url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
             status: 'done',
-            message: '上传失败',
+            message: '',
             percent: 0,
         },
     ])
@@ -24,17 +25,37 @@ const Developing: React.FC = () => {
         url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
     }])
 
+    useEffect(() => {
+        console.log('fileList', fileList)
+    }, [fileList])
+
+    const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+        setAntdFileList(newFileList)
+
+    const beforeRead = (files: File[]) => {
+        return Promise.resolve(true)
+    }
+
+    const beforeDelete = () => {
+        return Promise.resolve(true)
+    }
+
     return (
         <div className='w-full'>
             <div className='w-full'>
                 <Upload
                     fileList={fileList}
+                    beforeRead={beforeRead}
+                    onChange={setFileList}
+                    beforeDelete={beforeDelete}
+                    multiple
                 ></Upload>
             </div>
             <div className='w-full'>
                 <AntdUpload
                     listType='picture-card'
                     fileList={antdFileList}
+                    onChange={handleChange}
                 >
                     {fileList.length < 5 && '+ Upload'}
                 </AntdUpload>
