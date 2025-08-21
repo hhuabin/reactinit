@@ -19,8 +19,10 @@ export const baseRequest = (params: PublicParam, config?: AxiosRequestConfig): A
 }
 
 /**
- * 大文件上传
- * 监控上传进度
+ * @description 大文件上传，监控上传进度
+ * @param params 请求参数
+ * @param { AxiosRequestConfig } config 请求配置
+ * @returns { Promise<AxiosResponse<any, any>> }
  */
 export const largeFileUpload = (params: { file: FormData }, config?: AxiosRequestConfig) => {
     return axiosRequest({
@@ -30,12 +32,12 @@ export const largeFileUpload = (params: { file: FormData }, config?: AxiosReques
             'Content-Type': 'multipart/form-data',
         },
         onUploadProgress: (progressEvent) => {
-            // 上传进度监控，此处可移至 config 中
+            // 上传进度监控，此处可移至 config 中，函数调用时在 config 中定义即可
             const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total!)
             console.log(`Upload Progress: ${progress}%`)
         },
         onDownloadProgress: (progressEvent) => {
-            // 下载进度监控，此处可移至 config 中
+            // 下载进度监控，此处可移至 config 中，函数调用时在 config 中定义即可
             const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total!)
             console.log(`Download Progress: ${progress}%`)
         },

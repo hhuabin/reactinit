@@ -7,11 +7,12 @@ export type TaskResult<T> =
   | { status: 'rejected'; reason: any };      // rejected：失败返回
 
 /**
- * @description 任务并发控制函数，任务数控制在 limit 以内，参考 Promise.all() 使用
+ * @description 并发执行任务
+ * 任务数控制在 limit 以内，参考 Promise.all() 使用
  * 泛型 T 定义的是参数 tasks 的类型，因为我们需要从 tasks 的类型推导出结果类型，故而需要定义 tasks 的泛型
  * @param { TaskFn<any>[] } tasks Promise 任务列表
  * @param { number } limit 并发任务数量
- * @param { number } maxRetries 任务执行失败后重试次数，默认为0
+ * @param { number } maxRetries 非负整数；任务执行失败后重试次数，默认为 0
  * @returns 全部任务成功时按任务顺序返回所有结果，否则返回第一个失败的错误
  * 该情况 .then() 成功 / 失败状态和 .catch() 都可能会执行
  */
@@ -31,7 +32,7 @@ export const runTasksWithLimitFailFast = <T extends (() => Promise<any>)[]>(
 
         const retryWrapper = async (task: typeof tasks[number], retries = maxRetries) => {
             let lastError: any
-            for (let i = 0; i < retries; i++) {
+            for (let i = 0; i <= retries; i++) {
                 try {
                     return await task()
                 } catch (err) {
@@ -82,11 +83,12 @@ export const runTasksWithLimitFailFast = <T extends (() => Promise<any>)[]>(
 }
 
 /**
- * @description 任务并发控制函数，任务数控制在 limit 以内，参考 Promise.allSettled() 使用
+ * @description 并发执行任务
+ * 任务数控制在 limit 以内，参考 Promise.allSettled() 使用，每个任务都可以返回失败或者成功
  * 泛型 T 定义的是参数 tasks 的类型，因为我们需要从 tasks 的类型推导出结果类型，故而需要定义 tasks 的泛型
  * @param { TaskFn<any>[] } tasks Promise 任务列表
  * @param { number } limit 并发任务数量
- * @param { number } maxRetries 任务执行失败后重试次数，默认为0
+ * @param { number } maxRetries 非负整数；任务执行失败后重试次数，默认为 0
  * @returns 无论成功失败，全部执行完成后按任务顺序返回状态和结果
  * 该情况只有 .then() 成功状态会执行，故而给予了 status 去判断成功 / 失败状态
  */
@@ -105,7 +107,7 @@ export const runTasksWithLimitSettled = <T extends (() => Promise<any>)[]>(
 
         const retryWrapper = async (task: typeof tasks[number], retries = maxRetries) => {
             let lastError: any
-            for (let i = 0; i < retries; i++) {
+            for (let i = 0; i <= retries; i++) {
                 try {
                     return await task()
                 } catch (err) {

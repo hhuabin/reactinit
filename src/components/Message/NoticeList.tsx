@@ -36,6 +36,9 @@ const Notice: React.FC<NoticeProps> = (props) => {
 
     useEffect(() => {
 
+        /**
+         * @description 从生成开始就倒计时删除该元素
+         */
         const { duration } = notice
 
         let timer: NodeJS.Timeout | null = null
@@ -214,7 +217,7 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
         closeNotice(key)
     }
 
-    // 关闭全部通知，触发关闭动画
+    // 关闭全部通知，触发关闭动画，关闭动画结束会自动删除全部通知
     const closeAllNotice = () => {
         setNoticeList(noticeList => {
             if (!noticeList.length) return noticeList
@@ -223,7 +226,7 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
         })
     }
 
-    // 关闭某个通知，触发关闭动画
+    // 关闭某个通知，触发关闭动画，关闭动画结束会自动删除该通知
     const closeNotice = (key: React.Key) => {
         setNoticeList(noticeList => {
             const clone = noticeList.map(item => {

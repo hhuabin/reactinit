@@ -1,11 +1,14 @@
 /* eslint-disable max-lines */
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import type { ForwardedRef } from 'react'
+import { flushSync } from 'react-dom'
 
 import './Upload.less'
 
 import { isImageFile, readFileContent } from './utils'
-import type { UploadFile, UploaderBeforeRead, UploaderAfterRead, UploaderBeforeDelete } from './Upload.d'
+import { xhrRequest } from './xhrRequest'
+import { runTasksWithLimitSettled } from '@/utils/functionUtils/runTasksWithLimit'
+import type { UploadFile, RequestOptions, UploaderBeforeRead, UploaderAfterRead, UploaderBeforeDelete } from './Upload.d'
 
 let uploadKeyIndex = 0
 
@@ -18,8 +21,9 @@ type Props = {
     drag?: boolean;                             // 是否开启拖拽上传
     capture?: 'environment' | 'user';           // 拍照方式
     disabled?: boolean;                         // 是否禁用文件上传
+    action?: RequestOptions;                    // 上传的请求配置
     children?: JSX.Element;                     // 自定义 Upload children
-    onChange?: (info: UploadFile[]) => void;    // 上传文件改变时的回调，上传每个阶段都会触发该事件
+    onChange?: React.Dispatch<React.SetStateAction<UploadFile[]>>;    // 上传文件改变时的回调，上传每个阶段都会触发该事件
     beforeRead?: UploaderBeforeRead;            // 读取文件之前的回调，返回 false | resolve(false) | reject()，则停止上传
     afterRead?: UploaderAfterRead;              // 文件读取完成后的回调
     beforeDelete?: UploaderBeforeDelete;        // 删除文件之前的回调，返回 false | resolve(false) | reject()，则停止上传
@@ -31,13 +35,16 @@ export type UploadRef = {
 
 const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
     const {
+        fileList: propFileList,
         accept = 'image/*',
         maxCount = Number.MAX_VALUE,
         multiple = false,
         maxSize = Number.MAX_VALUE,
         drag = true,
         disabled = false,
+        action = {} as RequestOptions,
         children,
+        onChange,
         beforeRead,
         afterRead,
         beforeDelete,
@@ -47,6 +54,7 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
 
     const [dragActive, setDragActive] = useState(false)   // 拖拽状态，是否进入了 input
     const inputRef = useRef<HTMLInputElement>(null)
+    const controller = useRef<Map<React.Key, AbortController>>(new Map())
 
     useEffect(() => {
         const handleDragEvents = (e: DragEvent) => {
@@ -67,24 +75,25 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
     }, [])
 
     useEffect(() => {
-        const newFileList = (props.fileList || [])
+        const newFileList = (propFileList || [])
                 .slice(0, maxCount)
                 .map(file => ({
                     ...file,
                     key: file.key ?? `upload-${Date.now()}-${uploadKeyIndex++}`,
                 }))
-        setFileList(newFileList)
-    }, [props.fileList])
+        setFileList(() => newFileList)
+    }, [propFileList])
 
     /**
      * @description 文件列表改变后更新状态函数
      * @param { UploadFile[]} files 文件改变后的列表
      */
-    const changeFile = (files: UploadFile[]) => {
-        if (props.fileList || props.onChange) {
-            props.onChange?.(files)
+    const changeFile = (state: UploadFile[] | ((prevState: UploadFile[]) => UploadFile[])) => {
+        // 当开发者传入 fileList 或 onChange() 方法时，调用开发者传入的方法
+        if (propFileList || onChange) {
+            props.onChange?.(state)
         } else {
-            setFileList(files)
+            setFileList(state)
         }
     }
 
@@ -94,10 +103,108 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
     }
 
     /**
+     * @description 上传单个文件
+     * @param { UploadFile } uploadFile 上传文件
+     * @param { RequestOptions } action xhr请求配置
+     */
+    const xhrUploadFile = (uploadFile: UploadFile, action: RequestOptions) => {
+        const formData = new FormData()
+        formData.append('file', uploadFile.file!)
+        // 接收自定义参数
+        if (action.data) {
+            Object.keys(action.data).forEach((key) => {
+                formData.append(key, action.data![key])
+            })
+        }
+        // 创建取消请求的 controller
+        const newController = new AbortController()
+        controller.current.set(uploadFile.key!, newController)
+
+        return xhrRequest({
+            url: action.url,
+            headers: action.headers || {},
+            method: action.method || 'POST',
+            signal: newController.signal,
+            body: formData,
+            responseType: action.responseType || 'text',
+            onUploadProgress: (percent) => {
+                // 此处闭包，获得的 propFileList 是旧值，因此使用了函数式更新，后续需要更新为非函数是更新
+                changeFile(prevList => {
+                    const newPercentFileList = prevList.map(_uploadFile => {
+                        if (_uploadFile.key === uploadFile.key) {
+                            _uploadFile.percent = percent
+                        }
+                        return _uploadFile
+                    })
+                    return newPercentFileList
+                })
+            },
+        })
+        .then((response) => {
+            // 此处闭包，获得的 propFileList 是旧值，因此使用了函数式更新，后续需要更新为非函数是更新
+            changeFile(prevList => {
+                const newPercentFileList = prevList.map(_uploadFile => {
+                    if (_uploadFile.key === uploadFile.key) {
+                        _uploadFile.url = response
+                        _uploadFile.status = ''
+                        _uploadFile.message = ''
+                    }
+                    return _uploadFile
+                })
+                return newPercentFileList
+            })
+        })
+        .catch((error) => {
+            console.error(error)
+            // 此处闭包，获得的 propFileList 是旧值，因此使用了函数式更新，后续需要更新为非函数是更新
+            changeFile(prevList => {
+                const newPercentFileList = prevList.map(_uploadFile => {
+                    if (_uploadFile.key === uploadFile.key) {
+                        _uploadFile.status = 'failed'
+                        _uploadFile.message = '上传失败'
+                    }
+                    return _uploadFile
+                })
+                return newPercentFileList
+            })
+        })
+        .finally(() => {
+            // 删除该 controller
+            controller.current.delete(uploadFile.key!)
+        })
+    }
+
+    /**
+     * @description 并发上传文件列表
+     * @param { UploadFile[] } uploadFileList 文件列表
+     */
+    const requestUploadingFileList = (uploadFileList: UploadFile[]) => {
+        // 创建任务队列
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tasks: (() => Promise<any>)[] = []
+        // 此处的 propFileList 还是旧的
+        console.log('xhrUploadFile', propFileList)
+
+        uploadFileList.forEach((uploadFile, index) => {
+            uploadFile.percent = 0
+            uploadFile.status = 'uploading'
+            uploadFile.message = '上传中...'
+
+            tasks.push(() => xhrUploadFile(uploadFile, action))
+        })
+        // 更新文件的状态为上传中...
+        flushSync(() => {
+            changeFile([...fileList, ...uploadFileList])
+        })
+        // 并发上传所有文件
+        runTasksWithLimitSettled(tasks, action.maxConcurrent || 5)
+    }
+
+    /**
      * @description 读取文件列表
      * @param { File[] } files 文件列表
      */
-    const readFile = (files: File[]) => {
+    const readFiles = (files: File[]) => {
         // 过滤大小超过限制的文件
         files = files.filter(items => items.size <= maxSize)
 
@@ -108,8 +215,8 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
             files.map((file) => readFileContent(file)),
         )
         .then((tempUrls) => {
-            const _fileList = files.map((file, index) => {
-                console.log('file', file)
+            // 生成 uploadFile 列表
+            const uploadFiles = files.map((file, index) => {
                 return {
                     key: `upload-${Date.now()}-${uploadKeyIndex++}`,
                     tempUrl: tempUrls[index],
@@ -118,10 +225,18 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
                     file,
                 } as UploadFile
             }, [] as UploadFile[])
-            changeFile([...fileList, ..._fileList])
-            afterRead?.(_fileList)
+            flushSync(() => {
+                changeFile([...fileList, ...uploadFiles])
+            })
+            resetInput()
+            // 执行自定义传入的读取完成后方法
+            afterRead?.(uploadFiles)
+            // 若开发者传入了 url，则直接上传文件列表
+            if (action.url) {
+                requestUploadingFileList(uploadFiles)
+            }
         })
-        .finally(resetInput)
+        .catch(console.warn)
     }
 
     /**
@@ -153,15 +268,15 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
                     } else {
                         cloneFileList = result
                     }
-                    readFile(cloneFileList)
+                    readFiles(cloneFileList)
                 })
                 .catch(resetInput)
-                // 此处必须返回，避免下面的 readFile 重复读取
+                // 此处必须返回，避免下面的 readFiles 重复读取
                 return
             }
         }
 
-        readFile(cloneFileList)
+        readFiles(cloneFileList)
     }
 
     /**
@@ -213,15 +328,15 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
                     } else {
                         cloneFileList = result
                     }
-                    readFile(cloneFileList)
+                    readFiles(cloneFileList)
                 })
                 .catch(resetInput)
-                // 此处必须返回，避免下面的 readFile 重复读取
+                // 此处必须返回，避免下面的 readFiles 重复读取
                 return
             }
         }
 
-        readFile(cloneFileList)
+        readFiles(cloneFileList)
     }
 
     /**
@@ -233,6 +348,7 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
             const result = await beforeDelete?.(uploadFile, index)
             if (result === false) return
             const _fileList = fileList.filter(item => item.key !== uploadFile.key)
+            controller.current.get(uploadFile.key!)?.abort()
             changeFile(_fileList)
         } catch (error) {
             console.warn(error)

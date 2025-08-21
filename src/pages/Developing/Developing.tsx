@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { Upload as AntdUpload } from 'antd'
 import type { UploadFile as AntdUploadFile } from 'antd'
-import type { GetProp, UploadProps } from 'antd'
+import type { UploadProps } from 'antd'
 
 import { Upload } from '@/components/Upload'
 import type { UploadFile } from '@/components/Upload'
@@ -29,6 +29,10 @@ const Developing: React.FC = () => {
         console.log('fileList', fileList)
     }, [fileList])
 
+
+    const changeFileList = (files: UploadFile[] | ((prevState: UploadFile[]) => UploadFile[])) => {
+        setFileList(files)
+    }
     const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
         setAntdFileList(newFileList)
 
@@ -45,17 +49,24 @@ const Developing: React.FC = () => {
             <div className='w-full'>
                 <Upload
                     fileList={fileList}
-                    beforeRead={beforeRead}
                     onChange={setFileList}
+                    beforeRead={beforeRead}
                     beforeDelete={beforeDelete}
                     multiple
+                    action={{
+                        url: 'https://sk.cyctapp.com/yct/suikang/oldcar/scrap/file/upload',
+                        method: 'POST',
+                    }}
                 ></Upload>
             </div>
             <div className='w-full'>
                 <AntdUpload
+                    action={'https://sk.cyctapp.com/yct/suikang/oldcar/scrap/file/upload'}
+                    method='POST'
                     listType='picture-card'
                     fileList={antdFileList}
                     onChange={handleChange}
+                    multiple
                 >
                     {fileList.length < 5 && '+ Upload'}
                 </AntdUpload>

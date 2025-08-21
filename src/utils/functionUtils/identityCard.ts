@@ -17,7 +17,7 @@ const validateIdentityCard = (idCardNumber: string, enableFirst = false): boolea
 
 /**
  * @description 第一代居民身份证号码格式校验
- * @rule 1999年之前发放：6位地区码 + 6位出生日期（YYMMDD） + 3位顺序码（无校验码），共15位
+ * @rule 1999年之前发放：6位地区码 + 6位出生日期（YYMMDD） + 3位顺序码（无校验码，15位是性别），共15位
  * @param { string } idCardNumber 15位身份证号码
  * @returns { boolean } true 通过校验；false 校验失败
  * @example validateFirstIdCard('111111111111111')
@@ -43,7 +43,7 @@ const validateFirstIdCard = (idCardNumber: string): boolean => {
 
 /**
  * @description 第二代居民身份证号码格式校验
- * @rule 6位地区码 + 8位出生日期（YYYYMMDD） + 3位顺序码 + 1位校验码，共18位
+ * @rule 6位地区码 + 8位出生日期（YYYYMMDD） + 3位顺序码（17位是性别） + 1位校验码，共18位
  * @param { string } idCardNumber 18位身份证号码
  * @returns { boolean } true 通过校验；false 校验失败
  * @example validateSecondIdCard('111111111111111111')

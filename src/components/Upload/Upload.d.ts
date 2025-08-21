@@ -9,6 +9,16 @@ export type UploadFile = {
     file?: File;                                // 文件对象
 }
 
+export interface RequestOptions {
+    url: string;
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+    headers?: Record<string, string>;
+    timeout?: number;
+    responseType?: XMLHttpRequestResponseType;      // 响应数据类型，默认是 text
+    data?: {[key: string]: string | Blob};          // file 之外的请求参数
+    maxConcurrent?: number;                         // 最大并发上传个数
+}
+
 export type UploaderBeforeRead = (files: File[]) => boolean | Promise<boolean | File[]>;
 export type UploaderAfterRead = (files: UploadFile[]) => void;
 export type UploaderBeforeDelete = (items: UploadFile, index: number) => boolean | Promise<boolean>;
