@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react'
 
 type DeviceType = 'mobile' | 'pad' | 'desktop' | 'unknown'
 
+/**
+ * @description 获取设备类型
+ * @returns { DeviceType } 设备类型
+ */
 const getDeviceType = (): DeviceType => {
     if (typeof navigator === 'undefined') return 'unknown'
     const ua = navigator.userAgent.toLowerCase()
@@ -16,12 +20,12 @@ const getDeviceType = (): DeviceType => {
 }
 
 /**
- * 获取设备类型
- * @returns 设备类型
+ * 
+ * @returns 
  */
 const useDeviceType = () => {
 
-    const [deviceType, setDeviceType] = useState<DeviceType>(() => getDeviceType())
+    const [deviceType, setDeviceType] = useState<DeviceType>(getDeviceType)
 
     useEffect(() => {
         const handleResize = () => {

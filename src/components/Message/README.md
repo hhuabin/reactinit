@@ -2,7 +2,13 @@
 
 直接原理：使用 `React.createPortal` 将 `Message` 组件渲染到 自定义元素 或者 `document.body`中
 
-总共分为三层结构：
+设计理念：
+
+1. `message`每次执行方法，比如`message.open()`，`open`每次只会携带一个通知的配置，而显示是一个通知列表。这就注定了`Message`组件只能去维护一个消息队列，用于具体的`Message`队列显示，而每次`message.open()`都是执行改变消息队列的某个方法
+2. 需要实现`useMessage`是一个`hooks`，该`hooks`可以返回一个`Message`组件，用于直接放在`html`显示，同时返回`messageInstance`用于对组件的控制。这就确定了`useMessage`之外还必须包裹一层代码，该层必须要调用`createRoot(ducument.body).render()`去渲染组件，供`message.open()`函数式调用，也就是`Message.tsx`层。那么显而易见，`Message`消息队列应该放在`useMessage.tsx`中，并且`useMessage.tsx`还应该具备`message.info()`等方法指向`message.open()`
+3. 基本功能在前步设计完成，那么最后一步就是显示，即使`NoticeList.tsx`和`Notice`，实现显示、动画等即可
+
+设计原理总共分为三层结构：
 
 1. 第一层：代理层`Message.tsx`；
 
