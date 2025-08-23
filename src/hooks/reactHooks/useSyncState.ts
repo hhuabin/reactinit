@@ -1,0 +1,46 @@
+/* https://github.com/react-component/util/blob/master/src/hooks */
+import { useReducer, useRef } from 'react'
+import useEvent from './useEvent'
+
+type SetStateAction<T> = T | ((prevState: T) => T);
+
+export type SetState<T> = (stateAction: SetStateAction<T>) => void
+
+/**
+ * @description 自定义 Hook，与 useState 相似
+ * 功能：通过 get() 可以随时读取最新状态，不会被闭包影响
+ * 适合在事件回调中使用，例如 onTransitionEnd、setTimeout、requestAnimationFrame 等
+ * 与 React 内置 useState 的区别:
+ * 1. useState 在事件回调中可能获取到旧状态，尤其是 React 批量更新（batching）时
+ * 2. useSyncState 通过 useRef + forceUpdate 避免了这个问题
+ * @param defaultValue 默认值
+ * @returns [a, setA]
+ */
+function useSyncState<T>(defaultValue: T): [() => T, SetState<T>]
+function useSyncState<T>(): [() => T | undefined, SetState<T | undefined>]
+function useSyncState<T>(defaultValue?: T) {
+    // 使用 useReducer 来强制组件重新渲染。这里不关心 reducer 的值本身，只是用 forceUpdate() 来触发渲染
+    const [, forceUpdate] = useReducer(x => x + 1, 0)
+
+    // 内部状态管理
+    const currentValueRef = useRef(defaultValue)
+
+    // 获取最新状态
+    const getValue = useEvent(() => {
+        return currentValueRef.current
+    })
+
+    // 更新状态
+    const setValue = useEvent((stateAction: SetStateAction<T>) => {
+        currentValueRef.current =
+            typeof stateAction === 'function'
+                ? (stateAction as (prevState: T | undefined) => T)(currentValueRef.current)
+                : stateAction
+
+        forceUpdate()
+    })
+
+    return [getValue, setValue]
+}
+
+export default useSyncState

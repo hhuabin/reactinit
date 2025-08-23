@@ -20,10 +20,10 @@ const getDeviceType = (): DeviceType => {
 }
 
 /**
- * 
- * @returns 
+ * @description 获取设备类型，判定是否是移动端
+ * @returns { DeviceType, boolean }
  */
-const useDeviceType = () => {
+export default function useDeviceType() {
 
     const [deviceType, setDeviceType] = useState<DeviceType>(getDeviceType)
 
@@ -47,5 +47,3 @@ const useDeviceType = () => {
         isMobile: deviceType === 'mobile',
     }
 }
-
-export default useDeviceType

@@ -4,7 +4,7 @@ import { useState, useLayoutEffect } from 'react'
  * @description 简单的history路由
  * @example const [route, routeData] = useHistoryRoute()
  */
-const useHistoryRoute = () => {
+export default function useHistoryRoute() {
 
     const [route, setRoute] = useState<string>('/')
     const [routeData, setRouteData] = useState<object | null>(null)
@@ -24,4 +24,3 @@ const useHistoryRoute = () => {
 
     return [route, routeData]
 }
-export default useHistoryRoute

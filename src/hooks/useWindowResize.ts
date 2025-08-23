@@ -8,7 +8,7 @@ import ThrottleDebounce from '@/utils/functionUtils/ThrottleDebounce'
  * @param designHeight 设计稿高度
  * @param renderDom 需要挂载的元素（注意不能挂载在根html上，移动端可能会出现适配问题）
  */
-const useWindowResize = (designWidth = 1920, designHeight = 1080, renderDOM = '#root') => {
+export default function useWindowResize(designWidth = 1920, designHeight = 1080, renderDOM = '#root') {
 
     const htmlResize = () => {
         const htmlElement = document.documentElement      // html元素
@@ -63,5 +63,3 @@ const useWindowResize = (designWidth = 1920, designHeight = 1080, renderDOM = '#
         }
     }, [])
 }
-
-export default useWindowResize

@@ -3,7 +3,7 @@
  * @example const router = useHistoryRouter()
  * @example router.push('/')
  */
-const useHistoryRouter = () => {
+export default function useHistoryRouter() {
     /**
      * @description 创建一个路由对象，并返回给外部使用
      * @tips 使用Hooks 闭包函数（IIFE），每次返回的都是同一个 router 对象
@@ -57,5 +57,3 @@ const useHistoryRouter = () => {
 
     return router
 }
-
-export default useHistoryRouter

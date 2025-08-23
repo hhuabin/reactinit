@@ -22,12 +22,10 @@ export const navigate = (to: string) => {
     }
 }
 
-const useRouter = () => {
+export default function useRouter() {
 
     const navigate = useNavigate()
 
     setNavigator(navigate)
 
 }
-
-export default useRouter

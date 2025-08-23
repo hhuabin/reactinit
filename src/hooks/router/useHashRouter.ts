@@ -3,7 +3,7 @@
  * @example const router = useHashRouter()
  * @example router.push('/')
  */
-const useHashRouter = () => {
+export default function useHashRouter() {
     /**
      * @description 创建一个路由对象，并返回给外部使用
      * @tips 使用Hooks 闭包函数（IIFE），每次返回的都是同一个 router 对象
@@ -53,4 +53,3 @@ const useHashRouter = () => {
     return router
 }
 
-export default useHashRouter

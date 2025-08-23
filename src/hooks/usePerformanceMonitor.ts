@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 /**
  * 性能监控面板，生产环境不生效
  */
-const usePerformanceMonitor = () => {
+export default function usePerformanceMonitor() {
 
     useEffect(() => {
         // 性能监控
@@ -42,5 +42,3 @@ const usePerformanceMonitor = () => {
         }
     }, [])
 }
-
-export default usePerformanceMonitor
