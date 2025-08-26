@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type UploadFile = {
     url?: string;                               // 文件地址
     tempUrl?: string;                           // 临时文件地址，base64 或者 string
@@ -7,6 +8,7 @@ export type UploadFile = {
     message?: string;                           // 上传失败 | 上传中时展示
     percent?: number;                           // 上传进度，非 0 时展示进度条
     file?: File;                                // 文件对象
+    response?: any;                             // 上传完成后，服务端响应内容
 }
 
 export interface RequestOptions {

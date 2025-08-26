@@ -25,12 +25,7 @@ const Developing: React.FC = () => {
         url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
     }])
 
-    useEffect(() => {
-        console.log('fileList', fileList)
-    }, [fileList])
-
-
-    const changeFileList = (files: UploadFile[] | ((prevState: UploadFile[]) => UploadFile[])) => {
+    const changeFileList = (files: UploadFile[]) => {
         setFileList(files)
     }
     const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
@@ -49,7 +44,7 @@ const Developing: React.FC = () => {
             <div className='w-full'>
                 <Upload
                     fileList={fileList}
-                    onChange={setFileList}
+                    onChange={changeFileList}
                     beforeRead={beforeRead}
                     beforeDelete={beforeDelete}
                     multiple

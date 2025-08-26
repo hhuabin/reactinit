@@ -1,11 +1,12 @@
 /* eslint-disable max-lines */
-import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useMemo } from 'react'
 import type { ForwardedRef } from 'react'
 import { flushSync } from 'react-dom'
 
 import './Upload.less'
 
-import { isImageFile, readFileContent } from './utils'
+import useMergedState from '@/hooks/reactHooks/useMergedState'
+import { isImageFile, readFileContent, updateFileList } from './utils'
 import { xhrRequest } from './xhrRequest'
 import { runTasksWithLimitSettled } from '@/utils/functionUtils/runTasksWithLimit'
 import type { UploadFile, RequestOptions, UploaderBeforeRead, UploaderAfterRead, UploaderBeforeDelete } from './Upload.d'
@@ -23,7 +24,7 @@ type Props = {
     disabled?: boolean;                         // 是否禁用文件上传
     action?: RequestOptions;                    // 上传的请求配置
     children?: JSX.Element;                     // 自定义 Upload children
-    onChange?: React.Dispatch<React.SetStateAction<UploadFile[]>>;    // 上传文件改变时的回调，上传每个阶段都会触发该事件
+    onChange?: (info: UploadFile[]) => void;    // 上传文件改变时的回调，上传每个阶段都会触发该事件
     beforeRead?: UploaderBeforeRead;            // 读取文件之前的回调，返回 false | resolve(false) | reject()，则停止上传
     afterRead?: UploaderAfterRead;              // 文件读取完成后的回调
     beforeDelete?: UploaderBeforeDelete;        // 删除文件之前的回调，返回 false | resolve(false) | reject()，则停止上传
@@ -33,9 +34,9 @@ export type UploadRef = {
     chooseFile: VoidFunction;
 }
 
-const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
+export default forwardRef(function Upload(props: Props, ref: ForwardedRef<UploadRef>) {
     const {
-        fileList: propFileList,
+        fileList,
         accept = 'image/*',
         maxCount = Number.MAX_VALUE,
         multiple = false,
@@ -44,20 +45,27 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
         disabled = false,
         action = {} as RequestOptions,
         children,
-        onChange,
         beforeRead,
         afterRead,
         beforeDelete,
     } = props
 
-    const [fileList, setFileList] = useState<UploadFile[]>([])
+    const [mergedFileList, setMergedFileList, getLatestFileList] = useMergedState<UploadFile[]>(fileList || [], {
+        value: fileList,
+        onChange: (value) => {
+            // 修改父组件的 fileList
+            props.onChange?.(value)
+        },
+        postState: value => value ?? [],
+    })
 
     const [dragActive, setDragActive] = useState(false)   // 拖拽状态，是否进入了 input
     const inputRef = useRef<HTMLInputElement>(null)
     const controller = useRef<Map<React.Key, AbortController>>(new Map())
 
     useEffect(() => {
-        const handleDragEvents = (e: DragEvent) => {
+        // 禁止页面的拖拽事件
+        const onDragEvents = (e: DragEvent) => {
             e.preventDefault()
             e.stopPropagation()
             if (e.type === 'dragover') {
@@ -65,41 +73,78 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
             }
         }
 
-        document.addEventListener('dragover', handleDragEvents)
-        document.addEventListener('drop', handleDragEvents)
+        document.addEventListener('dragover', onDragEvents)
+        document.addEventListener('drop', onDragEvents)
 
         return () => {
-            document.removeEventListener('dragover', handleDragEvents)
-            document.removeEventListener('drop', handleDragEvents)
+            document.removeEventListener('dragover', onDragEvents)
+            document.removeEventListener('drop', onDragEvents)
         }
     }, [])
 
-    useEffect(() => {
-        const newFileList = (propFileList || [])
-                .slice(0, maxCount)
-                .map(file => ({
-                    ...file,
-                    key: file.key ?? `upload-${Date.now()}-${uploadKeyIndex++}`,
-                }))
-        setFileList(() => newFileList)
-    }, [propFileList])
+    // 受控模式下，若没有提供 key，将会自动为文件填充 key 值
+    useMemo(() => {
+        (fileList || [])
+            .slice(0, maxCount)
+            .forEach(uploadFile => {
+                if (!uploadFile.key) {
+                    uploadFile.key = `upload-${Date.now()}-${uploadKeyIndex++}`
+                }
+            })
+    }, [fileList])
 
     /**
      * @description 文件列表改变后更新状态函数
-     * @param { UploadFile[]} files 文件改变后的列表
+     * @param { UploadFile[] } files 文件改变后的列表
      */
-    const changeFile = (state: UploadFile[] | ((prevState: UploadFile[]) => UploadFile[])) => {
-        // 当开发者传入 fileList 或 onChange() 方法时，调用开发者传入的方法
-        if (propFileList || onChange) {
-            props.onChange?.(state)
-        } else {
-            setFileList(state)
-        }
+    const changeMergeFile = (state: UploadFile[] | ((prevState: UploadFile[]) => UploadFile[])) => {
+        setMergedFileList(state)
     }
 
     // ✅ 清空 input 的 value，防止相同文件不触发 onChange
     const resetInput = () => {
         inputRef.current && (inputRef.current.value = '')
+    }
+
+    // 上传状态处理
+    const onProgress = (uploadFile: UploadFile, percent: number, loaded: number, total: number) => {
+        // 此处闭包，获得的 mergedFileList 是旧值，因此使用了函数式更新
+        /* changeMergeFile(prevList => {
+            const targetItem = prevList.find((item => item.key === uploadFile.key))
+            if (!targetItem) return prevList
+
+            targetItem.percent = percent
+            const newFileList = updateFileList(targetItem, prevList)
+            return newFileList
+        }) */
+        changeMergeFile(prevList => prevList.map(item => {
+            if (item.key === uploadFile.key) {
+                item.percent = percent
+            }
+            return item
+        }))
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const onSuccess = (response: any, uploadFile: UploadFile) => {
+        // 此处闭包，获得的 mergedFileList 是旧值，因此使用了函数式更新
+        changeMergeFile(prevList => prevList.map(item => {
+            if (item.key === uploadFile.key) {
+                item.response = response
+                item.status = ''
+                item.message = ''
+            }
+            return item
+        }))
+    }
+    const onError = (uploadFile: UploadFile) => {
+        // 此处闭包，获得的 mergedFileList 是旧值，因此使用了函数式更新
+        changeMergeFile(prevList => prevList.map(item => {
+            if (item.key === uploadFile.key) {
+                item.status = 'failed'
+                item.message = '上传失败'
+            }
+            return item
+        }))
     }
 
     /**
@@ -127,46 +172,14 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
             signal: newController.signal,
             body: formData,
             responseType: action.responseType || 'text',
-            onUploadProgress: (percent) => {
-                // 此处闭包，获得的 propFileList 是旧值，因此使用了函数式更新，后续需要更新为非函数是更新
-                changeFile(prevList => {
-                    const newPercentFileList = prevList.map(_uploadFile => {
-                        if (_uploadFile.key === uploadFile.key) {
-                            _uploadFile.percent = percent
-                        }
-                        return _uploadFile
-                    })
-                    return newPercentFileList
-                })
+            onUploadProgress: (percent: number, loaded: number, total: number) => {
+                onProgress(uploadFile, percent, loaded, total)
             },
         })
-        .then((response) => {
-            // 此处闭包，获得的 propFileList 是旧值，因此使用了函数式更新，后续需要更新为非函数是更新
-            changeFile(prevList => {
-                const newPercentFileList = prevList.map(_uploadFile => {
-                    if (_uploadFile.key === uploadFile.key) {
-                        _uploadFile.url = response
-                        _uploadFile.status = ''
-                        _uploadFile.message = ''
-                    }
-                    return _uploadFile
-                })
-                return newPercentFileList
-            })
-        })
+        .then((response) => onSuccess(response, uploadFile))
         .catch((error) => {
             console.error(error)
-            // 此处闭包，获得的 propFileList 是旧值，因此使用了函数式更新，后续需要更新为非函数是更新
-            changeFile(prevList => {
-                const newPercentFileList = prevList.map(_uploadFile => {
-                    if (_uploadFile.key === uploadFile.key) {
-                        _uploadFile.status = 'failed'
-                        _uploadFile.message = '上传失败'
-                    }
-                    return _uploadFile
-                })
-                return newPercentFileList
-            })
+            onError(uploadFile)
         })
         .finally(() => {
             // 删除该 controller
@@ -182,9 +195,6 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
         // 创建任务队列
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const tasks: (() => Promise<any>)[] = []
-        // 此处的 propFileList 还是旧的
-        console.log('xhrUploadFile', propFileList)
-
         uploadFileList.forEach((uploadFile, index) => {
             uploadFile.percent = 0
             uploadFile.status = 'uploading'
@@ -194,7 +204,8 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
         })
         // 更新文件的状态为上传中...
         flushSync(() => {
-            changeFile([...fileList, ...uploadFileList])
+            // 此处的 mergedFileList 还是旧的
+            changeMergeFile([...mergedFileList, ...uploadFileList])
         })
         // 并发上传所有文件
         runTasksWithLimitSettled(tasks, action.maxConcurrent || 5)
@@ -206,7 +217,7 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
      */
     const readFiles = (files: File[]) => {
         // 过滤大小超过限制的文件
-        files = files.filter(items => items.size <= maxSize)
+        files = files.filter(items => (items.size <= maxSize))
 
         if (files.length > maxCount) {
             files = files.slice(0, maxCount)
@@ -226,17 +237,23 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
                 } as UploadFile
             }, [] as UploadFile[])
             flushSync(() => {
-                changeFile([...fileList, ...uploadFiles])
+                // 新增文件列表
+                changeMergeFile((prevList) => ([
+                    ...prevList,
+                    ...uploadFiles,
+                ]))
             })
             resetInput()
             // 执行自定义传入的读取完成后方法
             afterRead?.(uploadFiles)
+
             // 若开发者传入了 url，则直接上传文件列表
             if (action.url) {
                 requestUploadingFileList(uploadFiles)
             }
         })
         .catch(console.warn)
+        .finally(resetInput)
     }
 
     /**
@@ -283,7 +300,7 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
      * @description 拖拽事件处理函数
      * @param { React.DragEvent<HTMLInputElement> } event 事件对象
      */
-    const handleDrag = (event: React.DragEvent<HTMLInputElement>) => {
+    const onFileDrag = (event: React.DragEvent<HTMLInputElement>) => {
         if (!drag) return
         event.preventDefault()     // 阻止事件的默认行为
         event.stopPropagation()    // 防止事件冒泡到可能包含的其他拖拽监听器
@@ -299,11 +316,10 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
      * @description 拖拽事件处理函数
      * @param { React.DragEvent<HTMLInputElement> } event 事件对象
      */
-    const handleDrop = (event: React.DragEvent<HTMLInputElement>) => {
+    const onFileDrop = (event: React.DragEvent<HTMLInputElement>) => {
         event.preventDefault()
         setDragActive(false)
         const { files } = event.dataTransfer
-        console.log(files)
         if (!files.length) return
 
         let cloneFileList = Array.from(files)
@@ -343,20 +359,20 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
      * @description 删除文件
      * @param { UploadFile } uploadFile 文件对象
      */
-    const handleDelete = async (uploadFile: UploadFile, index: number) => {
+    const onDelete = async (uploadFile: UploadFile, index: number) => {
         try {
             const result = await beforeDelete?.(uploadFile, index)
             if (result === false) return
-            const _fileList = fileList.filter(item => item.key !== uploadFile.key)
+            const _fileList = mergedFileList.filter(item => item.key !== uploadFile.key)
             controller.current.get(uploadFile.key!)?.abort()
-            changeFile(_fileList)
+            changeMergeFile(_fileList)
         } catch (error) {
             console.warn(error)
         }
     }
 
     /**
-     * @description 选择文件
+     * @description 手动触发选择文件
      */
     const chooseFile = () => {
         if (!disabled) return
@@ -369,7 +385,7 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
 
     return (
         <div className='bin-upload-wrapper'>
-            {fileList.map((uploadFile, index) => (
+            {mergedFileList.map((uploadFile, index) => (
                 <div className='bin-upload' key={uploadFile.key}>
                     {
                         isImageFile(uploadFile) ? (
@@ -441,7 +457,7 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
                     {/* 删除按钮 */}
                     <button
                         className='bin-upload-delete-icon'
-                        onClick={() => handleDelete(uploadFile, index)}
+                        onClick={() => onDelete(uploadFile, index)}
                     >
                         <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
                             <line x1='40' y1='30' x2='70' y2='60' stroke='white' strokeWidth='6' strokeLinecap='round' />
@@ -450,7 +466,7 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
                     </button>
                 </div>
             ))}
-            {(fileList.length < maxCount) && (
+            {(mergedFileList.length < maxCount) && (
                 <div className='bin-upload'>
                     {
                         children || (
@@ -474,10 +490,10 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
                         { ...(props.capture ? { capture: props.capture } : {}) }
                         { ...(multiple ? { multiple } : {}) }
                         onChange={(event) => onFileChange(event)}
-                        onDragEnter={(event) => handleDrag(event)}
-                        onDragLeave={(event) => handleDrag(event)}
-                        onDragOver={(event) => handleDrag(event)}
-                        onDrop={(event) => handleDrop(event)}
+                        onDragEnter={(event) => onFileDrag(event)}
+                        onDragLeave={(event) => onFileDrag(event)}
+                        onDragOver={(event) => onFileDrag(event)}
+                        onDrop={(event) => onFileDrop(event)}
                     ></input>
                     {/*
                         onDragEnter: 拖拽进入
@@ -490,5 +506,3 @@ const Upload = forwardRef((props: Props, ref: ForwardedRef<UploadRef>) => {
         </div>
     )
 })
-
-export default Upload

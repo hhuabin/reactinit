@@ -37,3 +37,31 @@ export const readFileContent = (file: File) => {
         }
     })
 }
+
+/**
+ * @description 文件列表更新函数
+ * @param uploadFiles 文件
+ * @param fileList 文件列表
+ * @returns 更新后的文件列表
+ */
+export const updateFileList = (uploadFiles: UploadFile | UploadFile[], fileList: UploadFile[]) => {
+    const nextFileList = [...fileList]
+
+    const updateSingleFile = (uploadFile: UploadFile) => {
+        const fileIndex = nextFileList.findIndex(({ key }) => key === uploadFile.key)
+        if (fileIndex === -1) {
+            nextFileList.push(uploadFile)
+        } else {
+            nextFileList[fileIndex] = uploadFile
+        }
+    }
+
+    if (Array.isArray(uploadFiles)) {
+        uploadFiles.forEach(updateSingleFile)
+    } else {
+        updateSingleFile(uploadFiles)
+    }
+
+    return nextFileList
+
+}
