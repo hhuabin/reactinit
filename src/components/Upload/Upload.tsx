@@ -19,8 +19,9 @@ type Props = {
     maxCount?: number;                          // 文件上传数量限制，向前截断
     multiple?: boolean;                         // 是否支持多选文件
     maxSize?: number;                           // 文件大小限制，单位为 byte
+    imageFit?: 'contain' | 'cover' | 'fill';    // 图片填充模式
     drag?: boolean;                             // 是否开启拖拽上传
-    capture?: 'environment' | 'user';           // 拍照方式
+    capture?: 'environment' | 'user';           // 拍照方式（移动端生效）
     disabled?: boolean;                         // 是否禁用文件上传
     action?: RequestOptions;                    // 上传的请求配置
     children?: JSX.Element;                     // 自定义 Upload children
@@ -41,6 +42,7 @@ export default forwardRef(function Upload(props: Props, ref: ForwardedRef<Upload
         maxCount = Number.MAX_VALUE,
         multiple = false,
         maxSize = Number.MAX_VALUE,
+        imageFit = 'contain',
         drag = true,
         disabled = false,
         action = {} as RequestOptions,
@@ -391,7 +393,7 @@ export default forwardRef(function Upload(props: Props, ref: ForwardedRef<Upload
                         isImageFile(uploadFile) ? (
                             // 图片显示
                             <div className='bin-upload-image'>
-                                <img src={uploadFile.tempUrl || uploadFile.url} />
+                                <img src={uploadFile.tempUrl || uploadFile.url} className={imageFit} />
                             </div>
                         ) : (
                             // 文件显示
