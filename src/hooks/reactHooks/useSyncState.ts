@@ -2,9 +2,9 @@
 import { useReducer, useRef } from 'react'
 import useEvent from './useEvent'
 
-type SetStateAction<T> = T | ((prevState: T) => T);
+type StateAction<T> = T | ((prevState: T) => T);
 
-export type SetState<T> = (stateAction: SetStateAction<T>) => void
+export type SetStateAction<T> = (stateAction: StateAction<T>) => void
 
 /**
  * @description 自定义 Hook，与 useState 相似
@@ -15,9 +15,11 @@ export type SetState<T> = (stateAction: SetStateAction<T>) => void
  * 2. useSyncState 通过 useRef + forceUpdate 避免了这个问题
  * @param defaultValue 默认值
  * @returns [a, setA]
+ * @example const [a, setA] = useSyncState(0)
+ * @example a()、setA(a() + 1)
  */
-function useSyncState<T>(defaultValue: T): [() => T, SetState<T>]
-function useSyncState<T>(): [() => T | undefined, SetState<T | undefined>]
+function useSyncState<T>(defaultValue: T): [() => T, SetStateAction<T>]
+function useSyncState<T>(): [() => T | undefined, SetStateAction<T | undefined>]
 function useSyncState<T>(defaultValue?: T) {
     // 使用 useReducer 来强制组件重新渲染。这里不关心 reducer 的值本身，只是用 forceUpdate() 来触发渲染
     const [, forceUpdate] = useReducer(x => x + 1, 0)
@@ -31,7 +33,7 @@ function useSyncState<T>(defaultValue?: T) {
     })
 
     // 更新状态
-    const setValue = useEvent((stateAction: SetStateAction<T>) => {
+    const setValue = useEvent((stateAction: StateAction<T>) => {
         currentValueRef.current =
             typeof stateAction === 'function'
                 ? (stateAction as (prevState: T | undefined) => T)(currentValueRef.current)

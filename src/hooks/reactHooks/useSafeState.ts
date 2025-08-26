@@ -1,10 +1,10 @@
 /* https://github.com/react-component/util/blob/master/src/hooks */
 import { useEffect, useRef, useState } from 'react'
 
-type SetStateAction<T> = T | ((prevState: T) => T);
+type StateAction<T> = T | ((prevState: T) => T);
 
-export type SetState<T> = (
-    stateAction: SetStateAction<T>,
+export type SetStateAction<T> = (
+    stateAction: StateAction<T>,
     ignoreDestroy?: boolean,
 ) => void;
 
@@ -15,11 +15,11 @@ export type SetState<T> = (
  * 开发者需要手动设置 ignoreDestroy，不设置默认为 false，此时与 React.useState 使用方式一摸一样
  * @example const [a, setA] = useSafeState(0); setA(1, true)
  */
-function useSafeState<T>(defaultValue: T | (() => T)): [T, SetState<T>]
-function useSafeState<T>(): [T | undefined, SetState<T | undefined>]
+function useSafeState<T>(defaultValue: T | (() => T)): [T, SetStateAction<T>]
+function useSafeState<T>(): [T | undefined, SetStateAction<T | undefined>]
 function useSafeState<T>(
     defaultValue?: T | (() => T),
-): [T, SetState<T>] {
+): [T, SetStateAction<T>] {
     const destroyRef = useRef(false)
     const [value, setValue] = useState(defaultValue)
 
@@ -31,10 +31,10 @@ function useSafeState<T>(
         }
     }, [])
 
-    const safeSetState = (stateAction: SetStateAction<T>, ignoreDestroy?: boolean) => {
+    const safeSetState = (stateAction: StateAction<T>, ignoreDestroy?: boolean) => {
         // 避免组件卸载后依然调用 setState
         if (ignoreDestroy && destroyRef.current) return
-        setValue(stateAction as SetStateAction<T | undefined>)
+        setValue(stateAction as StateAction<T | undefined>)
     }
 
     return [value as T, safeSetState]

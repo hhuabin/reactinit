@@ -1,10 +1,11 @@
 /* https://github.com/react-component/util/blob/master/src/hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useRef } from 'react'
 import useEvent from './useEvent'
 import useLayoutUpdateEffect from './useLayoutUpdateEffect'
 import useSafeState from './useSafeState'
 
-type SetState<T> = (
+type SetStateAction<T> = (
     state: T | ((prevState: T) => T),
     ignoreDestroy?: boolean,
 ) => void;
@@ -16,16 +17,18 @@ const hasValue = (value: any) => {
 
 /**
  * @description 可受控/非受控状态合并管理 Hook
- * 作用：常用于组件可以通过 value 受控，当不传 value 可以使用内部状态非受控（受控模式（传 value）；非受控模式（没有传 value））
+ * 作用：常用于组件可以通过 value 受控，当不传 value 或 value === undefined 时可以使用内部状态非受控（受控模式（传 value）；非受控模式（没有传 value））
+ * 作用2：hooks 内部已经实现函数式更新，即使开发者在父组件不传函数式更新，也可以获取到最新更新值，这对组件开发来说非常友好
  * @param { T | (() => T) } defaultStateValue 非受控状态的默认值（初始化时使用）
  * @param option 可选对象
  * @type T 传入 state 类型
  * @type R 返回 state 类型（可能经过 postState() 处理）
- * @example1 const [a, setA] = useMergedState(0) 非受控。与 useSafeState 没有差别
- * @example2 const [a, setA] = useMergedState(0, {
+ * @returns { [R, SetStateAction<T>, () => R] } [state 值（和 useState 一样）, 更新状态的函数, 函数(返回闭包最新值)]
+ * @example1 const [a, setA, getLatestA] = useMergedState(0) 非受控。与 useSafeState 没有差别
+ * @example2 const [a, setA, getLatestA] = useMergedState(0, {
  *      value: props.a,
  * })   完全受控。 a 永远等于 props.a，因为没有配置 onChange，调用 setA 不会改变 a（该方式相当于 props.a 的透传）
- * @example3 const [a, setA] = useMergedState(0, {
+ * @example3 const [a, setA, getLatestA] = useMergedState(0, {
  *      defaultValue: 0,
  *      value: props.a,
  *      onChange: props.onChange,
@@ -41,7 +44,7 @@ export default function useMergedState<T, R = T>(
         onChange?: (value: T, prevState: T) => void;    // 内部状态变化自动调用，保存前一个值，参数有：最新的状态值、上一次的状态值
         postState?: (value: T) => R;      // 对 最终值 做加工/转换（比如格式化）
     },
-): [R, SetState<T>] {
+): [R, SetStateAction<T>, () => R] {
     const { defaultValue, value, onChange, postState } = option || {}
 
     // =================== 初始化内部状态 ====================
@@ -91,6 +94,7 @@ export default function useMergedState<T, R = T>(
              * 5. 若新值innerValue不符合需求，重新将值改成 prev
              */
             // onChangeFn 携带了新值与旧值，可以通知外部，hook 内的状态发生了改变
+            // （传入的是 innerValue， 而不是 postMergedValue，postState 进行数据处理时，需要注意初始化 key 值自增重复执行导致的跳跃问题）
             onChangeFn(innerValue, prev)
         }
     }, [prevValue])
@@ -106,12 +110,20 @@ export default function useMergedState<T, R = T>(
     /**
      * @description useEvent 保持函数引用稳定，不会每次渲染新建。并且内部依然能拿到最新的 mergedValue
      */
-    const triggerChange: SetState<T> = useEvent((state, ignoreDestroy) => {
+    const triggerChange: SetStateAction<T> = useEvent((state, ignoreDestroy) => {
         // state：传入更新的值，直接改变内部状态
         setInnerValue(state, ignoreDestroy)
         // mergedValue： 当前值，state 更新后便成了旧值，存储
         setPrevValue([mergedValue], ignoreDestroy)
     })
 
-    return [postMergedValue as unknown as R, triggerChange]
+    // 闭包最新值是新加值，useMergedState() 并无该功能
+    // 存储 postMergedValue 的最新值
+    const latestRef = useRef(postMergedValue)
+    latestRef.current = postMergedValue
+    // 新增 getLatestValue 函数，保证返回最新值
+    const getLatestValue = useEvent(() => latestRef.current)
+
+    // postMergedValue 并不是闭包最新值，不能实现 useSyncState 一样的返回最新值，getLatestValue() 可以获取最新值
+    return [postMergedValue as unknown as R, triggerChange, getLatestValue as () => R]
 }
