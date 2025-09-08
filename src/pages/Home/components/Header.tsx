@@ -80,7 +80,7 @@ const Header: React.FC = () => {
         <header className='fixed top-0 left-0 flex justify-between w-full h-[64px] bg-[var(--bg-color)] overflow-hidden
             [box-shadow:var(--box-bottom-shadow)] transition-all ease-[ease] duration-[var(--theme-duration)] z-[1000]'
         >
-            <div className='flex items-center px-8 text-[2rem] text-[var(--color-text)] font-bold cursor-pointer' onClick={() => handleClickName()}>H H U A B I N</div>
+            <div className='flex items-center px-8 text-[2rem] text-[var(--color-text)] font-bold cursor-pointer select-none' onClick={() => handleClickName()}>H H U A B I N</div>
 
             <div className='hidden md:flex items-center flex-nowrap gap-2 h-full pr-8 box-border'>
                 {/* <button className='inline-flex justify-center items-center w-8 h-8 rounded-md bg-[transparent] hover:bg-[var(--item-bg-hover)]'>

@@ -56,8 +56,6 @@ const Developing: React.FC = () => {
             </div>
             <div className='w-full'>
                 <AntdUpload
-                    action={'https://sk.cyctapp.com/yct/suikang/oldcar/scrap/file/upload'}
-                    method='POST'
                     listType='picture-card'
                     fileList={antdFileList}
                     onChange={handleChange}

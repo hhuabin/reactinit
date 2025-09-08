@@ -62,13 +62,13 @@ export const routes: RouteConfig[] = [
                 },
             },
             {
-                path: '/bigfile',
+                path: '/fileupload',
                 lazy: async () => {
-                    const { default: BigFileUpload } = await import('@/pages/BigFileUpload/BigFileUpload')
-                    return { Component: BigFileUpload }
+                    const { default: FileUpload } = await import('@/pages/FileUpload/FileUpload')
+                    return { Component: FileUpload }
                 },
                 meta: {
-                    title: 'timezone',
+                    title: 'fileupload',
                     auth: false,
                 },
             },
@@ -101,7 +101,7 @@ export const routes: RouteConfig[] = [
                     return { Component: Test }
                 },
                 meta: {
-                    title: 'Test',
+                    title: 'test',
                     auth: false,
                 },
             },

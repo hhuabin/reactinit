@@ -1,0 +1,184 @@
+import { useEffect, useState, useRef } from 'react'
+
+import { Upload } from '@/components/Upload'
+import type { UploadFile } from '@/components/Upload'
+
+import { clamp } from '@/utils/functionUtils/mathUtils'
+import {
+    multiThreadCreateFileChunks,
+    singleThreadCreateFileChunks,
+    mergeFileChunks,
+    uploadFileChunks,
+} from '@/utils/bigFileUploadUtils'
+import type { FileChunk } from '@/utils/bigFileUploadUtils'
+
+type Props = {
+    uploadUrl: string;
+}
+
+const BigFileUpload: React.FC<Props> = (props) => {
+
+
+    const [fileList, setFileList] = useState<UploadFile[]>([])
+    const [sliceImgFile, setSliceImgFile] = useState<string>('#')
+
+    const progressList = useRef<number[][]>([])
+    const controllerList = useRef<(AbortController | undefined)[]>([])
+
+    // 上传状态处理
+    const onProgress = (
+        progress: {
+            percent: number,
+            loaded: number,
+            total: number
+        },
+        uploadFile: UploadFile,
+        fileChunk: FileChunk,
+    ) => {
+        // progress.total 和 fileChunk 的大小并不一定都是一致的，特别是 fileChunk 经过数据编码之后
+        setFileList((prevFileList) => (prevFileList || []).map((item, index) => {
+            if (item.key === uploadFile.key) {
+                if (!progressList.current[index]) progressList.current[index] = []
+
+                progressList.current[index][fileChunk.index] = progress.loaded
+                const totalProgress = progressList.current[index].reduce((acc, cur) => acc + cur, 0)
+
+                item.percent = clamp(totalProgress / fileChunk.fileSize * 100, 0, 100)
+                item.message = item.percent.toFixed(2) + ' %'
+            }
+            return item
+        }))
+    }
+
+    const afterRead = (files: UploadFile[]) => {
+        const controllerLength = controllerList.current.length
+        const newController = files.map(() => new AbortController())
+        controllerList.current = [...controllerList.current, ...newController]
+
+        for (let index = 0; index < files.length; index++) {
+            const uploadFile = files[index]
+            if (!uploadFile.file) return
+
+            setFileList((prevList) => {
+                return (prevList || []).map(item => {
+                    if (item.key === uploadFile.key) {
+                        return {
+                            ...item,
+                            status: 'uploading',
+                        }
+                    }
+                    return item
+                })
+            })
+
+            // 1. 对文件进行分片
+            multiThreadCreateFileChunks(uploadFile.file, {
+                chunkSize: 1024 * 1024,
+            })
+            .then(fileChunks => {
+                // 2. 上传分片
+                const result = mergeFileChunks(fileChunks)
+                if (uploadFile.file!.type.includes('image')) {
+                    previewSliceImage(result)
+                }
+                return uploadFileChunks(fileChunks, {
+                    url: props.uploadUrl,
+                    signal: controllerList.current[controllerLength + index]?.signal,
+                    onProgress: (percent, loaded, total, fileChunk) => {
+                        onProgress(
+                            {
+                                percent,
+                                loaded,
+                                total,
+                            },
+                            uploadFile,
+                            fileChunk,
+                        )
+                    },
+                    onSuccess: (response) => {},
+                    onError: (error) => {},
+                })
+            })
+            .then(res => {
+                // 3. 单个文件上传成功
+                setFileList((prevList) => (prevList || []).map(item => {
+                    if (item.key === uploadFile.key) {
+                        return {
+                            ...item,
+                            status: 'done',
+                            response: res,
+                        }
+                    }
+                    return item
+                }))
+            })
+            .catch(error => {
+                console.error(error)
+                setFileList((prevList) => (prevList || []).map(item => {
+                    if (item.key === uploadFile.key) {
+                        return {
+                            ...item,
+                            status: 'failed',
+                            message: '上传失败',
+                            response: error,
+                        }
+                    }
+                    return item
+                }))
+            })
+        }
+    }
+
+    const previewSliceImage = (blob: Blob) => {
+        if (!blob) return null
+        const reader = new FileReader()
+
+        reader.onload = (e) => {
+            setSliceImgFile(e.target?.result as string)
+        }
+
+        reader.onerror = () => {
+            console.error('图片读取失败')
+        }
+
+        reader.readAsDataURL(blob)
+    }
+
+    const beforeDelete = (file: UploadFile, index: number) => {
+        // 停止上传，删除 controller
+        controllerList.current[index]?.abort()
+        controllerList.current.splice(index, 1)
+
+        // 删除 progressList
+        progressList.current.splice(index, 1)
+    }
+
+    return (
+        <>
+            <div className='flex w-full my-4'>
+                <div className=''>
+                    <div className='w-full'>大文件上传</div>
+                    <div className='w-full mt-2'>
+                        <Upload
+                            fileList={fileList}
+                            onChange={setFileList}
+                            afterRead={afterRead}
+                            beforeDelete={beforeDelete}
+                        />
+                    </div>
+                </div>
+
+                <div className='ml-4'>
+                    <div className='w-full'>切片后回显的图片：</div>
+                    <div className='w-full mt-2'>
+                        <div className='w-[80px] h-[80px] rounded-sm border border-[var(--color-border)] [box-shadow:var(--box-bottom-shadow)]'>
+                            <img src={sliceImgFile} className='block w-full h-full object-contain' alt="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+export default BigFileUpload
