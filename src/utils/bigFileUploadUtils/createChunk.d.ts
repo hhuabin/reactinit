@@ -1,6 +1,7 @@
 // 单个文件分片结果
 export interface FileChunk {
     fileName: string;        // 文件名
+    fileSize: number;        // 文件总大小
     chunk: Blob;             // 分片内容，二进制 Blod 格式
     hash: string;            // 文件哈希值
     chunkCount: number;      // 全部分片的数量

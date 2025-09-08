@@ -1,4 +1,10 @@
 /**
+ * @Author: bin
+ * @Date: 2025-07-30 19:52:52
+ * @LastEditors: bin
+ * @LastEditTime: 2025-09-08 16:38:44
+ */
+/**
  * @description: 分片上传
  * @param { File } file 文件源对象
  * @param { number } index 分片索引
@@ -25,9 +31,10 @@ const createChunk = (file, index, chunkSize, chunkCount) => {
             resolve({
                 chunkCount,
                 fileName: file.name,
-                start,
-                end,
+                fileSize: file.size,
                 index,
+                start,
+                end,                // 分片结束位置（不包含）
                 chunk: blob,        // 注意，当前格式是 Blod
                 hash: hashHex,
             })

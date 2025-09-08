@@ -1,10 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     multiThreadCreateFileChunks,
     singleThreadCreateFileChunks,
     mergeFileChunks,
 } from './'
 import { runTasksWithLimitFailFast } from '@/utils/functionUtils/runTasksWithLimit'
+import { xhrRequest } from './xhrRequest'
 import type { FileChunk } from './createChunk.d'
+
+interface RequestOptions {
+    url: string;               // 上传地址
+    signal?: AbortSignal;      // 上传取消信号
+    onProgress?: (percent: number, loaded: number, total: number, fileChunk: FileChunk) => void;   // 单个上传进度回调
+    onSuccess?: (response: any) => void;    // 单个分片上传成功回调，可设置上传进度
+    onError?: (error: any) => void;         // 单个分片上传失败回调，可以设置单个上传失败
+}
 
 /**
  * @description 并发上传所有文件分片
@@ -13,16 +23,16 @@ import type { FileChunk } from './createChunk.d'
  * @param { number } limit 上传并发数，默认为 5，不建议上传并发数大于 6。任务失败重发次数默认为 3，需要修改请看代码
  * @returns { Promise<any[]> } 接口的 Promise.all() 结果
  */
-export const uploadFileChunks = async (
-    uploadUrl: string,
+export const uploadFileChunks = <T = any>(
     fileChunks: FileChunk[],
+    requestOptions: RequestOptions,
     limit = 5,
 ) => {
     if (limit > 6) {
         console.warn('不建议上传并发数大于 6')
     }
     const uploadQueue = fileChunks.map(chunk => {
-        return () => uploadSingleChunk(uploadUrl, chunk)
+        return () => uploadSingleChunk<T>(chunk, requestOptions)
     })
     // 并发上传
     return runTasksWithLimitFailFast(uploadQueue, limit, 3)
@@ -30,14 +40,16 @@ export const uploadFileChunks = async (
 
 /**
  * @description 上传单个文件分片
- * @param { string } uploadUrl 上传地址
+ * @param { FileChunk } fileChunk 单个文件分片对象
  * @param { FileChunk } fileChunk 单个文件分片对象
  * @returns { Promise<any> } 接口返回什么就填什么，视后端而定
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const uploadSingleChunk = async (uploadUrl: string, fileChunk: FileChunk): Promise<any> => {
+const uploadSingleChunk = <T = any>(fileChunk: FileChunk, requestOptions: RequestOptions): Promise<T> => {
+    const { url = '', signal, onProgress, onSuccess, onError } = requestOptions
+
     const formData = new FormData()
     formData.append('filename', fileChunk.fileName)
+    formData.append('fileSize', fileChunk.fileSize.toString())
     formData.append('file', fileChunk.chunk)
     formData.append('hash', fileChunk.hash)
     formData.append('chunkCount', fileChunk.chunkCount.toString())
@@ -45,7 +57,28 @@ const uploadSingleChunk = async (uploadUrl: string, fileChunk: FileChunk): Promi
     formData.append('start', fileChunk.start.toString())
     formData.append('end', fileChunk.end.toString())
 
-    return fetch(uploadUrl, {
+    return xhrRequest({
+        url,
+        headers: {},
+        method: 'POST',
+        signal: signal,
+        body: formData,
+        responseType: 'text',
+        onUploadProgress: (percent: number, loaded: number, total: number) => {
+            onProgress?.(percent, loaded, total, fileChunk)
+        },
+    })
+    .then((response) => {
+        onSuccess?.(response)
+        return response
+    })
+    .catch((error) => {
+        console.error(error)
+        onError?.(error)
+        return Promise.reject(error)
+    })
+
+    /* return fetch(uploadUrl, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
@@ -61,8 +94,7 @@ const uploadSingleChunk = async (uploadUrl: string, fileChunk: FileChunk): Promi
     })
     .catch(error => {
         return Promise.reject(error)
-    })
-
+    }) */
 }
 
 // 选择文件

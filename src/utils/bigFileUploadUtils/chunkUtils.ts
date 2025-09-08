@@ -34,7 +34,6 @@ export const singleThreadCreateFileChunks = async (file: File, options: FileChun
     const chunkResult: FileChunk[] = []
 
     console.time('singleThreadCreateFileChunks')
-    console.log('正在读取文件...')
     console.log(`开启单线程切片，切片数量为：${chunkCount}`)
 
     for (let i = 0; i < chunkCount; i++) {
@@ -70,7 +69,6 @@ export const multiThreadCreateFileChunks = async (file: File, options: FileChunk
         const threadChunks: FileChunk[][] = []
         let finishedCount = 0      // 完成的线程数量
         console.time('multiThreadCreateFileChunks')
-        console.log('正在读取文件...')
         console.log(`开启多线程切片，切片数量为：${chunkCount}`)
 
         for (let i = 0; i < THREAD_COUNT; i++) {

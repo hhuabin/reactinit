@@ -11,3 +11,4 @@ export * from './chunkUtils'
  */
 export * from './createChunk'
 export * from './upload'
+export * from './xhrRequest'
