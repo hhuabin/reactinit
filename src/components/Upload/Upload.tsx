@@ -26,7 +26,7 @@ type Props = {
     action?: RequestOptions;                    // 上传的请求配置
     children?: JSX.Element;                     // 自定义 Upload children
     onChange?: (info: UploadFile[]) => void;    // 上传文件改变时的回调，上传每个阶段都会触发该事件
-    beforeRead?: UploaderBeforeRead;            // 读取文件之前的回调，返回 false | resolve(false) | reject()，则停止上传
+    beforeRead?: UploaderBeforeRead;            // 读取文件之前的回调，返回 false | resolve(false) | reject()，则停止上传；切忌不可返回 pedding 状态的 Promise
     afterRead?: UploaderAfterRead;              // 文件读取完成后的回调
     beforeDelete?: UploaderBeforeDelete;        // 删除文件之前的回调，返回 false | resolve(false) | reject()，则停止上传
 }
@@ -119,9 +119,10 @@ export default forwardRef(function Upload(props: Props, ref: ForwardedRef<Upload
             const newFileList = updateFileList(targetItem, prevList)
             return newFileList
         }) */
-        changeMergeFile(prevList => prevList.map(item => {
+        changeMergeFile(prevList => (prevList || []).map(item => {
             if (item.key === uploadFile.key) {
                 item.percent = percent
+                item.message = `${percent.toFixed(2) + ' '}%`
             }
             return item
         }))
@@ -129,7 +130,7 @@ export default forwardRef(function Upload(props: Props, ref: ForwardedRef<Upload
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onSuccess = (response: any, uploadFile: UploadFile) => {
         // 此处闭包，获得的 mergedFileList 是旧值，因此使用了函数式更新
-        changeMergeFile(prevList => prevList.map(item => {
+        changeMergeFile(prevList => (prevList || []).map(item => {
             if (item.key === uploadFile.key) {
                 item.response = response
                 item.status = ''
@@ -140,7 +141,7 @@ export default forwardRef(function Upload(props: Props, ref: ForwardedRef<Upload
     }
     const onError = (uploadFile: UploadFile) => {
         // 此处闭包，获得的 mergedFileList 是旧值，因此使用了函数式更新
-        changeMergeFile(prevList => prevList.map(item => {
+        changeMergeFile(prevList => (prevList || []).map(item => {
             if (item.key === uploadFile.key) {
                 item.status = 'failed'
                 item.message = '上传失败'
@@ -205,10 +206,7 @@ export default forwardRef(function Upload(props: Props, ref: ForwardedRef<Upload
             tasks.push(() => xhrUploadFile(uploadFile, action))
         })
         // 更新文件的状态为上传中...
-        flushSync(() => {
-            // 此处的 mergedFileList 还是旧的
-            changeMergeFile([...mergedFileList, ...uploadFileList])
-        })
+        changeMergeFile([...mergedFileList, ...uploadFileList])
         // 并发上传所有文件
         runTasksWithLimitSettled(tasks, action.maxConcurrent || 5)
     }
@@ -238,19 +236,25 @@ export default forwardRef(function Upload(props: Props, ref: ForwardedRef<Upload
                     file,
                 } as UploadFile
             }, [] as UploadFile[])
+            // flushSync：防止React18自动批处理，因为输入[上传]触发过程同时进行
             flushSync(() => {
-                // 新增文件列表
-                changeMergeFile((prevList) => ([
-                    ...prevList,
-                    ...uploadFiles,
-                ]))
+                // 此处不可使用函数式更新，flushSync 取的闭包值
+                changeMergeFile([...mergedFileList, ...uploadFiles])
+                /* changeMergeFile((prevList) => {
+                    // prev 始终是[进入 flushSync 前的旧值]
+                    console.log('flushSync', prevList)
+                    return [
+                        ...prevList,
+                        ...uploadFiles,
+                    ]
+                }) */
             })
             resetInput()
             // 执行自定义传入的读取完成后方法
             afterRead?.(uploadFiles)
 
             // 若开发者传入了 url，则直接上传文件列表
-            if (action.url) {
+            if (Object.prototype.hasOwnProperty.call(action, 'url')) {
                 requestUploadingFileList(uploadFiles)
             }
         })
@@ -477,8 +481,8 @@ export default forwardRef(function Upload(props: Props, ref: ForwardedRef<Upload
                                 style={{ backgroundColor: dragActive ? '#e6f2ff' : '' }}
                             >
                                 <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
-                                    <line x1='50' y1='35' x2='50' y2='65' stroke='#dcdee0' strokeWidth='2' strokeLinecap='round' />
-                                    <line x1='35' y1='50' x2='65' y2='50' stroke='#dcdee0' strokeWidth='2' strokeLinecap='round' />
+                                    <line x1='50' y1='35' x2='50' y2='65' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
+                                    <line x1='35' y1='50' x2='65' y2='50' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
                                 </svg>
                             </div>
                         )

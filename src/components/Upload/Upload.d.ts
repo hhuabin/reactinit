@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type UploadFile = {
+export interface UploadFile {
     url?: string;                               // 文件地址
     tempUrl?: string;                           // 临时文件地址，base64 或者 string
     key?: React.Key;                            // 文件唯一标识符，未指定则默认生成
@@ -13,9 +13,9 @@ export type UploadFile = {
 
 export interface RequestOptions {
     url: string;
-    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';  // 默认值是 POST
     headers?: Record<string, string>;
-    timeout?: number;
+    timeout?: number;                               // 默认是 0
     responseType?: XMLHttpRequestResponseType;      // 响应数据类型，默认是 text
     data?: {[key: string]: string | Blob};          // file 之外的请求参数
     maxConcurrent?: number;                         // 最大并发上传个数
@@ -23,4 +23,4 @@ export interface RequestOptions {
 
 export type UploaderBeforeRead = (files: File[]) => boolean | Promise<boolean | File[]>;
 export type UploaderAfterRead = (files: UploadFile[]) => void;
-export type UploaderBeforeDelete = (items: UploadFile, index: number) => boolean | Promise<boolean>;
+export type UploaderBeforeDelete = (file: UploadFile, index: number) => boolean | Promise<boolean> | void;

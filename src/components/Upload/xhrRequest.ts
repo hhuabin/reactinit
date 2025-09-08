@@ -25,7 +25,7 @@ export const xhrRequest = <T = any>(options: XhrRequestOptions) => {
         headers = { 'Content-Type': 'application/json' },
         timeout = 0,          // 无超时限制
         responseType = 'json',
-        body,          // 如果 body 改成 any，当 'Content-Type': 'application/json' 时，需要将 body 序列化，JSON.stringify(body)
+        body,                 // 如果 body 改成 any，当 'Content-Type': 'application/json' 时，需要将 body 序列化，JSON.stringify(body)
         signal,
         onUploadProgress,
         onDownloadProgress,
@@ -44,9 +44,9 @@ export const xhrRequest = <T = any>(options: XhrRequestOptions) => {
                 delete headers['Content-Type']
             }
         } else if (headers) {
-            Object.entries(headers).forEach(([key, value]) => {
+            for (const [key, value] of Object.entries(headers)) {
                 xhr.setRequestHeader(key, value)
-            })
+            }
         }
         xhr.timeout = timeout
         xhr.responseType = responseType
