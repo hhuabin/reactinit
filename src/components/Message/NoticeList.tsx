@@ -32,8 +32,6 @@ const Notice: React.FC<NoticeProps> = (props) => {
 
     const { notice } = props
 
-    const globalConfig = useContext(ConfigContext)
-
     useEffect(() => {
 
         /**
@@ -74,12 +72,7 @@ const Notice: React.FC<NoticeProps> = (props) => {
             onAnimationEnd={(e) => onAnimationEnd(e)}
         >
             <div className='bin-message-notice'>
-                <div
-                    className='bin-message-notice-content'
-                    style={{
-                        backgroundColor: globalConfig.theme === 'dark' ? '#1f1f1f' : '',
-                    }}
-                >
+                <div className='bin-message-notice-content'>
                     <div className='bin-message-custom-content'>
                         {
                             notice.icon
@@ -92,10 +85,7 @@ const Notice: React.FC<NoticeProps> = (props) => {
                                     )
                                 )
                         }
-                        <span
-                            className='bin-message-content'
-                            style={{ color: globalConfig.theme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '' }}
-                        >{notice.content}</span>
+                        <span className='bin-message-content'>{notice.content}</span>
                     </div>
                 </div>
             </div>
@@ -114,6 +104,9 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
     const { messageConfigList } = props
 
     const [noticeList, setNoticeList] = useState<NoticeConfig[]>([])
+
+    // 获取全局配置，修改主题等
+    const globalConfig = useContext(ConfigContext)
 
     useEffect(() => {
         if (!messageConfigList.length) {
@@ -246,7 +239,14 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
 
     if (!!noticeList.length) {
         return (
-            <div className="bin-message">
+            <div
+                className='bin-message'
+                style={{
+                    '--bg-color': globalConfig.theme === 'dark' ? '#1f1f1f' : '',
+                    '--color-text': globalConfig.theme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '',
+                    '--content-shadow': globalConfig.theme === 'dark' ? '0 2px 6px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 255, 255, 0.08)' : '',
+                } as React.CSSProperties}
+            >
                 {
                     noticeList.map(notice => (
                         <Notice

@@ -56,11 +56,11 @@ message.info(
 )
 ```
 
-| 参数     | 说明                                        | 类型                | 默认值 |
-| :------- | :------------------------------------------ | :------------------ | :----- |
-| content  | 提示内容                                    | ReactNode \| config | -      |
-| duration | 自动关闭的延时，单位秒。设为 0 时不自动关闭 | number              | 3000   |
-| onClose  | 关闭时触发的回调函数                        | function            | -      |
+| 参数       | 说明                                        | 类型                 | 默认值 |
+| :--------- | :------------------------------------------ | :------------------- | :----- |
+| `content`  | 提示内容                                    | `ReactNode | config` | -      |
+| `duration` | 自动关闭的延时，单位秒。设为 0 时不自动关闭 | `number`             | 3000   |
+| `onClose`  | 关闭时触发的回调函数                        | `function`           | -      |
 
 也可以对象的形式传递参数：
 
@@ -73,23 +73,22 @@ message.info(
 
 ```typescript
 message.info({
-    content: 'hello message'
-    
+    content: 'hello message',
     duration: 0,
     key: id.current,
-    () => { console.log('关闭') },
+    onClose: () => { console.log('关闭') },
 })
 ```
 
 `config` 对象属性如下：
 
-| 参数     | 说明                                                         | 类型             | 默认值 |
-| :------- | :----------------------------------------------------------- | :--------------- | :----- |
-| content  | 提示内容                                                     | ReactNode        | -      |
-| duration | 自动关闭的延时，单位秒。设为 0 时不自动关闭<br />（config的duration优先级更高） | number           | 3000   |
-| icon     | 自定义图标                                                   | ReactNode        | -      |
-| key      | 当前提示的唯一标志                                           | string \| number | -      |
-| onClose  | 关闭时触发的回调函数                                         | function         | -      |
+| 参数       | 说明                                                         | 类型              | 默认值 |
+| :--------- | :----------------------------------------------------------- | :---------------- | :----- |
+| `content`  | 提示内容                                                     | `ReactNode`       | -      |
+| `duration` | 自动关闭的延时，单位秒。设为 0 时不自动关闭<br />（config的duration优先级更高） | `number`          | 3000   |
+| `icon`     | 自定义图标                                                   | `ReactNode`       | -      |
+| `key`      | 当前提示的唯一标志                                           | `string | number` | -      |
+| `onClose`  | 关闭时触发的回调函数                                         | `function`        | -      |
 
 
 
@@ -99,11 +98,10 @@ message.info({
 
 ```typescript
 message.info({
-    content: 'hello message'
-    
+    content: 'hello message',
     duration: 0,
     key: id.current,
-    () => { console.log('关闭') },
+    onClose: () => { console.log('关闭') },
 })
 .then(() => {
     console.log('关闭2')
@@ -116,10 +114,10 @@ message.info({
 
 ```typescript
 const closeFn = message.loading({
-    content: 'loading...'
-    duration: 0,       // 以
+    content: 'loading...',
+    duration: 0,       // 以这个为准
     key: id.current,
-    () => { console.log('关闭') },
+    onClose: () => { console.log('关闭') },
 }, 3000)
 
 closeFn()     // 手动关闭函数
@@ -141,10 +139,10 @@ message.config({
 })
 ```
 
-| 参数         | 说明                                     | 类型              | 默认值              |
-| :----------- | :--------------------------------------- | :---------------- | :------------------ |
-| duration     | 默认自动关闭延时，单位秒                 | number            | 3000                |
-| getContainer | 配置渲染节点的输出位置，但依旧为全屏展示 | () => HTMLElement | () => document.body |
+| 参数           | 说明                                     | 类型                | 默认值                |
+| :------------- | :--------------------------------------- | :------------------ | :-------------------- |
+| `duration`     | 默认自动关闭延时，单位秒                 | `number`            | 3000                  |
+| `getContainer` | 配置渲染节点的输出位置，但依旧为全屏展示 | `() => HTMLElement` | `() => document.body` |
 
 
 
@@ -156,7 +154,7 @@ const Message = () => {
 
     const open = () => {
         messageApi.info({
-            content: 'hello message'
+            content: 'hello message',
         })
     }
 
