@@ -11,22 +11,28 @@ import { useCallback, useRef } from 'react'
  * @param { Function } callback 回调函数
  * @param { React.DependencyList } deps 依赖数组，默认是[]。是否启用依赖数据，取决于 useCallback 的返回值是否需要发生变化
  * 比如当 useEvent() 返回值传递给子组件当参数时，启用 deps 可以让子组件更新
- * @returns { T } 返回 useCallback 的返回值（即函数（地址））
+ * @returns { (...args: Parameters<T>) => any } 返回 useCallback 的返回值（即一个新函数（地址））
  * @example const memoFn = useEvent(() => {}, [])
  */
-export default function useEvent<T extends Function>(callback: T, deps?: React.DependencyList): T {
+export default function useEvent<T extends (...args: any[]) => any>(callback: T, deps?: React.DependencyList) {
     const fnRef = useRef<T>()
     // 最新闭包：重点代码，每次渲染都会执行。重新定义 fnRef.current = callback，即可获取最新闭包值
     fnRef.current = callback
 
     /**
      * 稳定引用：创建一个 稳定引用 的函数 memoFn，依赖是空数组 []，所以这个 memoFn 在整个生命周期内一直是等于 fnRef.current
+     * 问题1：callback 的原型等属性(callback.a???)将会用不了，此处返回的 memoFn 是一个函数 (...args: any) => void，无其他属性（useCallback会直接返回原函数）
      */
-    const memoFn = useCallback<T>(
-        ((...args: any) => fnRef.current?.(...args)) as any,
+    const memoFn = useCallback(
+        (...args: Parameters<T>) => { fnRef.current?.(...args) },
         deps ?? [],
     )
 
     return memoFn
 }
 
+/**
+ * 问题2：memoFn内部的值是 a 的上一个旧值，因为 setState 是异步的
+ *  setState(a)
+ *  memoFn()
+ */

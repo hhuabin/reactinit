@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef } from 'react'
 
 export default class ThrottleDebounce {
@@ -14,7 +15,7 @@ export default class ThrottleDebounce {
      * @example const debounced = useCallback(ThrottleDebounce.debounce(() => {}, 1000), [dependencies])
      * @tips 使用 useCallback 缓存函数避免内存泄漏
      */
-    public static debounce = <T>(callback: (...args: Array<T>) => void, delay = 500, immediate = false) => {
+    public static debounce = <T extends (...args: any[]) => void>(callback: T, delay = 500, immediate = false) => {
         // 一个函数绑定一个 timerId 可以分开执行
         /**
          * 在 React 中，不使用 useRef 的话
@@ -22,7 +23,7 @@ export default class ThrottleDebounce {
          */
         // let timerId: NodeJS.Timeout | null = null
         const timerId = useRef<NodeJS.Timeout | null>(null)
-        const debounced = (...args: Array<T>) => {
+        const debounced = (...args: Parameters<T>) => {
             if (timerId.current) clearTimeout(timerId.current)
             if (immediate) {
                 const callNow = !timerId.current
@@ -59,10 +60,10 @@ export default class ThrottleDebounce {
      * @example const debounced = useCallback(ThrottleDebounce.throttle(() => {}, 1000), [dependencies])
      * @tips 使用 useCallback 缓存函数避免内存泄漏
      */
-    public static throttle = <T>(callback: (...args: Array<T>) => void, delay = 200) => {
+    public static throttle = <T extends (...args: any[]) => void>(callback: T, delay = 200) => {
         // let lastTime = Date.now()
         const lastTime = useRef(0)
-        return (...args: Array<T>) => {
+        return (...args: Parameters<T>) => {
             const nowTime = Date.now()
             if (nowTime - lastTime.current > delay) {
                 callback(...args)

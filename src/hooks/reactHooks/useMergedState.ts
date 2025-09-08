@@ -1,6 +1,6 @@
 /* https://github.com/react-component/util/blob/master/src/hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import useEvent from './useEvent'
 import useLayoutUpdateEffect from './useLayoutUpdateEffect'
 import useSafeState from './useSafeState'
@@ -122,7 +122,7 @@ export default function useMergedState<T, R = T>(
     const latestRef = useRef(postMergedValue)
     latestRef.current = postMergedValue
     // 新增 getLatestValue 函数，保证返回最新值
-    const getLatestValue = useEvent(() => latestRef.current)
+    const getLatestValue = useCallback(() => latestRef.current, [])
 
     // postMergedValue 并不是闭包最新值，不能实现 useSyncState 一样的返回最新值，getLatestValue() 可以获取最新值
     return [postMergedValue as unknown as R, triggerChange, getLatestValue as () => R]
