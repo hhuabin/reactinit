@@ -1,10 +1,26 @@
+/* eslint-disable max-lines */
 import React, { useEffect, useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 
+import useMergedState from '@/hooks/reactHooks/useMergedState'
 import useTouch from './useTouch'
 import styles from './MobilePicker.module.less'
 
-import type { PickerProps } from './MobilePicker.d'
+import type { PickerColumn, PickerConfirmEventParams } from './MobilePicker.d'
+
+interface PickerProps {
+    visible?: boolean;                      // 是否显示
+    columns?: PickerColumn;                 // 配置列的选项
+    defaultIndex?: number;                  // 默认选中项
+    title?: string;                         // 标题
+    cancelText?: string;                    // 取消按钮的文字
+    confirmText?: string;                   // 确定按钮的文字
+    primaryColor?: string;                  // 主题色
+    visibleOptionNum?: number;              // 可见的选项个数
+    onChangeVisible?: (value: boolean) => void;       // 显示状态改变时触发函数
+    onConfirm?: (params: PickerConfirmEventParams) => void;       // 确认时触发函数
+    onCancel?: () => void;                  // 取消时触发函数
+}
 
 const DEFAULT_DURATION = 200         // 默认动画时长
 const INERTIAL_SLIDE_TIME = 300      // 惯性滚动判定时间，在该时间范围内为惯性滚动
@@ -28,7 +44,7 @@ const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, 
 const MobilePicker: React.FC<PickerProps> = (props) => {
 
     const {
-        visible = true,
+        visible,
         columns = [],
         defaultIndex = 0,
         title = '',
@@ -38,10 +54,17 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
         visibleOptionNum = 6,
     } = props
 
+    const [mergeVisible, setMergeVisible] = useMergedState(true, {
+        value: visible,
+        onChange: (value) => {
+            props.onChangeVisible?.(value)
+        },
+    })
+
     // 第一项居中的基础偏移的距离
     const baseOffset = COLUMN_HEIGHT * (+visibleOptionNum - 1) / 2
 
-    const [transformY, setTransformY] = useState(-1)                        // 当前偏移量
+    const [transformY, setTransformY] = useState(0)                         // 当前偏移量
     const [isInertialScrolling, setIsInertialScrolling] = useState(false)   // 是否正在惯性滚动
 
     const wrapperElementRef = useRef<HTMLUListElement | null>(null)
@@ -56,10 +79,18 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
     useEffect(() => {
         setIsInertialScrolling(false)
         updateValueByIndex(lastIndex.current, 0)
-    }, [visible])
+
+        const origin = document.body.style.overflow
+        if (mergeVisible) {
+            document.body.style.overflow = 'hidden'
+        }
+        return () => {
+            document.body.style.overflow = origin
+        }
+    }, [mergeVisible])
 
     /**
-     * 获取偏移量对应的索引
+     * @description 获取偏移量对应的索引
      * @param offset 当前偏移距离
      * @returns 索引
      */
@@ -72,7 +103,7 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
     }
 
     /**
-     * 获取当前滚动的索引
+     * @description 获取当前滚动的索引
      * @returns 索引
      */
     const currentIndex = () => getIndexByOffset(transformY)
@@ -92,7 +123,7 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
     }
 
     /**
-     * 惯性滚动
+     * @description 惯性滚动
      * @param distance 滚动的距离
      * @param duration 持续时间
      */
@@ -127,7 +158,7 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
         let _transformY = transformY
         if (moving.current) {
             const { transform } = window.getComputedStyle(wrapperElementRef.current as HTMLUListElement)
-            _transformY = Number(transform.slice(7, transform.length - 1).split(', ')[5])
+            _transformY = new DOMMatrixReadOnly(transform === 'none' ? undefined : transform).m42
             updateAnimate(_transformY, 0)
         }
         startOffset.current = _transformY        // 定义滑动开始前的位置
@@ -175,7 +206,7 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
     }
 
     /**
-     * 更新动画
+     * @description 更新动画
      * @param endTransformY 动画结束的偏移量
      * @param transitionDuration 动画时间
      */
@@ -185,7 +216,7 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
         setTransformY(endTransformY)
         // 获取动画当前的偏移量
         const { transform } = window.getComputedStyle(wrapperElementRef.current as HTMLUListElement)
-        const currentTransformY = transform.slice(7, transform.length - 1).split(', ')[5] || '0'
+        const currentTransformY = new DOMMatrixReadOnly(transform === 'none' ? undefined : transform).m42
         const keyframes: Keyframe[] = [
             { transform: `translateY(${currentTransformY}px)` },
             { transform: `translateY(${endTransformY}px)` },
@@ -211,10 +242,12 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
     }
 
     const onCancel = () => {
+        setMergeVisible(false)
         props.onCancel?.()
     }
 
     const onConfirm = () => {
+        setMergeVisible(false)
         const selectIndex = currentIndex()
         const selectOption = columns[currentIndex()]
         const selectValue = typeof selectOption === 'string' ? selectOption.toString() : selectOption.value
@@ -225,14 +258,14 @@ const MobilePicker: React.FC<PickerProps> = (props) => {
     return createPortal(
         <>
             <div
-                className={styles['picker-popup'] + ' ' + (visible ? '' : styles['picker-popup-hidden'])}
+                className={styles['picker-popup'] + ' ' + (mergeVisible ? '' : styles['picker-popup-hidden'])}
                 style={{ '--primary-color': primaryColor } as React.CSSProperties}
             >
-                <div role='button' className={styles['overlay'] + ' ' + (visible ? '' : styles['overlay-hidden'])}
+                <div role='button' className={styles['overlay'] + ' ' + (mergeVisible ? '' : styles['overlay-hidden'])}
                     onClick={() => onClickMask()}
                 ></div>
 
-                <div className={styles['popup-body'] + ' ' + (visible ? '' : styles['popup-hidden'])}>
+                <div className={styles['popup-body'] + ' ' + (mergeVisible ? '' : styles['popup-hidden'])}>
                     <div className={styles['picker-header']}>
                         <button
                             type='button'
