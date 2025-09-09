@@ -96,8 +96,10 @@ const BigFileUpload: React.FC<Props> = (props) => {
                         )
                     },
                     onSuccess: (response) => {},
-                    onError: (error) => {},
-                })
+                    onError: (error, fileChunk) => {
+                        // console.error(`分片${fileChunk.index + 1}上传失败`)
+                    },
+                }, 5,3)
             })
             .then(res => {
                 // 3. 单个文件上传成功
@@ -113,6 +115,13 @@ const BigFileUpload: React.FC<Props> = (props) => {
                 }))
             })
             .catch(error => {
+                /**
+                 * 只要有一个分片上传失败即失败，阻止其余的分片继续上传
+                 * 若是不想使用 controller 取消上传，或者需要做 重试请求并且进度不回退
+                 * 提供一种想法，使用 Ref 去存储所有的进度，保证进度大于 Ref 的值，再修改。即可保证进度不回退
+                 * * 开发中若不想麻烦，直接将 并发任务上传 的请求重试次数设置成 0 即可 *
+                 */
+                controllerList.current[controllerLength + index]?.abort()
                 console.error(error)
                 setFileList((prevList) => (prevList || []).map(item => {
                     if (item.key === uploadFile.key) {

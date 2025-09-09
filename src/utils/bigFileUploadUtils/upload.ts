@@ -3,7 +3,7 @@ import {
     multiThreadCreateFileChunks,
     singleThreadCreateFileChunks,
     mergeFileChunks,
-} from './'
+} from './index'
 import { runTasksWithLimitFailFast } from '@/utils/functionUtils/runTasksWithLimit'
 import { xhrRequest } from './xhrRequest'
 import type { FileChunk } from './createChunk.d'
@@ -13,20 +13,22 @@ interface RequestOptions {
     signal?: AbortSignal;      // 上传取消信号
     onProgress?: (percent: number, loaded: number, total: number, fileChunk: FileChunk) => void;   // 单个上传进度回调
     onSuccess?: (response: any) => void;    // 单个分片上传成功回调，可设置上传进度
-    onError?: (error: any) => void;         // 单个分片上传失败回调，可以设置单个上传失败
+    onError?: (error: any, fileChunk: FileChunk) => void;         // 单个分片上传失败回调，可以设置单个上传失败
 }
 
 /**
  * @description 并发上传所有文件分片
  * @param { string } uploadUrl 上传地址
  * @param { FileChunk[] } fileChunks 齐全的文件分片的数组
- * @param { number } limit 上传并发数，默认为 5，不建议上传并发数大于 6。任务失败重发次数默认为 3，需要修改请看代码
+ * @param { number } limit 上传并发数，默认为 5，不建议上传并发数大于 6。
+ * @param { number } maxRetries 任务失败重发次数，默认为 3
  * @returns { Promise<any[]> } 接口的 Promise.all() 结果
  */
 export const uploadFileChunks = <T = any>(
     fileChunks: FileChunk[],
     requestOptions: RequestOptions,
     limit = 5,
+    maxRetries = 3,
 ) => {
     if (limit > 6) {
         console.warn('不建议上传并发数大于 6')
@@ -35,7 +37,7 @@ export const uploadFileChunks = <T = any>(
         return () => uploadSingleChunk<T>(chunk, requestOptions)
     })
     // 并发上传
-    return runTasksWithLimitFailFast(uploadQueue, limit, 3)
+    return runTasksWithLimitFailFast(uploadQueue, limit, maxRetries)
 }
 
 /**
@@ -73,8 +75,7 @@ const uploadSingleChunk = <T = any>(fileChunk: FileChunk, requestOptions: Reques
         return response
     })
     .catch((error) => {
-        console.error(error)
-        onError?.(error)
+        onError?.(error, fileChunk)
         return Promise.reject(error)
     })
 
