@@ -2,7 +2,7 @@
 
 ```tsx
 // 直接引入使用
-<MobilePicker></MobilePicker>
+<SinglePicker></SinglePicker>
 ```
 
 
@@ -11,7 +11,7 @@
 
 | 参数               | 说明                   | 类型                                         | 默认值      |
 | ------------------ | ---------------------- | -------------------------------------------- | ----------- |
-| `visible`          | 是否显示               | `boolean`                                    | -           |
+| `visible`          | 是否显示               | `boolean`                                    | `true`      |
 | `columns`          | 配置列的选项           | `PickerColumn`                               | `[]`        |
 | `defaultIndex`     | 默认选中项             | `number`                                     | `0`         |
 | `title`            | 标题                   | `string`                                     | `''`        |
@@ -26,18 +26,21 @@
 `PickerColumn`
 
 ```typescript
-type PickerColumn = (
-    string | { label: string | number; value: string | number }
-)[]
+interface PickerOption {
+    label: string | number;
+    value: string | number;
+}
+
+type PickerColumn = (string | number | PickerOption)[]
 ```
 
 `PickerConfirmEventParams`
 
 ```typescript
-type PickerConfirmEventParams = {
-    selectIndex: number,
-    selectOption: PickerColumn[number],
-    selectValue: string | number
+type PickerConfirmEventParams<T extends string | number | PickerOption = PickerOption> = {
+    selectIndex: number;
+    selectOption: T extends number ? number : T extends string ? string : PickerOption;
+    selectValue: T extends number ? number : T extends string ? string : string | number;
 }
 ```
 

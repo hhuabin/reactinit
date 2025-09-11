@@ -1,4 +1,4 @@
-.picker-popup {
+.bin-picker-popup {
     --primary-color: #1989fa;
     --z-index: 999;
     --animation-duration: 0.3s;
@@ -7,7 +7,7 @@
 
     width: 100%;
 
-    .overlay {
+    .bin-overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -16,9 +16,9 @@
         background-color: rgba(0, 0, 0, .55);
         z-index: var(--z-index);
         opacity: 1;
-        animation: maskIn var(--animation-duration);
+        animation: mask-in var(--animation-duration);
 
-        @keyframes maskIn {
+        @keyframes mask-in {
             from {
                 opacity: 0;
             }
@@ -27,11 +27,11 @@
             }
         }
     }
-    .overlay-hidden {
+    .bin-overlay-hidden {
         opacity: 0;
-        animation: maskOut var(--animation-duration);
+        animation: mask-out var(--animation-duration);
 
-        @keyframes maskOut {
+        @keyframes mask-out {
             from {
                 opacity: 1;
             }
@@ -41,7 +41,7 @@
         }
     }
 
-    .popup-body {
+    .bin-popup-body {
         position: fixed;
         left: 0;
         bottom: 0;
@@ -50,12 +50,12 @@
         border-top-right-radius: 8px;
         background-color: #fff;
         transform: translateY(0);
-        animation: fadeIn var(--animation-duration);
+        animation: fade-in var(--animation-duration);
         overflow: hidden;
         z-index: calc(var(--z-index) + 10);
         user-select: none;
 
-        @keyframes fadeIn {
+        @keyframes fade-in {
             from {
                 opacity: 0;
                 transform: translateY(100%);
@@ -66,7 +66,7 @@
             }
         }
 
-        .picker-header {
+        .bin-picker-header {
             position: relative;
             display: flex;
             justify-content: space-between;
@@ -77,8 +77,8 @@
             background-color: #fff;
             z-index: 10;
 
-            .picker-header-cancel-button,
-            .picker-header-confirm-button {
+            .bin-picker-header-cancel-button,
+            .bin-picker-header-confirm-button {
                 flex: none;
                 height: 100%;
                 background: transparent;
@@ -94,13 +94,13 @@
                     opacity: 0.7;
                 }
             }
-            .picker-header-cancel-button {
+            .bin-picker-header-cancel-button {
                 color: var(--cancel-button-color);
             }
-            .picker-header-confirm-button {
+            .bin-picker-header-confirm-button {
                 color: var(--confirm-button-color);
             }
-            .picker-header-title {
+            .bin-picker-header-title {
                 font-size: 16px;
                 color: #323233;
                 font-weight: 600;
@@ -111,47 +111,53 @@
             }
         }
 
-        .picker-body {
+        .bin-picker-body {
             position: relative;
             width: 100%;
             height: 264px;
 
-            .picker-column {
+            .bin-picker-columns {
+                display: flex;
                 width: 100%;
                 height: 100%;
-                font-size: 16px;
-                line-height: 24px;
-                overflow: hidden;
-                cursor: grab;
 
-                .picker-column-wrapper {
+                .bin-picker-column {
+                    width: 100%;
                     height: 100%;
-                    padding: 0;
-                    margin: 0;
-                    list-style: none;
-                    transform: translate3d(0px, 0px, 0px);
-
-                    .picker-column-item {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        height: 44px;
-                        padding: 0 4px;
-                        margin: 0;
-                        box-sizing: border-box;
-                        color: #323233;
-                        cursor: grab;
+                    font-size: 16px;
+                    line-height: 24px;
+                    overflow: hidden;
+                    cursor: grab;
     
-                        .line-ellipsis {
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
+                    .bin-picker-column-wrapper {
+                        min-height: 100%;
+                        padding: 0;
+                        margin: 0;
+                        list-style: none;
+                        transform: translate3d(0px, 0px, 0px);
+    
+                        .bin-picker-column-item {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 44px;
+                            padding: 0 4px;
+                            margin: 0;
+                            box-sizing: border-box;
+                            color: #323233;
+                            cursor: grab;
+        
+                            .bin-line-ellipsis {
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            }
                         }
                     }
                 }
             }
 
-            .picker-mask {
+            .bin-picker-mask {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -166,7 +172,7 @@
                 pointer-events: none;
             }
 
-            .picker-frame {
+            .bin-picker-frame {
                 position: absolute;
                 top: 50%;
                 left: 16px;
@@ -194,11 +200,11 @@
             }
         }
     }
-    .popup-hidden {
-        animation: fadeOut var(--animation-duration);
+    .bin-popup-hidden {
+        animation: fade-out var(--animation-duration);
         transform: translateY(100%);
 
-        @keyframes fadeOut {
+        @keyframes fade-out {
             from {
                 opacity: 1;
                 transform: translateY(0);
@@ -210,11 +216,11 @@
         }
     }
 }
-.picker-popup-hidden {
+.bin-picker-popup-hidden {
     display: none;
-    animation: pickerOut var(--animation-duration);
+    animation: picker-out var(--animation-duration);
 
-    @keyframes pickerOut {
+    @keyframes picker-out {
         from {
             display: block;
         }

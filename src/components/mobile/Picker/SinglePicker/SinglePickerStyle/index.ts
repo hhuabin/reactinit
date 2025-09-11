@@ -3,5 +3,5 @@
  * 为了组件逻辑清晰，不建议引用此文件
  * 建议使用者直接引用 MobilePicker.tsx 和 MobilePicker.d.ts
  */
-export { default } from './MobilePicker'
-export * from './MobilePicker.d'
+export { default } from './SinglePicker'
+export * from './SinglePicker.d'

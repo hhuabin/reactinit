@@ -17,8 +17,9 @@ const getEnv = () => {
 /**
  * @description 避免警告：在测试环境中（如 Jest）使用 useEffect 代替 useLayoutEffect
  * React 在测试环境中使用 useLayoutEffect 会发出警告，因为 jsdom 没有布局（layout）能力
+ * 在日常开发中，特别是 SSR 应用 / 组件库开发中，应该使用 useInternalLayoutEffect 替换 useLayoutEffect
  */
-const useInternalLayoutEffect = getEnv() !== 'test' ? useLayoutEffect : useEffect
+export const useInternalLayoutEffect = getEnv() !== 'test' ? useLayoutEffect : useEffect
 
 /**
  * @description 允许 callback 知道是否是首次挂载

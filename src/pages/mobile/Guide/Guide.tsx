@@ -23,7 +23,7 @@ const Guide: React.FC = () => {
                         <div className='flex-none min-w-40 mr-[5.5rem]'>Picker</div>
                         <div className='flex justify-between items-center w-full min-h-10 text-[var(--color-text)]'
                         >
-                            <div className='w-full h-full break-all'>单列选择</div>
+                            <div className='w-full h-full text-[#999] break-all'>Picker选择器</div>
                             <div className='flex-none w-8 h-8 ml-[0.75rem]'>
                                 <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
                                     <polyline points='35,20 65,50 35,80' fill='none' stroke='var(--color-fill)' strokeWidth='8' strokeLinecap='round'>

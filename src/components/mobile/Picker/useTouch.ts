@@ -1,10 +1,7 @@
-/**
- * @Author: bin
- * @Date: 2025-06-04 10:44:56
- * @LastEditors: bin
- * @LastEditTime: 2025-06-06 10:36:28
- */
 import { useRef } from 'react'
+
+// const INERTIAL_SLIDE_TIME = 300      // 建议惯性滚动判定时间，在该时间范围内为惯性滚动
+// const INERTIAL_SLIDE_DISTANCE = 15   // 建议惯性滚动判定距离
 
 const getDirection = (x: number, y: number) => {
     if (x > y) {
@@ -17,7 +14,8 @@ const getDirection = (x: number, y: number) => {
 }
 
 /**
- * 封装了手势相关的hooks
+ * @description 封装了手势相关的hooks
+ * 只是统计滑动距离，并不处理滑动时间
  */
 const useTouch = () => {
 
@@ -45,6 +43,7 @@ const useTouch = () => {
         isTap.current = true
     }
 
+    // onTouchStart 调用
     const start = (event: React.TouchEvent) => {
         reset()
         const touch = event.touches[0]
@@ -53,7 +52,8 @@ const useTouch = () => {
     }
 
     /**
-     * 计算滑动距离
+     * @description计算滑动距离
+     * onTouchMove 调用
      */
     const move = (event: React.TouchEvent) => {
         const touch = event.touches[0]
