@@ -73,6 +73,7 @@ const Header: React.FC = () => {
         message.open({
             type: messageType[randonNumber] as NoticeType,
             content: '死鬼！不要点我',
+            showCloseBtn: true,
         })
     }
 

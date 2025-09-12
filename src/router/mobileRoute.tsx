@@ -27,6 +27,17 @@ export const mobileRoute: RouteConfig[] = [
                 },
             },
             {
+                path: 'message',
+                lazy: async () => {
+                    const { default: Message } = await import('@/pages/mobile/Message/Message')
+                    return { Component: Message }
+                },
+                meta: {
+                    auth: false,
+                    title: 'message',
+                },
+            },
+            {
                 path: 'picker',
                 lazy: async () => {
                     const { default: Picker } = await import('@/pages/mobile/Picker/Picker')

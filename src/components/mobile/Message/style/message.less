@@ -1,0 +1,124 @@
+.bin-message {
+    --bg-color: #fff;
+    --color-text: rgba(0, 0, 0, 0.88);
+    --content-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+
+    // dark mode
+    // --bg-color: #1f1f1f;
+    // --color-text: rgba(255, 255, 255, 0.85);
+    // --content-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 255, 255, 0.08);
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    pointer-events: none;
+
+    .bin-message-notice-wrapper {
+        width: 100%;
+        padding: 8px;
+        text-align: center;
+        animation: message-move-in 300ms;
+
+        @keyframes message-move-in {
+            from {
+                padding: 0;
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                padding: 8px;
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .bin-message-notice {
+            box-sizing: border-box;
+
+            .bin-message-notice-content {
+                display: inline-block;
+                padding: 9px 12px;
+                border-radius: 8px;
+                box-sizing: border-box;
+                background: var(--bg-color);
+                box-shadow: var(--content-shadow);
+                pointer-events: all;
+
+                .bin-message-custom-content {
+                    display: flex;
+                    align-items: center;
+                    font-size: 14px;
+                    line-height: 22px;
+                    color: var(--color-text);
+
+                    .bin-message-icon {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 16px;
+                        height: 16px;
+                        margin-right: 8px;
+                        color: #fff;
+
+                        .bin-svg-rotate-spinner {
+                            transform-origin: 50% 50%;
+                            animation: spin 1s linear infinite;
+
+                            @keyframes spin {
+                                to {
+                                    transform: rotate(360deg);
+                                }
+                            }
+                        }
+                    }
+                    .bin-message-content {
+                        color: var(--color-text);
+                    }
+                    .bin-message-close {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: calc(1em + 8px);
+                        height: calc(1em + 8px);
+                        padding: 4px;
+                        margin-left: 4px;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+
+    .bin-message-notice-wrapper-leave {
+        overflow: hidden;
+        animation: message-move-out 300ms forwards;
+
+        @keyframes message-move-out {
+            from {
+                display: block;
+                max-height: 56px;
+                padding: 8px;
+                opacity: 1;
+            }
+            to {
+                display: none;
+                max-height: 0;
+                padding: 0;
+                opacity: 0;
+            }
+        }
+    }
+}
+.bin-forbid-click {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    pointer-events: auto;
+}

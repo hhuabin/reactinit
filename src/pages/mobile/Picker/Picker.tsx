@@ -182,24 +182,24 @@ const PickerComponent: React.FC = () => {
                 <div className='flex w-full justify-center my-8'>
                     <button
                         type='button'
-                        className='px-4 border border-[var(--color-border)] rounded-md text-[16px] bg-[var(--bg-color)] select-none
-                            text-[var(--color-text)] leading-[24px] hover:border-[var(--color-primary-hover)] hover:text-[var(--color-primary-hover)]'
+                        className='px-[16px] border border-[var(--color-border)] rounded-md text-[16px] bg-[var(--bg-color)] select-none
+                            text-[var(--color-text)] leading-[32px] hover:border-[var(--color-primary-hover)] hover:text-[var(--color-primary-hover)]'
                         onClick={() => changePickerColumns1()}
                     >
                         <span>点击改变单列数据</span>
                     </button>
                     <button
                         type='button'
-                        className='px-4 border border-[var(--color-border)] rounded-md text-[16px] bg-[var(--bg-color)] select-none
-                            text-[var(--color-text)] leading-[24px] hover:border-[var(--color-primary-hover)] hover:text-[var(--color-primary-hover)]'
+                        className='px-[16px] border border-[var(--color-border)] rounded-md text-[16px] bg-[var(--bg-color)] select-none
+                            text-[var(--color-text)] leading-[32px] hover:border-[var(--color-primary-hover)] hover:text-[var(--color-primary-hover)]'
                         onClick={() => changePickerColumns2()}
                     >
                         <span>点击改变多列数据</span>
                     </button>
                     <button
                         type='button'
-                        className='px-4 border border-[var(--color-border)] rounded-md text-[16px] bg-[var(--bg-color)] select-none
-                            text-[var(--color-text)] leading-[24px] hover:border-[var(--color-primary-hover)] hover:text-[var(--color-primary-hover)]'
+                        className='px-[16px] border border-[var(--color-border)] rounded-md text-[16px] bg-[var(--bg-color)] select-none
+                            text-[var(--color-text)] leading-[32px] hover:border-[var(--color-primary-hover)] hover:text-[var(--color-primary-hover)]'
                         onClick={() => changePickerColumns3()}
                     >
                         <span>点击改变级联数据</span>
