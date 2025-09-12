@@ -1,19 +1,25 @@
 /* eslint-disable max-lines */
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import useMergedState from '@/hooks/reactHooks/useMergedState'
-import { useInternalLayoutEffect } from '@/hooks/reactHooks/useLayoutUpdateEffect'
 import useTouch from './useTouch'
 import { isMultiColumn, clamp, getPickerColumnDepth } from './utils'
 import './Picker.less'
 
 import type { PickerOption, PickerColumn, PickerConfirmEventParams } from './Picker.d'
 
+type ColumnsFieldNames = {
+    label?: string;
+    value?: string;
+}
+
 type PickerProps = {
     visible?: boolean;                        // 是否显示
     columns?: PickerColumn | PickerColumn[];  // 配置列的选项
-    defaultIndex?: number[];                  // 默认选中项
+    defaultIndexs?: number[];                 // 默认选中项
+    columnsFieldNames?: ColumnsFieldNames;    // 自定义列字段名称
+    loading?: boolean;                        // 是否显示加载中
     title?: string;                           // 标题
     cancelText?: string;                      // 取消按钮的文字
     confirmText?: string;                     // 确定按钮的文字
@@ -46,7 +52,9 @@ const Picker: React.FC<PickerProps> = (props) => {
     const {
         visible,
         columns,
-        defaultIndex = [],
+        defaultIndexs = [],
+        columnsFieldNames = { label: 'label', value: 'value' },
+        loading = false,
         title = '',
         cancelText = '取消',
         confirmText = '确定',
@@ -70,6 +78,7 @@ const Picker: React.FC<PickerProps> = (props) => {
     const [isInertialScrollings, setIsInertialScrollings] = useState<boolean[]>([])   // 各列是否正在惯性滚动
 
     const wrapperElementRefs = useRef<(HTMLUListElement | null)[]>([])
+    const currentIndexs = useRef<number[]>([])             // 当前选中项，仅用于级联判断数据是否切换
     const lastIndexs = useRef<number[]>([])                // 缓存上一次的选中项
 
     const startOffsets = useRef<number[]>([])              // 滑动开始时的 transformY
@@ -79,7 +88,18 @@ const Picker: React.FC<PickerProps> = (props) => {
 
     const touch = useTouch()
 
-    useInternalLayoutEffect(() => {
+    // 寻找 children 最大深度
+    const columnDepth = useMemo(() => {
+        if (!Array.isArray(columns)) return 0
+
+        if (isMultiColumn(columns as PickerColumn[])) {
+            return (columns as PickerColumn[]).length
+        } else {
+            return getPickerColumnDepth(columns as PickerColumn)
+        }
+    }, [columns])
+
+    useEffect(() => {
         // 处理传入的数组，将传入数组 columns 改为 currentColumns
         if (!Array.isArray(columns) || columns.length === 0) return
 
@@ -87,21 +107,20 @@ const Picker: React.FC<PickerProps> = (props) => {
             // 1. 多列
             currentMode.current = 'multicolumn'
             setCurrentColumns(columns as PickerColumn[])
-            initBaseData(columns.length)
+            initBaseData(columns as PickerColumn[])
         } else {
             // 2. 单列
             const newColumns: PickerColumn[] = [columns]
             currentMode.current = 'singlecolumn'
             // 3. 级联
             let columnIndex = 0
-            const columnDepth = getPickerColumnDepth(columns)   // 寻找 children 最大深度
-            let current: PickerOption = (columns as PickerColumn)[defaultIndex[columnIndex++] ?? 0] ?? columns[0]
-            if (current.children && !!current.children.length) currentMode.current = 'cascader'
+            let current: PickerOption | undefined = (columns as PickerColumn)[clamp(defaultIndexs[columnIndex++] ?? 0, 0, columns.length - 1)]
+            if (current?.children && !!current.children.length) currentMode.current = 'cascader'
 
             // 向下寻找 children
-            while (current.children && !!current.children.length) {
+            while (current?.children && !!current.children.length) {
                 newColumns.push(current.children)
-                current = current.children[defaultIndex[columnIndex++] ?? 0] ?? current.children[0]
+                current = current.children[clamp(defaultIndexs[columnIndex++] ?? 0, 0, current.children.length - 1)]
             }
             if (newColumns.length < columnDepth) {
                 // 小于最大深度，直接赋值空数组，保证 currentColumns 长度一致
@@ -109,7 +128,7 @@ const Picker: React.FC<PickerProps> = (props) => {
             }
 
             setCurrentColumns(newColumns)
-            initBaseData(columnDepth)
+            initBaseData(newColumns)
         }
     }, [columns])
 
@@ -118,11 +137,17 @@ const Picker: React.FC<PickerProps> = (props) => {
 
         // 初始化/重置每一列的惯性滚动状态为 false
         setIsInertialScrollings(new Array(currentColumns.length).fill(false))
-        // 恢复列选中位置为 lastIndexs 状态
+        // currentColumns.length 发生变化，即代表 columns 发生变化，初始化动画
+        lastIndexs.current = new Array(currentColumns.length).fill(0).map((_, i) => clamp(defaultIndexs[i] ?? 0, 0, Math.max(0, currentColumns[i].length - 1)))
+        currentIndexs.current = [...lastIndexs.current]
         for (let columnIndex = 0; columnIndex < currentColumns.length; columnIndex++) {
             updateColumnByIndex(columnIndex, lastIndexs.current[columnIndex] ?? 0, 0)
         }
-    }, [columns, currentColumns.length])   // 添加 currentColumns.length 依赖是因为初始化 columns 变化时，currentColumns 还是 []
+        /**
+         * 添加 currentColumns.length 依赖是因为初始化 columns 变化时，currentColumns 还是 []
+         * 当currentColumns 是 [] 时，DOM 还未未生成，无法更新动画
+         */
+    }, [currentColumns.length])
 
     useEffect(() => {
         // 初始化/重置每一列的惯性滚动状态为 false
@@ -131,18 +156,18 @@ const Picker: React.FC<PickerProps> = (props) => {
         for (let columnIndex = 0; columnIndex < currentColumns.length; columnIndex++) {
             updateColumnByIndex(columnIndex, lastIndexs.current[columnIndex] ?? 0, 0)
         }
+        currentIndexs.current = [...lastIndexs.current]
 
         // 恢复级联数据为 lastIndexs 状态，此处与处理传入的数组相似
         if (currentMode.current === 'cascader' && Array.isArray(columns)) {
             const newColumns: PickerColumn[] = [columns]
             let columnIndex = 0
             let current: PickerOption | undefined = (columns as PickerColumn)[lastIndexs.current[columnIndex++] ?? 0]
-            const columnDepth = getPickerColumnDepth(columns)   // 寻找 children 最大深度
 
             // 向下寻找 children
-            while (current.children && !!current.children.length) {
+            while (current?.children && !!current.children.length) {
                 newColumns.push(current.children)
-                current = current.children[lastIndexs.current[columnIndex++] ?? 0] ?? current.children[0]
+                current = current.children[clamp(lastIndexs.current[columnIndex++] ?? 0, 0, current.children.length - 1)]
             }
             if (newColumns.length < columnDepth) {
                 // 小于最大深度，直接赋值空数组，保证 currentColumns 长度一致
@@ -163,17 +188,32 @@ const Picker: React.FC<PickerProps> = (props) => {
     }, [mergeVisible])
 
     // 根据 columnCount 列数，初始化每一列的数据
-    const initBaseData = (columnCount: number = 1) => {
-        columnCount = Math.max(1, columnCount)
+    const initBaseData = (newColumns: PickerColumn[]) => {
+        const columnCount = Math.max(1, newColumns.length)
         // 初始化数据
-        setTransformYs(new Array(columnCount).fill(0))
+        const _transformYs = new Array(columnCount).fill(0) // 初始值为 0
         setIsInertialScrollings(new Array(columnCount).fill(false))
-        lastIndexs.current = new Array(columnCount).fill(0).map((_, i) => defaultIndex[i] ?? 0)
+        // lastIndexs 不能超过数组边界
+        lastIndexs.current = new Array(columnCount).fill(0).map((_, i) => clamp(defaultIndexs[i] ?? 0, 0, Math.max(0, newColumns[i].length - 1)))
+        currentIndexs.current = [...lastIndexs.current]
 
         startOffsets.current = new Array(columnCount).fill(0)
         movings.current = new Array(columnCount).fill(false)
         inertialStartTimes.current = new Array(columnCount).fill(0)
         inertialOffsets.current = new Array(columnCount).fill(0)
+
+        if (newColumns.length === currentColumns.length) {
+            for (let columnIndex = 0; columnIndex < newColumns.length; columnIndex++) {
+                // 先更新动画到指定位置，等待 currentColumns 更新即可直接填充数据，因为 newColumns 数据是为止的，不能使用 updateColumnByIndex
+                // updateColumnByIndex(columnIndex, lastIndexs.current[columnIndex] ?? 0, 0)
+                const offset = baseOffset - lastIndexs.current[columnIndex] * COLUMN_HEIGHT
+                // 给 transformYs 赋值上 offset
+                _transformYs[columnIndex] = offset
+                updateAnimate(columnIndex, offset, 0)
+            }
+        }
+        // 更新动画后再赋值 _transformYs，因为 updateAnimate 中可能不更新 transformYs
+        setTransformYs(_transformYs)
     }
 
     /**
@@ -186,7 +226,7 @@ const Picker: React.FC<PickerProps> = (props) => {
         // 根据当前偏移距离，计算索引，但是索引可能会超出边界，所以需要处理一下
         const notTrustedIndex = Math.round((-offset + baseOffset) / COLUMN_HEIGHT)
         // 计算正常范围内的索引
-        const trustedIndex = clamp(notTrustedIndex, 0, currentColumns[columnIndex].length - 1)
+        const trustedIndex = clamp(notTrustedIndex, 0, Math.max(0, currentColumns[columnIndex].length - 1))
         return trustedIndex
     }
     /**
@@ -210,7 +250,7 @@ const Picker: React.FC<PickerProps> = (props) => {
      */
     const updateColumnByIndex = (columnIndex: number, index: number, duration: number) => {
         if (!currentColumns[columnIndex]) return
-        const offset = baseOffset - clamp(index, 0, currentColumns[columnIndex].length - 1) * COLUMN_HEIGHT
+        const offset = baseOffset - clamp(index, 0, Math.max(0, currentColumns[columnIndex].length - 1)) * COLUMN_HEIGHT
         /**
          * 这个位置可以增加 onChange 事件，由于用的少，此处不写
          * props.onChange?.()
@@ -219,14 +259,19 @@ const Picker: React.FC<PickerProps> = (props) => {
     }
 
     /**
-     * @description 改变级联数据
+     * @description 改变子级的级联数据
      * 点击（onClickOption）、滑动（onTouchEnd）、惯性滚动（inertialScrolling），均需调用
      * @param columnIndex 列下标
      * @param index 列项
      * @param duration 动画时间
      */
     const updateCascaderColumns = (columnIndex: number, index: number, duration: number) => {
+        // 下标没有变动，则不处理
+        if (index === currentIndexs.current[columnIndex]) return
+        currentIndexs.current[columnIndex] = index
+
         if (currentMode.current !== 'cascader') return
+
         setCurrentColumns(prevColumns => {
             const newColumns = [...prevColumns]
             let i = columnIndex + 1
@@ -234,7 +279,7 @@ const Picker: React.FC<PickerProps> = (props) => {
 
             while (current?.children && current.children.length) {
                 // 更新后续级联列为第一项
-                updateAnimate(i, baseOffset, duration)
+                updateColumnByIndex(i, 0, duration)
                 newColumns[i++] = current.children
                 current = current.children[0]
             }
@@ -384,8 +429,8 @@ const Picker: React.FC<PickerProps> = (props) => {
 
     const onConfirm = () => {
         const selectedIndexs = getCurrentIndexsByTransformYs()
-        const selectedOptions = currentColumns.map((options, index) => options[selectedIndexs[index]] || { label: '', value: '' })
-        const selectedValues = selectedOptions.map(option => option?.label || '')
+        const selectedOptions = currentColumns.map((options, index) => options[selectedIndexs[index]] || { [columnsFieldNames.label || 'label']: '', [columnsFieldNames.value || 'value']: '' })
+        const selectedValues = selectedOptions.map(option => option[columnsFieldNames.label || 'label'] || '')
         lastIndexs.current = selectedIndexs
 
         setMergeVisible(false)
@@ -447,7 +492,7 @@ const Picker: React.FC<PickerProps> = (props) => {
                                                 style={{ color: ((index == getCurrentIndexByColumnIndex(columnIndex) && !isInertialScrollings[columnIndex]) ? 'var(--primary-color)' : '') }}
                                             >
                                                 <div className='bin-line-ellipsis'>
-                                                    {item.label}
+                                                    {item[columnsFieldNames.label || 'label']}
                                                 </div>
                                             </li>
                                         ))}
@@ -461,6 +506,25 @@ const Picker: React.FC<PickerProps> = (props) => {
                         ></div>
                         <div className='bin-picker-frame'></div>
                     </div>
+
+                    {loading && (
+                        <div className='bin-picker-loading'>
+                            <svg width='50px' height='50px' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+                                <circle cx='25' cy='50' r='6' fill={`${primaryColor}`}>
+                                    <animate attributeName='cx' values='25;50;25' dur='1s' repeatCount='indefinite' begin='0s' />
+                                    <animate attributeName='fill' values={`${primaryColor}bf;${primaryColor};${primaryColor}bf`} dur='1s' repeatCount='indefinite' begin='0s' />
+                                </circle>
+                                <circle cx='50' cy='50' r='6' fill={`${primaryColor}`}>
+                                    <animate attributeName='r' values='6;9;6' dur='1s' repeatCount='indefinite' begin='0s' />
+                                    <animate attributeName='fill' values={`${primaryColor}bf;${primaryColor};${primaryColor}bf`} dur='1s' repeatCount='indefinite' begin='0s' />
+                                </circle>
+                                <circle cx='75' cy='50' r='6' fill={`${primaryColor}`}>
+                                    <animate attributeName='cx' values='75;50;75' dur='1s' repeatCount='indefinite' begin='0s' />
+                                    <animate attributeName='fill' values={`${primaryColor}bf;${primaryColor};${primaryColor}bf`} dur='1s' repeatCount='indefinite' begin='0s' />
+                                </circle>
+                            </svg>
+                        </div>
+                    )}
                 </div>
             </div>
         </>,

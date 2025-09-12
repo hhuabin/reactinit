@@ -1,3 +1,21 @@
+# 功能说明
+
+### 单列选择器 / 多列选择器 / 级联选择器
+
+1. 点击、滑动、惯性滑动等基础功能
+2. 受控 / 非受控
+3. `loading`功能
+4. 只有点击确定才会更改选中项目，不确定均是临时选中项
+5. `columns`切换，选中项默认重置到`defaultIndexs`
+
+
+
+### 级联选择器独有功能
+
+1. 滑动父级，子级选中项全部默认重置为 `0`
+
+
+
 # 使用说明
 
 ```tsx
@@ -9,19 +27,21 @@
 
 ## 参数
 
-| 参数               | 说明                   | 类型                                         | 默认值      |
-| ------------------ | ---------------------- | -------------------------------------------- | ----------- |
-| `visible`          | 是否显示               | `boolean`                                    | `true`      |
-| `columns`          | 配置列的选项           | `PickerColumn[]`                             | `[]`        |
-| `defaultIndex`     | 默认选中项             | `number[]`                                   | `[]`        |
-| `title`            | 标题                   | `string`                                     | `''`        |
-| `cancelText`       | 取消按钮的文字         | `string`                                     | `'取消'`    |
-| `confirmText`      | 确定按钮的文字         | `string`                                     | `'确定'`    |
-| `primaryColor`     | 主题色                 | `string`                                     | `'#1989fa'` |
-| `visibleOptionNum` | 可见的选项个数         | `number`                                     | `6`         |
-| `onChangeVisible`  | 显示状态改变时触发函数 | `(value: boolean) => void`                   | -           |
-| `onConfirm`        | 确认时触发函数         | `(params: PickerConfirmEventParams) => void` | -           |
-| `onCancel`         | 取消时触发函数         | `() => void`                                 | -           |
+| 参数                | 说明                   | 类型                                         | 默认值                               |
+| ------------------- | ---------------------- | -------------------------------------------- | ------------------------------------ |
+| `visible`           | 是否显示               | `boolean`                                    | `true`                               |
+| `columns`           | 配置列的选项           | `PickerColumn[]`                             | `[]`                                 |
+| `defaultIndexs`     | 默认选中项             | `number[]`                                   | `[]`                                 |
+| `columnsFieldNames` | 自定义列字段名称       | `{ label?: string, value?: string }`         | `{ label: 'label', value: 'value' }` |
+| `loading`           | 是否显示加载中         | `boolean`                                    | `false`                              |
+| `title`             | 标题                   | `string`                                     | `''`                                 |
+| `cancelText`        | 取消按钮的文字         | `string`                                     | `'取消'`                             |
+| `confirmText`       | 确定按钮的文字         | `string`                                     | `'确定'`                             |
+| `primaryColor`      | 主题色                 | `string`                                     | `'#1989fa'`                          |
+| `visibleOptionNum`  | 可见的选项个数         | `number`                                     | `6`                                  |
+| `onChangeVisible`   | 显示状态改变时触发函数 | `(value: boolean) => void`                   | -                                    |
+| `onConfirm`         | 确认时触发函数         | `(params: PickerConfirmEventParams) => void` | -                                    |
+| `onCancel`          | 取消时触发函数         | `() => void`                                 | -                                    |
 
 `PickerColumn`
 
@@ -134,123 +154,123 @@ const pickerColumns2: PickerColumn[] = [
 ## 级联选择
 
 ```tsx
-const pickerColumns3: PickerColumn = [
+const pickerColumns31: PickerColumn = [
     {
-        label: '广东',
+        cityName: '广东',
         value: 'guangdong',
         children: [
             {
-                label: '广州',
+                cityName: '广州',
                 value: 'guangzhou',
                 children: [
-                    { label: '越秀', value: 'yuexiu' },
-                    { label: '海珠', value: 'haizhu' },
-                    { label: '荔湾', value: 'liwan' },
-                    { label: '天河', value: 'tianhe' },
-                    { label: '番禺', value: 'panyu' },
-                    { label: '花都', value: 'huadu' },
-                    { label: '南沙', value: 'nansha' },
-                    { label: '增城', value: 'zengcheng' },
-                    { label: '从化', value: 'conghua' },
+                    { cityName: '越秀', value: 'yuexiu' },
+                    { cityName: '海珠', value: 'haizhu' },
+                    { cityName: '荔湾', value: 'liwan' },
+                    { cityName: '天河', value: 'tianhe' },
+                    { cityName: '番禺', value: 'panyu' },
+                    { cityName: '花都', value: 'huadu' },
+                    { cityName: '南沙', value: 'nansha' },
+                    { cityName: '增城', value: 'zengcheng' },
+                    { cityName: '从化', value: 'conghua' },
                 ],
             },
             {
-                label: '深圳',
+                cityName: '深圳',
                 value: 'shenzhen',
                 children: [
-                    { label: '福田', value: 'futian' },
-                    { label: '南山', value: 'nanshan' },
-                    { label: '罗湖', value: 'luohu' },
-                    { label: '宝安', value: 'baoan' },
-                    { label: '龙岗', value: 'longgang' },
-                    { label: '龙华', value: 'longhua' },
+                    { cityName: '福田', value: 'futian' },
+                    { cityName: '南山', value: 'nanshan' },
+                    { cityName: '罗湖', value: 'luohu' },
+                    { cityName: '宝安', value: 'baoan' },
+                    { cityName: '龙岗', value: 'longgang' },
+                    { cityName: '龙华', value: 'longhua' },
                 ],
             },
             {
-                label: '茂名',
+                cityName: '茂名',
                 value: 'maoming',
                 children: [
-                    { label: '茂南', value: 'maonan' },
-                    { label: '电白', value: 'dianbai' },
-                    { label: '茂港', value: 'maogang' },
-                    { label: '高州', value: 'gaozhou' },
-                    { label: '化州', value: 'huazhou' },
-                    { label: '信宜', value: 'xinyi' },
+                    { cityName: '茂南', value: 'maonan' },
+                    { cityName: '电白', value: 'dianbai' },
+                    { cityName: '茂港', value: 'maogang' },
+                    { cityName: '高州', value: 'gaozhou' },
+                    { cityName: '化州', value: 'huazhou' },
+                    { cityName: '信宜', value: 'xinyi' },
                 ],
             },
             {
-                label: '惠州',
+                cityName: '惠州',
                 value: 'huizhou',
                 children: [
-                    { label: '惠城', value: 'huicheng' },
-                    { label: '惠阳', value: 'huiyang' },
-                    { label: '博罗', value: 'boluo' },
-                    { label: '惠东', value: 'huidong' },
-                    { label: '龙门', value: 'longmen' },
+                    { cityName: '惠城', value: 'huicheng' },
+                    { cityName: '惠阳', value: 'huiyang' },
+                    { cityName: '博罗', value: 'boluo' },
+                    { cityName: '惠东', value: 'huidong' },
+                    { cityName: '龙门', value: 'longmen' },
                 ],
             },
         ],
     },
     {
-        label: '北京',
+        cityName: '北京',
         value: 'beijing',
         children: [
-            { label: '东城', value: 'dongcheng' },
-            { label: '西城', value: 'xicheng' },
-            { label: '朝阳', value: 'chaoyang' },
-            { label: '丰台', value: 'fengtai' },
-            { label: '石景山', value: 'shijingshan' },
-            { label: '海淀', value: 'haidian' },
+            { cityName: '东城', value: 'dongcheng' },
+            { cityName: '西城', value: 'xicheng' },
+            { cityName: '朝阳', value: 'chaoyang' },
+            { cityName: '丰台', value: 'fengtai' },
+            { cityName: '石景山', value: 'shijingshan' },
+            { cityName: '海淀', value: 'haidian' },
         ],
     },
     {
-        label: '上海',
+        cityName: '上海',
         value: 'shanghai',
         children: [
-            { label: '黄浦', value: 'huangpu' },
-            { label: '徐汇', value: 'xuhui' },
-            { label: '长宁', value: 'changning' },
-            { label: '静安', value: 'jingan' },
-            { label: '普陀', value: 'putuo' },
-            { label: '闸北', value: 'zhabei' },
+            { cityName: '黄浦', value: 'huangpu' },
+            { cityName: '徐汇', value: 'xuhui' },
+            { cityName: '长宁', value: 'changning' },
+            { cityName: '静安', value: 'jingan' },
+            { cityName: '普陀', value: 'putuo' },
+            { cityName: '闸北', value: 'zhabei' },
         ],
     },
     {
-        label: '浙江',
+        cityName: '浙江',
         value: 'zhejiang',
         children: [
             {
-                label: '杭州',
+                cityName: '杭州',
                 value: 'hangzhou',
                 children: [
-                    { label: '上城', value: 'shangcheng' },
-                    { label: '下城', value: 'xiacheng' },
-                    { label: '拱墅', value: 'gongshu' },
-                    { label: '西湖', value: 'xihu' },
-                    { label: '滨江', value: 'binjiang' },
-                    { label: '萧山', value: 'xiaoshan' },
+                    { cityName: '上城', value: 'shangcheng' },
+                    { cityName: '下城', value: 'xiacheng' },
+                    { cityName: '拱墅', value: 'gongshu' },
+                    { cityName: '西湖', value: 'xihu' },
+                    { cityName: '滨江', value: 'binjiang' },
+                    { cityName: '萧山', value: 'xiaoshan' },
                 ],
             },
             {
-                label: '宁波',
+                cityName: '宁波',
                 value: 'ningbo',
                 children: [
-                    { label: '海曙', value: 'haishu' },
-                    { label: '江北', value: 'jiangbei' },
-                    { label: '北仑', value: 'beilun' },
-                    { label: '镇海', value: 'zhenhai' },
-                    { label: '鄞州', value: 'yinzhou' },
+                    { cityName: '海曙', value: 'haishu' },
+                    { cityName: '江北', value: 'jiangbei' },
+                    { cityName: '北仑', value: 'beilun' },
+                    { cityName: '镇海', value: 'zhenhai' },
+                    { cityName: '鄞州', value: 'yinzhou' },
                 ],
             },
             {
-                label: '温州',
+                cityName: '温州',
                 value: 'wenzhou',
                 children: [
-                    { label: '鹿城', value: 'lucheng' },
-                    { label: '龙湾', value: 'longwan' },
-                    { label: '瓯海', value: 'ouhai' },
-                    { label: '洞头', value: 'dongtou' },
-                    { label: '永嘉', value: 'yongjia' },
+                    { cityName: '鹿城', value: 'lucheng' },
+                    { cityName: '龙湾', value: 'longwan' },
+                    { cityName: '瓯海', value: 'ouhai' },
+                    { cityName: '洞头', value: 'dongtou' },
+                    { cityName: '永嘉', value: 'yongjia' },
                 ],
             },
         ],
@@ -262,6 +282,7 @@ const pickerColumns3: PickerColumn = [
     onChangeVisible={(value) => setPickerVisible(value)}
     defaultIndex={[1, 2, 3]}
     columns={pickerColumns3}
+    columnsFieldNames={{ label: 'cityName' }}
     onConfirm={handleConfirmPicker}
     onCancel={() => setPickerVisible(false)}
 ></Picker>

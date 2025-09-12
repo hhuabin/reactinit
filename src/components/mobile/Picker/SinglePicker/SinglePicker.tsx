@@ -12,6 +12,7 @@ type PickerProps<T extends string | number | PickerOption = string | number | Pi
     visible?: boolean;                      // 是否显示
     columns?: T[];                          // 配置列的选项
     defaultIndex?: number;                  // 默认选中项
+    loading?: boolean;                        // 是否显示加载中
     title?: string;                         // 标题
     cancelText?: string;                    // 取消按钮的文字
     confirmText?: string;                   // 确定按钮的文字
@@ -45,14 +46,19 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
 
     const {
         visible,
-        columns = [],
+        columns,
         defaultIndex = 0,
+        loading = false,
         title = '',
         cancelText = '取消',
         confirmText = '确定',
         primaryColor = '#1989fa',
         visibleOptionNum = 6,
     } = props
+
+    const [mergeColumns, setMergeColumns] = useMergedState([], {
+        value: columns,
+    })
 
     const [mergeVisible, setMergeVisible] = useMergedState(true, {
         value: visible,
@@ -78,6 +84,12 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
     const touch = useTouch()
 
     useEffect(() => {
+        // columns 更新，重置选中项目为默认选中项
+        setIsInertialScrolling(false)
+        updateValueByIndex(+defaultIndex, 0)
+    }, [columns])
+
+    useEffect(() => {
         setIsInertialScrolling(false)
         updateValueByIndex(lastIndex.current, 0)
 
@@ -93,30 +105,30 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
     /**
      * @description 根据偏移量获取对应的索引
      * @param offset 当前偏移距离
-     * @returns columns 下标索引
+     * @returns mergeColumns 下标索引
      */
     const getIndexByOffset = (offset: number) => {
         // 根据当前偏移距离，计算索引，但是索引可能会超出边界，所以需要处理一下
         const notTrustedIndex = Math.round((-offset + baseOffset) / COLUMN_HEIGHT)
         // 计算正常范围内的索引
-        const trustedIndex = clamp(notTrustedIndex, 0, columns.length - 1)
+        const trustedIndex = clamp(notTrustedIndex, 0, mergeColumns.length - 1)
         return trustedIndex
     }
 
     /**
      * @description 获取当前滚动的索引
-     * @returns columns 下标索引
+     * @returns mergeColumns 下标索引
      */
     const getCurrentIndex = () => getIndexByOffset(transformY)
 
     /**
      *@description 让滚动定格在某一项
      * 根据索引更新偏移量，也是每个更新最后执行的函数
-     * @param index columns 索引
+     * @param index mergeColumns 索引
      * @param duration 动画时长
      */
     const updateValueByIndex = (columnsIndex: number, duration: number) => {
-        const offset = baseOffset - clamp(0, columnsIndex, columns.length - 1) * COLUMN_HEIGHT
+        const offset = baseOffset - clamp(columnsIndex, 0, mergeColumns.length - 1) * COLUMN_HEIGHT
         /**
          * 这个位置可以增加 onChange 事件，由于用的少，此处不写
          * props.onChange?.()
@@ -177,7 +189,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
         event.stopPropagation()     // 停止传播
         if (touch.isVertical()) moving.current = true
         // 计算可以滑动的最大距离和最小距离
-        const maxColumuHeight = columns.length * COLUMN_HEIGHT
+        const maxColumuHeight = mergeColumns.length * COLUMN_HEIGHT
         const newOffset = clamp(startOffset.current + touch.deltaY.current, -maxColumuHeight + baseOffset, baseOffset + COLUMN_HEIGHT)
         updateAnimate(newOffset, 0)
         const now = Date.now()
@@ -251,7 +263,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
     const onConfirm = () => {
         setMergeVisible(false)
         const selectIndex = getCurrentIndex()
-        const selectOption = columns[getCurrentIndex()]
+        const selectOption = mergeColumns[getCurrentIndex()]
         const selectValue = ['string', 'number'].includes(typeof selectOption)
             ? (selectOption as unknown as string | number) : (selectOption as PickerOption).label
         lastIndex.current = selectIndex
@@ -300,7 +312,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
                                 ref={wrapperElementRef}
                                 className={styles['picker-column-wrapper']}
                             >
-                                {columns.map((item, index) => (
+                                {mergeColumns.map((item, index) => (
                                     <li
                                         role='button'
                                         tabIndex={index}
@@ -322,6 +334,25 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
                         ></div>
                         <div className={styles['picker-frame']}></div>
                     </div>
+
+                    {loading && (
+                        <div className={styles['picker-loading']}>
+                            <svg width='50px' height='50px' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+                                <circle cx='25' cy='50' r='6' fill={`${primaryColor}`}>
+                                    <animate attributeName='cx' values='25;50;25' dur='1s' repeatCount='indefinite' begin='0s' />
+                                    <animate attributeName='fill' values={`${primaryColor}bf;${primaryColor};${primaryColor}bf`} dur='1s' repeatCount='indefinite' begin='0s' />
+                                </circle>
+                                <circle cx='50' cy='50' r='6' fill={`${primaryColor}`}>
+                                    <animate attributeName='r' values='6;9;6' dur='1s' repeatCount='indefinite' begin='0s' />
+                                    <animate attributeName='fill' values={`${primaryColor}bf;${primaryColor};${primaryColor}bf`} dur='1s' repeatCount='indefinite' begin='0s' />
+                                </circle>
+                                <circle cx='75' cy='50' r='6' fill={`${primaryColor}`}>
+                                    <animate attributeName='cx' values='75;50;75' dur='1s' repeatCount='indefinite' begin='0s' />
+                                    <animate attributeName='fill' values={`${primaryColor}bf;${primaryColor};${primaryColor}bf`} dur='1s' repeatCount='indefinite' begin='0s' />
+                                </circle>
+                            </svg>
+                        </div>
+                    )}
                 </div>
             </div>
         </>,

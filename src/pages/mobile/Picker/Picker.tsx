@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { SinglePicker } from '@/components/mobile/Picker'
 import Picker from '@/components/mobile/Picker'
@@ -76,6 +76,12 @@ const PickerComponent: React.FC = () => {
     const changePickerColumns3 = () => {
         setPickerColumns3(pickerColumns32)
     }
+
+    useEffect(() => {
+        setTimeout(() => {
+            changePickerColumns3()
+        }, 3000)
+    }, [])
 
     return (
         <>
@@ -203,6 +209,7 @@ const PickerComponent: React.FC = () => {
             <SinglePicker
                 visible={singlePickerVisible}
                 defaultIndex={2}
+                loading={true}
                 onChangeVisible={(value) => setSinglePickerVisible(value)}
                 columns={singlePickerColumns2}
                 onConfirm={handleConfirmSinglePicker}
@@ -212,7 +219,7 @@ const PickerComponent: React.FC = () => {
             <Picker
                 visible={pickerVisible1}
                 onChangeVisible={(value) => setPickerVisible1(value)}
-                defaultIndex={[2]}
+                defaultIndexs={[2]}
                 columns={pickerColumns1}
                 onConfirm={handleConfirmPicker1}
                 onCancel={() => setPickerVisible1(false)}
@@ -221,7 +228,7 @@ const PickerComponent: React.FC = () => {
             <Picker
                 visible={pickerVisible2}
                 onChangeVisible={(value) => setPickerVisible2(value)}
-                defaultIndex={[1, 2]}
+                defaultIndexs={[1, 2]}
                 columns={pickerColumns2}
                 onConfirm={handleConfirmPicker2}
                 onCancel={() => setPickerVisible2(false)}
@@ -230,8 +237,9 @@ const PickerComponent: React.FC = () => {
             <Picker
                 visible={pickerVisible3}
                 onChangeVisible={(value) => setPickerVisible3(value)}
-                defaultIndex={[1, 2, 3]}
+                defaultIndexs={[10, 10, 10]}
                 columns={pickerColumns3}
+                columnsFieldNames={{ label: 'cityName' }}
                 onConfirm={handleConfirmPicker3}
                 onCancel={() => setPickerVisible3(false)}
             ></Picker>

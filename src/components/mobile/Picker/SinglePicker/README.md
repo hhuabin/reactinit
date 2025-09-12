@@ -14,6 +14,7 @@
 | `visible`          | 是否显示               | `boolean`                                    | `true`      |
 | `columns`          | 配置列的选项           | `PickerColumn`                               | `[]`        |
 | `defaultIndex`     | 默认选中项             | `number`                                     | `0`         |
+| `loading`          | 是否显示加载中         | `boolean`                                    | `false`     |
 | `title`            | 标题                   | `string`                                     | `''`        |
 | `cancelText`       | 取消按钮的文字         | `string`                                     | `'取消'`    |
 | `confirmText`      | 确定按钮的文字         | `string`                                     | `'确定'`    |
