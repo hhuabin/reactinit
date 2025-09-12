@@ -57,7 +57,7 @@ const setMessageGlobalConfig = (config: ConfigOptions) => {
  * 并将其包括在全局组件 <ConfigProvider> 中
  */
 // eslint-disable-next-line react-refresh/only-export-components
-const GlobalHolderWrapper = forwardRef((props: unknown, ref: ForwardedRef<GlobalHolderRef>) => {
+const GlobalHolderWrapper = forwardRef(function MessageWrapper(props: unknown, ref: ForwardedRef<GlobalHolderRef>) {
     // useState(getGlobalContext) 惰性初始化
     // React 检测到你传的是一个函数，而不是一个普通值，它会在初始化时执行这个函数一次，把返回值当作初始值
     const [messageConfig, setMessageConfig] = useState<ConfigOptions>(getGlobalContext)

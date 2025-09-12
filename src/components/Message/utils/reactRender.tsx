@@ -1,3 +1,4 @@
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import type { Root } from 'react-dom/client'
 
@@ -23,7 +24,8 @@ export type RenderType = (
 export const render = (node: React.ReactElement, container: ContainerType) => {
     const root = container[MARK] || createRoot(container)
 
-    root.render(node)
+    root.render(<StrictMode>{node}</StrictMode>)
+    // root.render(node)
 
     container[MARK] = root
 }

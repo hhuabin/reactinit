@@ -50,7 +50,7 @@ const mergeConfig = <T extends object>(...objList: Partial<T>[]): T => {
  * 3. 消息列表 configList 将会被 <NoticeList /> 监控
  */
 // eslint-disable-next-line react-refresh/only-export-components
-const Notifications = forwardRef((props: ConfigOptions, ref: ForwardedRef<NotificationsRef>) => {
+const Notifications = forwardRef(function Notifications(props: ConfigOptions, ref: ForwardedRef<NotificationsRef>) {
 
     const {
         getContainer = () => document.body,

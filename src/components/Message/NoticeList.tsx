@@ -61,7 +61,7 @@ const Notice: React.FC<NoticeProps> = (props) => {
 
     // 动画执行完毕，删除该元素
     const onAnimationEnd = (event: React.AnimationEvent<HTMLDivElement>) => {
-        if (event.animationName === 'bin-message-move-out') {
+        if (event.animationName === 'message-move-out') {
             props.onNoticeDelete?.(notice.key)
         }
     }
