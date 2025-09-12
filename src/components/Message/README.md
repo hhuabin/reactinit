@@ -38,6 +38,35 @@
 
 # 使用
 
+## 全局方法
+
+还提供了全局配置和全局销毁方法：
+
+- `message.config(options)`
+- `message.destroy()`
+
+```typescript
+message.config({
+    duration: 3000,
+    getContainer: () => messageRef.current,
+})
+```
+
+| 参数           | 说明                                     | 类型                | 默认值                |
+| :------------- | :--------------------------------------- | :------------------ | :-------------------- |
+| `duration`     | 默认自动关闭延时，单位秒                 | `number`            | 3000                  |
+| `getContainer` | 配置渲染节点的输出位置，但依旧为全屏展示 | `() => HTMLElement` | `() => document.body` |
+
+```typescript
+interface ConfigOptions {
+    duration?: number;                       // 默认自动关闭延时，单位秒，默认值 3
+    prefixCls?: string;                      // 消息节点的 className 前缀
+    getContainer?: () => HTMLElement;        // 配置渲染节点的输出位置，默认为 () => document.body
+}
+```
+
+
+
 ## API
 
 组件提供了一些静态方法，使用方式和参数如下：
@@ -54,6 +83,18 @@ message.info(
     0,
     () => { console.log('关闭') },
 )
+```
+
+```typescript
+type TypeOpen = {
+    /**
+     * @param { number } duration 消息通知持续显示的时间
+     * @param { VoidFunction } onClose 消息通知关闭时进行调用的回调函数
+     */
+    (content: JointContent): MessageType;
+    (content: JointContent, onClose: VoidFunction): MessageType;
+    (content: JointContent, duration: number, onClose?: VoidFunction): MessageType;
+}
 ```
 
 | 参数       | 说明                                        | 类型                 | 默认值 |
@@ -82,13 +123,26 @@ message.info({
 
 `config` 对象属性如下：
 
-| 参数       | 说明                                                         | 类型              | 默认值 |
-| :--------- | :----------------------------------------------------------- | :---------------- | :----- |
-| `content`  | 提示内容                                                     | `ReactNode`       | -      |
-| `duration` | 自动关闭的延时，单位秒。设为 0 时不自动关闭<br />（config的duration优先级更高） | `number`          | 3000   |
-| `icon`     | 自定义图标                                                   | `ReactNode`       | -      |
-| `key`      | 当前提示的唯一标志                                           | `string | number` | -      |
-| `onClose`  | 关闭时触发的回调函数                                         | `function`        | -      |
+| 参数           | 说明                                                         | 类型              | 默认值  |
+| :------------- | :----------------------------------------------------------- | :---------------- | :------ |
+| `content`      | 提示内容                                                     | `ReactNode`       | -       |
+| `duration`     | 自动关闭的延时，单位毫秒。设为 0 时不自动关闭<br />（config的duration优先级更高） | `number`          | `3000`  |
+| `icon`         | 自定义图标                                                   | `ReactNode`       | -       |
+| `key`          | 当前提示的唯一标志                                           | `string | number` | -       |
+| `showCloseBtn` | 是否展示关闭按钮                                             | `boolean`         | `false` |
+| `onClose`      | 关闭时触发的回调函数                                         | `function`        | -       |
+
+```typescript
+interface ArgsProps {
+    content: React.ReactNode;             // 消息内容
+    duration?: number;                    // 自动关闭的延时，单位秒。设为 0 时不自动关闭，默认值 3
+    type?: NoticeType;                    // 消息类型
+    icon?: React.ReactNode;               // 自定义图标
+    key?: React.Key;                      // 当前提示的唯一标志
+    showCloseBtn?: boolean;               // 是否展示关闭按钮
+    onClose?: () => void;                 // 消息通知关闭时进行调用的回调函数
+}
+```
 
 
 
@@ -125,28 +179,7 @@ closeFn()     // 手动关闭函数
 
 
 
-## 全局方法
-
-还提供了全局配置和全局销毁方法：
-
-- `message.config(options)`
-- `message.destroy()`
-
-```typescript
-message.config({
-    duration: 3000,
-    getContainer: () => messageRef.current,
-})
-```
-
-| 参数           | 说明                                     | 类型                | 默认值                |
-| :------------- | :--------------------------------------- | :------------------ | :-------------------- |
-| `duration`     | 默认自动关闭延时，单位秒                 | `number`            | 3000                  |
-| `getContainer` | 配置渲染节点的输出位置，但依旧为全屏展示 | `() => HTMLElement` | `() => document.body` |
-
-
-
-## 实例化
+## 实例化 Hooks
 
 ```typescript
 const Message = () => {

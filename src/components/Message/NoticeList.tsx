@@ -74,18 +74,25 @@ const Notice: React.FC<NoticeProps> = (props) => {
             <div className='bin-message-notice'>
                 <div className='bin-message-notice-content'>
                     <div className='bin-message-custom-content'>
-                        {
-                            notice.icon
-                                ? notice.icon
-                                : (
-                                    notice.type && (
-                                        <span className='bin-message-icon'>
-                                            { renderIcon(notice.type) }
-                                        </span>
-                                    )
+                        { notice.icon
+                            ? notice.icon
+                            : (
+                                notice.type && (
+                                    <span className='bin-message-icon'>
+                                        { renderIcon(notice.type) }
+                                    </span>
                                 )
+                            )
                         }
                         <span className='bin-message-content'>{notice.content}</span>
+                        { notice.showCloseBtn && (
+                            <span className='bin-message-close' onClick={() => props.onNoticeClose?.(notice.key)}>
+                                <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+                                    <line x1='25' y1='25' x2='75' y2='75' stroke='currentColor' strokeWidth='8' strokeLinecap='round' />
+                                    <line x1='75' y1='25' x2='25' y2='75' stroke='currentColor' strokeWidth='8' strokeLinecap='round' />
+                                </svg>
+                            </span>
+                        )}
                     </div>
                 </div>
             </div>
@@ -222,19 +229,23 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
     // 关闭某个通知，触发关闭动画，关闭动画结束会自动删除该通知
     const closeNotice = (key: React.Key) => {
         setNoticeList(noticeList => {
-            const clone = noticeList.map(item => {
-                if (item.key === key) {
-                    return { ...item, isClose: true }
-                }
-                return item
-            })
+            const index = noticeList.findIndex(item => item.key === key)
+            if (index === -1) return noticeList
+
+            const clone = [...noticeList]
+            clone[index] = { ...clone[index], isClose: true }
             return clone
         })
     }
 
     // 删除 noticeList 单个通知
     const deleteNotice = (key: React.Key) => {
-        setNoticeList(noticeList => noticeList.filter(item => item.key !== key))
+        setNoticeList(noticeList => {
+            const index = noticeList.findIndex(item => item.key === key)
+            if (index === -1) return noticeList
+
+            return noticeList.filter(item => item.key !== key)
+        })
     }
 
     if (!!noticeList.length) {
