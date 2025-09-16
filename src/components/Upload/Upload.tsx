@@ -13,7 +13,7 @@ import type { UploadFile, RequestOptions, UploaderBeforeRead, UploaderAfterRead,
 
 let uploadKeyIndex = 0
 
-type Props = {
+type UploadProps = {
     fileList?: UploadFile[];                    // 已上传的文件列表
     accept?: string;                            // 允许上传的文件类型，默认值 image/*
     maxCount?: number;                          // 文件上传数量限制，向前截断
@@ -35,7 +35,7 @@ export type UploadRef = {
     chooseFile: VoidFunction;
 }
 
-export default forwardRef(function Upload(props: Props, ref: ForwardedRef<UploadRef>) {
+export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<UploadRef>) {
     const {
         fileList,
         accept = 'image/*',
@@ -506,7 +506,7 @@ export default forwardRef(function Upload(props: Props, ref: ForwardedRef<Upload
                         onDragLeave: 拖拽离开
                         onDragOver: 拖拽悬停时 不断 触发，必须阻止默认行为才能让drop事件生效
                         onDrop: 放置时触发，必须阻止默认行为才能阻止文件打开
-                        */}
+                    */}
                 </div>
             )}
         </div>

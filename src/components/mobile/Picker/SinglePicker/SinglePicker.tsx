@@ -265,7 +265,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
         const selectIndex = getCurrentIndex()
         const selectOption = mergeColumns[getCurrentIndex()]
         const selectValue = ['string', 'number'].includes(typeof selectOption)
-            ? (selectOption as unknown as string | number) : (selectOption as PickerOption).label
+            ? (selectOption as unknown as string | number) : (selectOption as PickerOption).value
         lastIndex.current = selectIndex
         props.onConfirm?.({ selectIndex, selectOption, selectValue })
     }

@@ -430,7 +430,7 @@ const Picker: React.FC<PickerProps> = (props) => {
     const onConfirm = () => {
         const selectedIndexs = getCurrentIndexsByTransformYs()
         const selectedOptions = currentColumns.map((options, index) => options[selectedIndexs[index]] || { [columnsFieldNames.label || 'label']: '', [columnsFieldNames.value || 'value']: '' })
-        const selectedValues = selectedOptions.map(option => option[columnsFieldNames.label || 'label'] || '')
+        const selectedValues = selectedOptions.map(option => option[columnsFieldNames.value || 'value'] || '')
         lastIndexs.current = selectedIndexs
 
         setMergeVisible(false)

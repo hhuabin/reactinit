@@ -13,7 +13,7 @@ export type PickerColumn = PickerOption[]
 
 // onConfirm事件参数
 export type PickerConfirmEventParams = {
-    selectedIndexs: number[],
-    selectedOptions: PickerOption[],
-    selectedValues: Numeric[]
+    selectedIndexs: number[];
+    selectedOptions: PickerOption[];
+    selectedValues: Numeric[];
 }

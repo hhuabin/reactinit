@@ -1,4 +1,4 @@
-type Props = {
+type LoadingProps = {
     readonly beginColor?: string;
     readonly endColor?: string;
     readonly size?: string;
@@ -10,7 +10,7 @@ type Props = {
  * #f4f4f4 - #d8d8d8
  */
 
-const Loading: React.FC<Props> = (props) => {
+const Loading: React.FC<LoadingProps> = (props) => {
 
     const {
         beginColor = '#66b8ff',

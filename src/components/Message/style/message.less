@@ -24,12 +24,10 @@
 
         @keyframes message-move-in {
             from {
-                padding: 0;
                 transform: translateY(-100%);
                 opacity: 0;
             }
             to {
-                padding: 8px;
                 transform: translateY(0);
                 opacity: 1;
             }
@@ -55,6 +53,7 @@
                     color: var(--color-text);
 
                     .bin-message-icon {
+                        flex: none;
                         display: flex;
                         justify-content: center;
                         align-items: center;
@@ -78,6 +77,7 @@
                         color: var(--color-text);
                     }
                     .bin-message-close {
+                        flex: none;
                         display: flex;
                         justify-content: center;
                         align-items: center;
@@ -100,13 +100,11 @@
             from {
                 display: block;
                 max-height: 56px;
-                padding: 8px;
                 opacity: 1;
             }
             to {
                 display: none;
                 max-height: 0;
-                padding: 0;
                 opacity: 0;
             }
         }
