@@ -48,6 +48,17 @@ export const mobileRoute: RouteConfig[] = [
                     title: 'picker',
                 },
             },
+            {
+                path: 'swiper',
+                lazy: async () => {
+                    const { default: Swiper } = await import('@/pages/mobile/Swiper/Swiper')
+                    return { Component: Swiper }
+                },
+                meta: {
+                    auth: false,
+                    title: 'swiper',
+                },
+            },
         ],
     },
 ]

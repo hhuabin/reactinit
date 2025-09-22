@@ -1,0 +1,51 @@
+.bin-swiper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform: translateZ(0);
+    overflow: hidden;
+    cursor: grab;
+    user-select: none;
+
+    --indicator-size: 6px;
+    --indicator-duration: 0.2s;
+
+    .bin-swiper-track {
+        display: flex;
+        height: 100%;
+        transform: translateX(0);
+        transition-property: transform;
+
+        .bin-swiper-item {
+            position: relative;
+            flex-shrink: 0;
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .bin-swiper-indicators {
+        position: absolute;
+        left: 50%;
+        bottom: 12px;
+        display: flex;
+        transform: translateX(-50%);
+
+        .bin-swiper-indicator {
+            width: var(--indicator-size);
+            height: var(--indicator-size);
+            border-radius: 50%;
+            margin-right: 6px;
+            background-color: #ebedf0;
+            opacity: 0.3;
+            transition: opacity var(--indicator-duration), background-color var(--indicator-duration);
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+        .bin-swiper-indicator-active {
+            background-color: #fff;
+            opacity: 1;
+        }
+    }
+}
