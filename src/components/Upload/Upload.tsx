@@ -24,6 +24,7 @@ type UploadProps = {
     capture?: 'environment' | 'user';           // 拍照方式（移动端生效）
     disabled?: boolean;                         // 是否禁用文件上传
     action?: RequestOptions;                    // 上传的请求配置
+    style?: React.CSSProperties;                // 自定义样式
     children?: JSX.Element;                     // 自定义 Upload children
     onChange?: (info: UploadFile[]) => void;    // 上传文件改变时的回调，上传每个阶段都会触发该事件
     beforeRead?: UploaderBeforeRead;            // 读取文件之前的回调，返回 false | resolve(false) | reject()，则停止上传；切忌不可返回 pedding 状态的 Promise
@@ -46,6 +47,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
         drag = true,
         disabled = false,
         action = {} as RequestOptions,
+        style = {},
         children,
         beforeRead,
         afterRead,
@@ -251,7 +253,8 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
             })
             resetInput()
             // 执行自定义传入的读取完成后方法
-            afterRead?.(uploadFiles)
+            afterRead?.(uploadFiles, getLatestFileList())
+            // afterRead?.(uploadFiles, [...mergedFileList, ...uploadFiles])
 
             // 若开发者传入了 url，则直接上传文件列表
             if (Object.prototype.hasOwnProperty.call(action, 'url')) {
@@ -390,7 +393,10 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
     }))
 
     return (
-        <div className='bin-upload-wrapper'>
+        <div
+            className='bin-upload-wrapper'
+            style={style}
+        >
             {mergedFileList.map((uploadFile, index) => (
                 <div className='bin-upload' key={uploadFile.key}>
                     {

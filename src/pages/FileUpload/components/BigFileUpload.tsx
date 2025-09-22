@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 
-import { Upload } from '@/components/Upload'
+import Upload from '@/components/Upload'
 import type { UploadFile } from '@/components/Upload'
 
 import { clamp } from '@/utils/functionUtils/mathUtils'

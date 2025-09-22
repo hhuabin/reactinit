@@ -12,12 +12,13 @@ type PickerProps<T extends string | number | PickerOption = string | number | Pi
     visible?: boolean;                      // 是否显示
     columns?: T[];                          // 配置列的选项
     defaultIndex?: number;                  // 默认选中项
-    loading?: boolean;                        // 是否显示加载中
+    loading?: boolean;                      // 是否显示加载中
     title?: string;                         // 标题
     cancelText?: string;                    // 取消按钮的文字
     confirmText?: string;                   // 确定按钮的文字
     primaryColor?: string;                  // 主题色
     visibleOptionNum?: number;              // 可见的选项个数
+    style?: React.CSSProperties;            // 自定义样式
     onChangeVisible?: (value: boolean) => void;                   // 显示状态改变时触发函数
     onConfirm?: (params: PickerConfirmEventParams<T>) => void;    // 确认时触发函数
     onCancel?: () => void;                  // 取消时触发函数
@@ -52,8 +53,9 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
         title = '',
         cancelText = '取消',
         confirmText = '确定',
-        primaryColor = '#1989fa',
+        primaryColor = '',
         visibleOptionNum = 6,
+        style = {},
     } = props
 
     const [mergeColumns, setMergeColumns] = useMergedState([], {
@@ -74,7 +76,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
     const [isInertialScrolling, setIsInertialScrolling] = useState(false)   // 是否正在惯性滚动
 
     const wrapperElementRef = useRef<HTMLUListElement | null>(null)
-    const lastIndex = useRef(+defaultIndex)    // 缓存上一次的选中项
+    const lastIndex = useRef(+defaultIndex || 0)    // 缓存上一次的选中项
 
     const startOffset = useRef(0)              // 滑动开始时的 transformY
     const moving = useRef(false)               // 滚动判定，正在滚动时点击无效
@@ -86,7 +88,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
     useEffect(() => {
         // columns 更新，重置选中项目为默认选中项
         setIsInertialScrolling(false)
-        updateValueByIndex(+defaultIndex, 0)
+        updateValueByIndex(+defaultIndex || 0, 0)
     }, [columns])
 
     useEffect(() => {
@@ -274,7 +276,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
         <>
             <div
                 className={styles['picker-popup'] + ' ' + (mergeVisible ? '' : styles['picker-popup-hidden'])}
-                style={{ '--primary-color': primaryColor } as React.CSSProperties}
+                style={{ ...style, '--primary-color': primaryColor || (style as Record<string, string>)['--primary-color'] } as React.CSSProperties }
             >
                 <div role='button' className={styles['overlay'] + ' ' + (mergeVisible ? '' : styles['overlay-hidden'])}
                     onClick={() => onClickMask()}
@@ -307,6 +309,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
                             onTouchStart={onTouchStart}
                             onTouchMove={onTouchMove}
                             onTouchEnd={onTouchEnd}
+                            onTouchCancel={onTouchEnd}
                         >
                             <ul
                                 ref={wrapperElementRef}

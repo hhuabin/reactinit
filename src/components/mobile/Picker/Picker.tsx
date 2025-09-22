@@ -25,11 +25,11 @@ type PickerProps = {
     confirmText?: string;                     // 确定按钮的文字
     primaryColor?: string;                    // 主题色
     visibleOptionNum?: number;                // 可见的选项个数
+    style?: React.CSSProperties;              // 自定义样式
     onChangeVisible?: (value: boolean) => void;                // 显示状态改变时触发函数
     onConfirm?: (params: PickerConfirmEventParams) => void;    // 确认时触发函数
     onCancel?: () => void;                    // 取消时触发函数
 }
-
 
 const DEFAULT_DURATION = 200              // 默认动画时长
 const INERTIAL_SLIDE_TIME = 300           // 惯性滚动判定时间，在该时间范围内为惯性滚动
@@ -58,8 +58,9 @@ const Picker: React.FC<PickerProps> = (props) => {
         title = '',
         cancelText = '取消',
         confirmText = '确定',
-        primaryColor = '#1989fa',
+        primaryColor = '',
         visibleOptionNum = 6,
+        style = {},
     } = props
 
     const [mergeVisible, setMergeVisible] = useMergedState(true, {
@@ -107,20 +108,20 @@ const Picker: React.FC<PickerProps> = (props) => {
             // 1. 多列
             currentMode.current = 'multicolumn'
             setCurrentColumns(columns as PickerColumn[])
-            initBaseData(columns as PickerColumn[])
+            initializeBaseData(columns as PickerColumn[])
         } else {
             // 2. 单列
             const newColumns: PickerColumn[] = [columns]
             currentMode.current = 'singlecolumn'
             // 3. 级联
             let columnIndex = 0
-            let current: PickerOption | undefined = (columns as PickerColumn)[clamp(defaultIndexs[columnIndex++] ?? 0, 0, columns.length - 1)]
+            let current: PickerOption | undefined = (columns as PickerColumn)[clamp(defaultIndexs[columnIndex++] || 0, 0, columns.length - 1)]
             if (current?.children && !!current.children.length) currentMode.current = 'cascader'
 
             // 向下寻找 children
             while (current?.children && !!current.children.length) {
                 newColumns.push(current.children)
-                current = current.children[clamp(defaultIndexs[columnIndex++] ?? 0, 0, current.children.length - 1)]
+                current = current.children[clamp(defaultIndexs[columnIndex++] || 0, 0, current.children.length - 1)]
             }
             if (newColumns.length < columnDepth) {
                 // 小于最大深度，直接赋值空数组，保证 currentColumns 长度一致
@@ -128,7 +129,7 @@ const Picker: React.FC<PickerProps> = (props) => {
             }
 
             setCurrentColumns(newColumns)
-            initBaseData(newColumns)
+            initializeBaseData(newColumns)
         }
     }, [columns])
 
@@ -138,7 +139,7 @@ const Picker: React.FC<PickerProps> = (props) => {
         // 初始化/重置每一列的惯性滚动状态为 false
         setIsInertialScrollings(new Array(currentColumns.length).fill(false))
         // currentColumns.length 发生变化，即代表 columns 发生变化，初始化动画
-        lastIndexs.current = new Array(currentColumns.length).fill(0).map((_, i) => clamp(defaultIndexs[i] ?? 0, 0, Math.max(0, currentColumns[i].length - 1)))
+        lastIndexs.current = new Array(currentColumns.length).fill(0).map((_, i) => clamp(defaultIndexs[i] || 0, 0, Math.max(0, currentColumns[i].length - 1)))
         currentIndexs.current = [...lastIndexs.current]
         for (let columnIndex = 0; columnIndex < currentColumns.length; columnIndex++) {
             updateColumnByIndex(columnIndex, lastIndexs.current[columnIndex] ?? 0, 0)
@@ -188,13 +189,13 @@ const Picker: React.FC<PickerProps> = (props) => {
     }, [mergeVisible])
 
     // 根据 columnCount 列数，初始化每一列的数据
-    const initBaseData = (newColumns: PickerColumn[]) => {
+    const initializeBaseData = (newColumns: PickerColumn[]) => {
         const columnCount = Math.max(1, newColumns.length)
         // 初始化数据
         const _transformYs = new Array(columnCount).fill(0) // 初始值为 0
         setIsInertialScrollings(new Array(columnCount).fill(false))
         // lastIndexs 不能超过数组边界
-        lastIndexs.current = new Array(columnCount).fill(0).map((_, i) => clamp(defaultIndexs[i] ?? 0, 0, Math.max(0, newColumns[i].length - 1)))
+        lastIndexs.current = new Array(columnCount).fill(0).map((_, i) => clamp(defaultIndexs[i] || 0, 0, Math.max(0, newColumns[i].length - 1)))
         currentIndexs.current = [...lastIndexs.current]
 
         startOffsets.current = new Array(columnCount).fill(0)
@@ -441,7 +442,7 @@ const Picker: React.FC<PickerProps> = (props) => {
         <>
             <div
                 className={'bin-picker-popup' + (mergeVisible ? '' : ' bin-picker-popup-hidden')}
-                style={{ '--primary-color': primaryColor } as React.CSSProperties}
+                style={{ ...style, '--primary-color': primaryColor || (style as Record<string, string>)['--primary-color'] } as React.CSSProperties }
             >
                 <div role='button' className={'bin-overlay' + (mergeVisible ? '' : ' bin-overlay-hidden')}
                     onClick={() => onClickMask()}
@@ -477,6 +478,7 @@ const Picker: React.FC<PickerProps> = (props) => {
                                     onTouchStart={e => onTouchStart(e, columnIndex)}
                                     onTouchMove={e => onTouchMove(e, columnIndex)}
                                     onTouchEnd={e => onTouchEnd(e, columnIndex)}
+                                    onTouchCancel={e => onTouchEnd(e, columnIndex)}
                                 >
                                     <ul
                                         ref={node => wrapperElementRefs.current[columnIndex] = node}

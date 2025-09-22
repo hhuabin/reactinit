@@ -22,5 +22,10 @@ export interface RequestOptions {
 }
 
 export type UploaderBeforeRead = (files: File[]) => boolean | Promise<boolean | File[]>;
-export type UploaderAfterRead = (files: UploadFile[]) => void;
+/**
+ * @description 由于闭包， UploaderAfterRead 函数只能取到旧的文件列表，因此传入一个 fileList 参数，开发者可以参考使用
+ * @param newFiles 新文件列表
+ * @param fileList 全部文件列表
+ */
+export type UploaderAfterRead = (newFiles: UploadFile[], fileList: UploadFile[]) => void;
 export type UploaderBeforeDelete = (file: UploadFile, index: number) => boolean | Promise<boolean> | void;

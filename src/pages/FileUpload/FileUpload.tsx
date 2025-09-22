@@ -3,9 +3,11 @@ import { useState } from 'react'
 import { Modal } from 'antd'
 
 import { message } from '@/components/Message'
-import { Upload } from '@/components/Upload'
+import Upload from '@/components/Upload'
 import type { UploadFile } from '@/components/Upload'
 import BigFileUpload from './components/BigFileUpload'
+
+import useSyncState from '@/hooks/reactHooks/useSyncState'
 
 const FileUpload: React.FC = () => {
 
@@ -33,7 +35,7 @@ const FileUpload: React.FC = () => {
             }
         }
         return true */
-        return new Promise<boolean |File[]>((resolve, reject) => {
+        return new Promise<boolean | File[]>((resolve, reject) => {
             const cloneList = []
             for (const file of files) {
                 // 自动忽略大于 1M 的图片和非 jpg 格式图片
@@ -49,8 +51,8 @@ const FileUpload: React.FC = () => {
         })
     }
 
-    const afterRead = (files: UploadFile[]) => {
-        console.log('afterRead', fileList2, files)
+    const afterRead = (files: UploadFile[], fileList: UploadFile[]) => {
+        console.log('afterRead', files, fileList)
         files.forEach((uploadFile, index) => {
             setFileList2((prevList) => {
                 return (prevList || []).map(item => {

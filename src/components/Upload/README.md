@@ -52,3 +52,10 @@
 | `responseType`  | 响应数据类型             | `XMLHttpRequestResponseType`                                 | ` text`  |
 | `data`          | ` file` 之外的请求参数   | `{[key: string]: string |Blob}`                              | -        |
 | `maxConcurrent` | 最大并发上传个数         | `number`                                                     | `5`      |
+
+```typescript
+type UploaderBeforeRead = (files: File[]) => boolean | Promise<boolean | File[]>;
+type UploaderAfterRead = (newFiles: UploadFile[], fileList: UploadFile[]) => void;
+type UploaderBeforeDelete = (file: UploadFile, index: number) => boolean | Promise<boolean> | void;
+```
+
