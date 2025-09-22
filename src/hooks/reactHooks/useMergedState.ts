@@ -4,11 +4,7 @@ import { useCallback, useRef } from 'react'
 import useEvent from './useEvent'
 import useLayoutUpdateEffect from './useLayoutUpdateEffect'
 import useSafeState from './useSafeState'
-
-type SetStateAction<T> = (
-    state: T | ((prevState: T) => T),
-    ignoreDestroy?: boolean,
-) => void;
+import type { SetStateAction } from './useSafeState'
 
 /** We only think `undefined` is empty */
 const hasValue = (value: any) => {
@@ -117,12 +113,9 @@ export default function useMergedState<T, R = T>(
         setPrevValue([mergedValue], ignoreDestroy)
     })
 
-    // 闭包最新值是新加值，useMergedState() 并无该功能
-    // 存储 postMergedValue 的最新值
-    const latestRef = useRef(postMergedValue)
-    latestRef.current = postMergedValue
+    // 闭包最新值是新加值，原始 useMergedState() 并无该功能
     // 新增 getLatestValue 函数，保证返回最新值
-    const getLatestValue = useCallback(() => latestRef.current, [])
+    const getLatestValue = useEvent(() => postMergedValue)
 
     // postMergedValue 并不是闭包最新值，不能实现 useSyncState 一样的返回最新值，getLatestValue() 可以获取最新值
     return [postMergedValue as unknown as R, triggerChange, getLatestValue as () => R]

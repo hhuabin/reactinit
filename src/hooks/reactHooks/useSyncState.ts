@@ -13,19 +13,19 @@ export type SetStateAction<T> = (stateAction: StateAction<T>) => void
  * 与 React 内置 useState 的区别:
  * 1. useState 在事件回调中可能获取到旧状态，尤其是 React 批量更新（batching）时
  * 2. useSyncState 通过 useRef + forceUpdate 避免了这个问题
- * @param defaultValue 默认值
+ * @param initialValue 默认值
  * @returns [a, setA]
  * @example const [a, setA] = useSyncState(0)
  * @example a()、setA(a() + 1)
  */
-function useSyncState<T>(defaultValue: T): [() => T, SetStateAction<T>]
+function useSyncState<T>(initialValue: T): [() => T, SetStateAction<T>]
 function useSyncState<T>(): [() => T | undefined, SetStateAction<T | undefined>]
-function useSyncState<T>(defaultValue?: T) {
+function useSyncState<T>(initialValue?: T) {
     // 使用 useReducer 来强制组件重新渲染。这里不关心 reducer 的值本身，只是用 forceUpdate() 来触发渲染
     const [, forceUpdate] = useReducer(x => x + 1, 0)
 
     // 内部状态管理
-    const currentValueRef = useRef(defaultValue)
+    const currentValueRef = useRef(initialValue)
 
     // 获取最新状态
     const getValue = useEvent(() => {

@@ -24,7 +24,7 @@ export default function useEvent<T extends (...args: any[]) => any>(callback: T,
      * 问题1：callback 的原型等属性(callback.a???)将会用不了，此处返回的 memoFn 是一个函数 (...args: any) => void，无其他属性（useCallback会直接返回原函数）
      */
     const memoFn = useCallback(
-        (...args: Parameters<T>) => { fnRef.current?.(...args) },
+        (...args: Parameters<T>) => fnRef.current?.(...args),
         deps ?? [],
     )
 
