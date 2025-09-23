@@ -137,6 +137,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                 item.response = response
                 item.status = ''
                 item.message = ''
+                item.showDeleteButton = false
             }
             return item
         }))
@@ -147,6 +148,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
             if (item.key === uploadFile.key) {
                 item.status = 'failed'
                 item.message = '上传失败'
+                item.showDeleteButton = false
             }
             return item
         }))
@@ -204,6 +206,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
             uploadFile.percent = 0
             uploadFile.status = 'uploading'
             uploadFile.message = '上传中...'
+            uploadFile.showDeleteButton = true
 
             tasks.push(() => xhrUploadFile(uploadFile, action))
         })
@@ -236,6 +239,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                     status: '',
                     name: file.name,
                     file,
+                    // showDeleteButton: false,
                 } as UploadFile
             }, [] as UploadFile[])
             // flushSync：防止React18自动批处理，因为输入[上传]触发过程同时进行
@@ -466,16 +470,20 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                         )
                     }
 
-                    {/* 删除按钮 */}
-                    <button
-                        className='bin-upload-delete-icon'
-                        onClick={() => onDelete(uploadFile, index)}
-                    >
-                        <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
-                            <line x1='40' y1='30' x2='70' y2='60' stroke='white' strokeWidth='6' strokeLinecap='round' />
-                            <line x1='70' y1='30' x2='40' y2='60' stroke='white' strokeWidth='6' strokeLinecap='round' />
-                        </svg>
-                    </button>
+                    {/* 删除按钮（非上传状态或者显示设置为 true 时显示） */}
+                    {
+                        (uploadFile.status !== 'uploading' || uploadFile.showDeleteButton) && (
+                            <button
+                                className='bin-upload-delete-icon'
+                                onClick={() => onDelete(uploadFile, index)}
+                            >
+                                <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+                                    <line x1='40' y1='30' x2='70' y2='60' stroke='white' strokeWidth='6' strokeLinecap='round' />
+                                    <line x1='70' y1='30' x2='40' y2='60' stroke='white' strokeWidth='6' strokeLinecap='round' />
+                                </svg>
+                            </button>
+                        )
+                    }
                 </div>
             ))}
             {(mergedFileList.length < maxCount) && (
