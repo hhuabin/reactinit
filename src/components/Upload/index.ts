@@ -1,2 +1,3 @@
 export { default } from './Upload'
+export * from './Upload'
 export * from './Upload.d'

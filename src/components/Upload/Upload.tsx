@@ -223,9 +223,13 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
     const readFiles = (files: File[]) => {
         // 过滤大小超过限制的文件
         files = files.filter(items => (items.size <= maxSize))
+        // 获取最大可上传数量
+        const restLength = maxCount - mergedFileList.length
 
-        if (files.length > maxCount) {
+        if (restLength === 0) {
             files = files.slice(0, maxCount)
+        } else if (files.length > restLength) {
+            files = files.slice(0, restLength)
         }
         Promise.all(
             files.map((file) => readFileContent(file)),
@@ -244,15 +248,14 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
             }, [] as UploadFile[])
             // flushSync：防止React18自动批处理，因为输入[上传]触发过程同时进行
             flushSync(() => {
-                // 此处不可使用函数式更新，flushSync 取的闭包值
-                changeMergeFile([...mergedFileList, ...uploadFiles])
+                const targetFileList = [...mergedFileList, ...uploadFiles].slice(-maxCount)
+                changeMergeFile(targetFileList)
+                // 此处不可使用函数式更新，prev 是 flushSync 取的闭包值
                 /* changeMergeFile((prevList) => {
                     // prev 始终是[进入 flushSync 前的旧值]
                     console.log('flushSync', prevList)
-                    return [
-                        ...prevList,
-                        ...uploadFiles,
-                    ]
+                    const targetFileList = [...prevList, ...uploadFiles].slice(-maxCount)
+                    return targetFileList
                 }) */
             })
             resetInput()
@@ -388,7 +391,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
      * @description 手动触发选择文件
      */
     const chooseFile = () => {
-        if (!disabled) return
+        if (disabled) return
         inputRef.current?.click()
     }
 
@@ -397,12 +400,13 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
     }))
 
     return (
-        <div
-            className='bin-upload-wrapper'
-            style={style}
-        >
+        <div className='bin-upload-wrapper'>
             {mergedFileList.map((uploadFile, index) => (
-                <div className='bin-upload' key={uploadFile.key}>
+                <div
+                    key={uploadFile.key}
+                    className='bin-upload'
+                    style={style}
+                >
                     {
                         isImageFile(uploadFile) ? (
                             // 图片显示
@@ -486,43 +490,44 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                     }
                 </div>
             ))}
-            {(mergedFileList.length < maxCount) && (
-                <div className='bin-upload'>
-                    {
-                        children || (
-                            <div
-                                className='bin-upload-add-icon'
-                                style={{ backgroundColor: dragActive ? '#e6f2ff' : '' }}
-                            >
-                                <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
-                                    <line x1='50' y1='35' x2='50' y2='65' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
-                                    <line x1='35' y1='50' x2='65' y2='50' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
-                                </svg>
-                            </div>
-                        )
-                    }
-                    <input
-                        ref={inputRef}
-                        className='bin-upload-input'
-                        type='file'
-                        disabled={disabled}
-                        accept={accept}
-                        { ...(props.capture ? { capture: props.capture } : {}) }
-                        { ...(multiple ? { multiple } : {}) }
-                        onChange={(event) => onFileChange(event)}
-                        onDragEnter={(event) => onFileDrag(event)}
-                        onDragLeave={(event) => onFileDrag(event)}
-                        onDragOver={(event) => onFileDrag(event)}
-                        onDrop={(event) => onFileDrop(event)}
-                    ></input>
-                    {/*
-                        onDragEnter: 拖拽进入
-                        onDragLeave: 拖拽离开
-                        onDragOver: 拖拽悬停时 不断 触发，必须阻止默认行为才能让drop事件生效
-                        onDrop: 放置时触发，必须阻止默认行为才能阻止文件打开
-                    */}
-                </div>
-            )}
+            <div
+                className='bin-upload'
+                style={{ ...style, display: (mergedFileList.length >= maxCount ? 'none' : '') }}
+            >
+                {
+                    children || (
+                        <div
+                            className='bin-upload-add-icon'
+                            style={{ backgroundColor: dragActive ? '#e6f2ff' : '' }}
+                        >
+                            <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+                                <line x1='50' y1='35' x2='50' y2='65' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
+                                <line x1='35' y1='50' x2='65' y2='50' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
+                            </svg>
+                        </div>
+                    )
+                }
+                <input
+                    ref={inputRef}
+                    className='bin-upload-input'
+                    type='file'
+                    disabled={disabled}
+                    accept={accept}
+                    { ...(props.capture ? { capture: props.capture } : {}) }
+                    { ...(multiple ? { multiple } : {}) }
+                    onChange={(event) => onFileChange(event)}
+                    onDragEnter={(event) => onFileDrag(event)}
+                    onDragLeave={(event) => onFileDrag(event)}
+                    onDragOver={(event) => onFileDrag(event)}
+                    onDrop={(event) => onFileDrop(event)}
+                ></input>
+                {/*
+                    onDragEnter: 拖拽进入
+                    onDragLeave: 拖拽离开
+                    onDragOver: 拖拽悬停时 不断 触发，必须阻止默认行为才能让drop事件生效
+                    onDrop: 放置时触发，必须阻止默认行为才能阻止文件打开
+                */}
+            </div>
         </div>
     )
 })
