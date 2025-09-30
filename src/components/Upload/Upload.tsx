@@ -21,7 +21,7 @@ type UploadProps = {
     maxSize?: number;                           // 文件大小限制，单位为 byte
     imageFit?: 'contain' | 'cover' | 'fill';    // 图片填充模式
     drag?: boolean;                             // 是否开启拖拽上传
-    capture?: 'environment' | 'user';           // 拍照方式（移动端生效）
+    capture?: boolean | 'environment' | 'user'; // 拍照方式（移动端生效）
     disabled?: boolean;                         // 是否禁用文件上传
     action?: RequestOptions;                    // 上传的请求配置
     style?: React.CSSProperties;                // 自定义样式
@@ -137,7 +137,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                 item.response = response
                 item.status = ''
                 item.message = ''
-                item.showDeleteButton = false
+                // item.deletable = true
             }
             return item
         }))
@@ -148,7 +148,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
             if (item.key === uploadFile.key) {
                 item.status = 'failed'
                 item.message = '上传失败'
-                item.showDeleteButton = false
+                // item.deletable = true
             }
             return item
         }))
@@ -206,7 +206,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
             uploadFile.percent = 0
             uploadFile.status = 'uploading'
             uploadFile.message = '上传中...'
-            uploadFile.showDeleteButton = true
+            uploadFile.deletable = true
 
             tasks.push(() => xhrUploadFile(uploadFile, action))
         })
@@ -243,7 +243,6 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                     status: '',
                     name: file.name,
                     file,
-                    // showDeleteButton: false,
                 } as UploadFile
             }, [] as UploadFile[])
             // flushSync：防止React18自动批处理，因为输入[上传]触发过程同时进行
@@ -476,17 +475,29 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
 
                     {/* 删除按钮（非上传状态或者显示设置为 true 时显示） */}
                     {
-                        (uploadFile.status !== 'uploading' || uploadFile.showDeleteButton) && (
-                            <button
-                                className='bin-upload-delete-icon'
-                                onClick={() => onDelete(uploadFile, index)}
-                            >
-                                <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
-                                    <line x1='40' y1='30' x2='70' y2='60' stroke='white' strokeWidth='6' strokeLinecap='round' />
-                                    <line x1='70' y1='30' x2='40' y2='60' stroke='white' strokeWidth='6' strokeLinecap='round' />
-                                </svg>
-                            </button>
-                        )
+                        (() => {
+                            // 默认展示删除按钮
+                            let showDeleteButton = true
+                            if (uploadFile.deletable === false) {
+                                // 显式显示设置为 false，则不显示
+                                showDeleteButton = false
+                            } else if (uploadFile.status === 'uploading' && uploadFile.deletable !== true) {
+                                // 正在上传时，需要显示设置删除按钮为 true 才显示
+                                showDeleteButton = false
+                            }
+                            if (!showDeleteButton) return null
+                            return (
+                                <button
+                                    className='bin-upload-delete-icon'
+                                    onClick={() => onDelete(uploadFile, index)}
+                                >
+                                    <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+                                        <line x1='40' y1='30' x2='70' y2='60' stroke='white' strokeWidth='6' strokeLinecap='round' />
+                                        <line x1='70' y1='30' x2='40' y2='60' stroke='white' strokeWidth='6' strokeLinecap='round' />
+                                    </svg>
+                                </button>
+                            )
+                        })()
                     }
                 </div>
             ))}
@@ -513,7 +524,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                     type='file'
                     disabled={disabled}
                     accept={accept}
-                    { ...(props.capture ? { capture: props.capture } : {}) }
+                    { ...((Object.prototype.hasOwnProperty.call(props, 'capture')) ? { capture: props.capture } : {}) }
                     { ...(multiple ? { multiple } : {}) }
                     onChange={(event) => onFileChange(event)}
                     onDragEnter={(event) => onFileDrag(event)}

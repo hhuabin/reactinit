@@ -8,7 +8,7 @@ export interface UploadFile {
     message?: string;                           // 上传失败 | 上传中时展示
     percent?: number;                           // 上传进度，非 0 时展示进度条
     file?: File;                                // 文件对象
-    showDeleteButton?: boolean;                 // 上传状态是否显示删除按钮（当上传请求可以取消时，建议设置为true）
+    deletable?: boolean;                        // 是否展示删除按钮，默认展示，'uploading'状态默认不展示
     response?: any;                             // 上传完成后，服务端响应内容
 }
 
