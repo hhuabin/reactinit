@@ -13,7 +13,7 @@
     .bin-swiper-track {
         display: flex;
         height: 100%;
-        transform: translateX(0);
+        transform: translate3d(0, 0, 0);
         transition-property: transform;
 
         .bin-swiper-item {
@@ -22,6 +22,15 @@
             width: 100%;
             height: 100%;
         }
+    }
+    .swiper-vertical {
+        flex-direction: column;
+    }
+    .forbid-scroll-x {
+        touch-action: pan-y;
+    }
+    .forbid-scroll-y {
+        touch-action: pan-x;
     }
 
     .bin-swiper-indicators {
