@@ -4,7 +4,7 @@ import { Upload as AntdUpload } from 'antd'
 import type { UploadFile as AntdUploadFile } from 'antd'
 import type { UploadProps } from 'antd'
 
-import { Upload } from '@/components/Upload'
+import Upload from '@/components/Upload'
 import type { UploadFile } from '@/components/Upload'
 
 
