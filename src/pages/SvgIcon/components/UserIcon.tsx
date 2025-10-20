@@ -100,7 +100,7 @@ const UserIcon: React.FC = () => {
                             </path>
                         </svg>
                     </div>
-                    <div className='w-full mt-[12px] text-center break-all'>loaction</div>
+                    <div className='w-full mt-[12px] text-center break-all'>location</div>
                 </div>
 
                 <div className='flex flex-col items-center w-full'>

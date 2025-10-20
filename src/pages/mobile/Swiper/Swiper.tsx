@@ -12,12 +12,15 @@ const SwiperComponent: React.FC = () => {
             <div className='w-full px-4'>
                 <div className='w-full text-[#697b8c] text-[16px]'>基础用法</div>
                 <div className='w-full h-[160px] mt-4'>
-                    <Swiper autoplay={true} loop={true}>
+                    <Swiper autoplay={true} loop={false}>
                         <SwiperItem key={111}>
                             <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>0</div>
                         </SwiperItem>
                         <SwiperItem>
                             <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#bcffbd]'>1</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full bg-[#1989fa] text-[16px]'>222</div>
                         </SwiperItem>
                     </Swiper>
                 </div>
@@ -26,12 +29,15 @@ const SwiperComponent: React.FC = () => {
             <div className='w-full px-4 my-8'>
                 <div className='w-full text-[#697b8c] text-[16px]'>自动播放</div>
                 <div className='w-full h-[160px] mt-4'>
-                    <Swiper direction='vertical' autoplay={true} loop={true}>
-                        <SwiperItem key={222}>
+                    <Swiper direction='vertical' autoplay={true} loop={false}>
+                        <SwiperItem key={111}>
                             <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>0</div>
                         </SwiperItem>
                         <SwiperItem>
                             <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#bcffbd]'>1</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full bg-[#1989fa] text-[16px]'>222</div>
                         </SwiperItem>
                     </Swiper>
                 </div>
@@ -46,7 +52,7 @@ const SwiperComponent: React.FC = () => {
             <div className='w-full px-4 my-8'>
                 <div className='w-full text-[#697b8c] text-[16px]'>手动播放</div>
                 <div className='w-full h-[160px] mt-4'>
-                    <AntdSwiper loop={true}>
+                    <AntdSwiper loop={true} slideSize={70} trackOffset={15}>
                         <AntdSwiper.Item>
                             <div className='flex justify-center items-center w-full h-[160px] bg-[#1989fa] text-[16px]'>000</div>
                         </AntdSwiper.Item>
