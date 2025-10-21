@@ -68,7 +68,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
 
     const rootRef = useRef<HTMLDivElement | null>(null)        // 最外层元素，框框
     const trackRef = useRef<HTMLDivElement | null>(null)       // 滚动块
-    const [stableRootStyle, setStableRootStyle] = useSyncState({               // 存放最外层 swiper(rootRef) 的样式
+    const [stableRootSize, setStableRootSize] = useSyncState({               // 存放最外层 swiper(rootRef) 的样式
         width: 0,
         height: 0,
     })
@@ -142,7 +142,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
                 _basicOffset -= slideItemHeight * trusteddefaultIndex
             }
 
-            setStableRootStyle({
+            setStableRootSize({
                 width: offsetWidth,
                 height: offsetHeight,
             })
@@ -217,15 +217,15 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         if (isLoop) {
             // 循环时最小偏移量可向左 / 下滚动多一项
             if (direction === 'horizontal') {
-                minOffset = -(swiperItemCount + 1) * stableTrackState().width + stableRootStyle().width
+                minOffset = -(swiperItemCount + 1) * stableTrackState().width + stableRootSize().width
             } else if (direction === 'vertical') {
-                minOffset = -(swiperItemCount + 1) * stableTrackState().height + stableRootStyle().height
+                minOffset = -(swiperItemCount + 1) * stableTrackState().height + stableRootSize().height
             }
         } else {
             if (direction === 'horizontal') {
-                minOffset = -swiperItemCount * stableTrackState().width + stableRootStyle().width
+                minOffset = -swiperItemCount * stableTrackState().width + stableRootSize().width
             } else if (direction === 'vertical') {
-                minOffset = -swiperItemCount * stableTrackState().height + stableRootStyle().height
+                minOffset = -swiperItemCount * stableTrackState().height + stableRootSize().height
             }
         }
         return minOffset
@@ -583,9 +583,9 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         const trackSize: React.CSSProperties = {}
         if (direction === 'horizontal') {
             // 数量 * 实际宽度
-            trackSize.width = Math.max(swiperItemCount, 1) * (slideItemSize ?? stableRootStyle().width) + 'px'
+            trackSize.width = Math.max(swiperItemCount, 1) * (slideItemSize ?? stableRootSize().width) + 'px'
         } else if (direction === 'vertical') {
-            trackSize.height = Math.max(swiperItemCount, 1) * (slideItemSize ?? stableRootStyle().height) + 'px'
+            trackSize.height = Math.max(swiperItemCount, 1) * (slideItemSize ?? stableRootSize().height) + 'px'
         }
         return trackSize
     }
@@ -597,8 +597,8 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
     const renderSwiperItems = () => {
         // 宽高需要乘百分比
         const publcStyle: SwiperItemProps = direction === 'horizontal'
-            ? { width: slideItemSize ?? stableRootStyle().width }
-            : { height: slideItemSize ?? stableRootStyle().height }
+            ? { width: slideItemSize ?? stableRootSize().width }
+            : { height: slideItemSize ?? stableRootSize().height }
         return React.Children.map((children || []), (child, i) => {
             const style = { ...publcStyle }
             // 只有开启了循环并且轮播项是头项或者尾项时，才需要设置偏移量
@@ -678,7 +678,11 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         <div
             ref={rootRef}
             className='bin-swiper'
-            style={{ ...style, width: width || style['width'], height: height || style['height'] }}
+            style={{
+                ...style,
+                width: width ? (typeof width === 'number' ? `${width}px` : width) : style['width'],
+                height: height ? (typeof height === 'number' ? `${height}px` : height) : style['height'],
+            }}
         >
             <div
                 ref={trackRef}
