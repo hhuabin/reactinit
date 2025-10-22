@@ -1,68 +1,77 @@
 import { useEffect, useState } from 'react'
 
-import { Upload as AntdUpload } from 'antd'
-import type { UploadFile as AntdUploadFile } from 'antd'
-import type { UploadProps } from 'antd'
+import { Button, Image, ImageViewer, Swiper } from 'antd-mobile'
 
-import Upload from '@/components/Upload'
-import type { UploadFile } from '@/components/Upload'
-
+import ImagePreview from '@/components/mobile/ImagePreview'
 
 const Developing: React.FC = () => {
 
-    const [fileList, setFileList] = useState<UploadFile[]>([
-        {
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-            status: 'done',
-            message: '',
-            percent: 0,
-        },
-    ])
-    const [antdFileList, setAntdFileList] = useState<AntdUploadFile[]>([{
-        uid: '-1',
-        name: 'xxx.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    }])
+    const [visible, setVisible] = useState(false)
+    const [antdVisible, setAntdVisible] = useState(false)
 
-    const changeFileList = (files: UploadFile[]) => {
-        setFileList(files)
-    }
-    const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
-        setAntdFileList(newFileList)
-
-    const beforeRead = (files: File[]) => {
-        return Promise.resolve(true)
-    }
-
-    const beforeDelete = () => {
-        return Promise.resolve(true)
-    }
+    const demoViewImages = [
+        'https://images.unsplash.com/photo-1620476214170-1d8080f65cdb?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3150&q=80',
+        'https://images.unsplash.com/photo-1601128533718-374ffcca299b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3128&q=80',
+        'https://images.unsplash.com/photo-1567945716310-4745a6b7844b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3113&q=80',
+        'https://images.unsplash.com/photo-1624993590528-4ee743c9896e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=1000&q=80',
+    ]
 
     return (
         <div className='w-full'>
             <div className='w-full'>
-                <Upload
-                    fileList={fileList}
-                    onChange={changeFileList}
-                    beforeRead={beforeRead}
-                    beforeDelete={beforeDelete}
-                    multiple
-                    action={{
-                        url: 'https://sk.cyctapp.com/yct/suikang/oldcar/scrap/file/upload',
-                        method: 'POST',
+                <ImagePreview
+                    visible={visible}
+                    images={demoViewImages}
+                    onClose={() => {
+                        setVisible(false)
                     }}
-                ></Upload>
+                ></ImagePreview>
             </div>
             <div className='w-full'>
-                <AntdUpload
-                    listType='picture-card'
-                    fileList={antdFileList}
-                    onChange={handleChange}
-                    multiple
+                <Image
+                    src='https://images.unsplash.com/photo-1620476214170-1d8080f65cdb?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3150&q=80'
+                    width={100}
+                    height={100}
+                    fit='fill'
+                />
+                <div className='w-full h-[160px]'>
+                    <Swiper>
+                        <Swiper.Item>
+                            <div className='flex justify-center items-center w-full h-[160px] text-[24px] bg-[#ace0ff]'>1</div>
+                        </Swiper.Item>
+                        <Swiper.Item>
+                            <div className='flex justify-center items-center w-full h-[160px] text-[24px] bg-[#bcffbd]'>2</div>
+                        </Swiper.Item>
+                        <Swiper.Item>
+                            <div className='flex justify-center items-center w-full h-[160px] text-[24px] bg-[#ffcfac]'>3</div>
+                        </Swiper.Item>
+                    </Swiper>
+                </div>
+                <Button
+                    onClick={() => {
+                        setVisible(true)
+                    }}
                 >
-                    {fileList.length < 5 && '+ Upload'}
-                </AntdUpload>
+                    显示自定义组件图片
+                </Button>
+                <Button
+                    onClick={() => {
+                        setAntdVisible(true)
+                    }}
+                >
+                    显示Antd组件图片
+                </Button>
+                <ImageViewer.Multi
+                    classNames={{
+                        mask: 'customize-mask',
+                        body: 'customize-body',
+                    }}
+                    images={demoViewImages}
+                    visible={antdVisible}
+                    onClose={() => {
+                        setAntdVisible(false)
+                    }}
+                />
             </div>
         </div>
     )
