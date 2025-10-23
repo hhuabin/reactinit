@@ -214,18 +214,53 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
      */
     const getMinOffset = (isLoop = loop): number => {
         let minOffset: number = 0
+        /**
+         * bug：此处有个问题，由于最小偏移量引入了 stableRootSize()
+         * 在使用固定宽时，会造成在超大屏幕下的所有 stableTrackState().width 相加都小于 stableRootSize().width 的情况
+         */
         if (isLoop) {
             // 循环时最小偏移量可向左 / 下滚动多一项
             if (direction === 'horizontal') {
                 minOffset = -(swiperItemCount + 1) * stableTrackState().width + stableRootSize().width
+                // 循环状态下，限制最小偏移量 至少 为 一个轮播项宽。
+                // 不能让 stableTrackState().offset <= getMinOffset() 一直是 true 造成 updateAnimate 死循环
+                // 由于 updateAnimateByIndex(0) 将会移动到 basicOffset 的位置，故而当 basicOffset <= 项宽时候，应取值为 basicOffset - 1
+                const limitMinOffset = -stableTrackState().width < basicOffset ? -stableTrackState().width : basicOffset - 1
+                // 风险控制
+                if (stableRootSize().width > 2 * stableTrackState().width) {
+                    // 当滑块太大时（超大屏幕并且被定宽*px），就不要搞那么多花里胡哨的，直接一点
+                    minOffset = -(swiperItemCount) * stableTrackState().width
+                }
+
+                minOffset = Math.min(minOffset, limitMinOffset)
             } else if (direction === 'vertical') {
                 minOffset = -(swiperItemCount + 1) * stableTrackState().height + stableRootSize().height
+
+                const limitMinOffset = -stableTrackState().height < basicOffset ? -stableTrackState().height : basicOffset - 1
+                if (stableRootSize().height > 2 * stableTrackState().height) {
+                    minOffset = -(swiperItemCount) * stableTrackState().height
+                }
+
+                minOffset = Math.min(minOffset, limitMinOffset)
             }
         } else {
             if (direction === 'horizontal') {
                 minOffset = -swiperItemCount * stableTrackState().width + stableRootSize().width
+                // 风险控制
+                /* if (stableRootSize().width > 2 * stableTrackState().width) {
+                    // 当滑块太大时（超大屏幕并且被定宽*px），就不要搞那么多花里胡哨的，直接一点
+                    minOffset = -(swiperItemCount - 1) * stableTrackState().width
+                } */
+
+                minOffset = Math.min(minOffset, 0)
             } else if (direction === 'vertical') {
                 minOffset = -swiperItemCount * stableTrackState().height + stableRootSize().height
+
+                /* if (stableRootSize().width > 2 * stableTrackState().height) {
+                    minOffset = -(swiperItemCount - 1) * stableTrackState().height
+                } */
+
+                minOffset = Math.min(minOffset, 0)
             }
         }
         return minOffset
@@ -288,31 +323,51 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         stopAutoPlay()
         touch.start(event)
 
-        if (loop) {
+        let _startOffset = stableTrackState().offset
+        if (loop && swiperItemCount > 1) {
             // 循环时，处理轮播第一项和最后一项的衔接问题
+            // 该代码用于处理，滑动从 n + 1 轮播项目直接向左跳转至 -1 项
             const { transform } = window.getComputedStyle(trackRef.current as HTMLDivElement)
             const { m41, m42 } = new DOMMatrixReadOnly(transform === 'none' ? undefined : transform)
+            // 获取非轮播的最大、最小偏移量，便于计算
             const maxOffset = getMaxOffset(false)
-            const minOffset = getMinOffset(false)
+            let minOffset = getMinOffset(false)
 
             if (direction === 'horizontal') {
+                if (stableRootSize().width > 2 * stableTrackState().width) {
+                    // 容器过宽限制
+                    minOffset = -(swiperItemCount - 1) * stableTrackState().width
+                } else {
+                    // 由于非轮播状态下的最小偏移量被限制的与 stableRootSize().width 相关，故而此处需要矫正最小偏移量
+                    minOffset = minOffset + stableTrackState().width - stableRootSize().width + basicOffset
+                }
                 if (m41 > maxOffset) {
                     // 轮播 -1 项，瞬移到尾项
-                    updateAnimate(m41 + (-swiperItemCount * stableTrackState().width), 0)
+                    _startOffset = m41 + (-swiperItemCount * stableTrackState().width)
                 } else if (m41 < minOffset) {
                     // 轮播 n + 1 项，瞬移到第一项
-                    updateAnimate(m41 - (-swiperItemCount * stableTrackState().width), 0)
+                    _startOffset = m41 - (-swiperItemCount * stableTrackState().width)
                 } else if (moving.current) {
-                    updateAnimate(m41, 0)
+                    _startOffset = m41
                 }
+                updateAnimate(_startOffset, 0)
             } else if (direction === 'vertical') {
-                if (m42 > maxOffset) {
-                    updateAnimate(m42 + (-swiperItemCount * stableTrackState().height), 0)
-                } else if (m42 < minOffset) {
-                    updateAnimate(m42 - (-swiperItemCount * stableTrackState().height), 0)
-                } else if (moving.current) {
-                    updateAnimate(m42, 0)
+                if (stableRootSize().height > 2 * stableTrackState().height) {
+                    // 容器过高限制
+                    minOffset = -(swiperItemCount - 1) * stableTrackState().height
+                } else {
+                    // 由于非轮播状态下的最小偏移量被限制的与 stableRootSize().height 相关，故而此处需要矫正最小偏移量
+                    minOffset = minOffset + stableTrackState().height - stableRootSize().height + basicOffset
                 }
+
+                if (m42 > maxOffset) {
+                    _startOffset = m42 + (-swiperItemCount * stableTrackState().height)
+                } else if (m42 < minOffset) {
+                    _startOffset = m42 - (-swiperItemCount * stableTrackState().height)
+                } else if (moving.current) {
+                    _startOffset = m42
+                }
+                updateAnimate(_startOffset, 0)
             }
         } else if (moving.current) {
             // 正在滚动时点击固定到当前位置
@@ -320,14 +375,16 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
             const { m41, m42 } = new DOMMatrixReadOnly(transform === 'none' ? undefined : transform)
             if (direction === 'horizontal') {
                 // 设置横向偏移量
+                _startOffset = m41
                 updateAnimate(m41, 0)
             } else {
                 // 设置纵向偏移量
+                _startOffset = m42
                 updateAnimate(m42, 0)
             }
         }
-        startOffset.current = stableTrackState().offset
-        inertialOffset.current = stableTrackState().offset
+        startOffset.current = _startOffset
+        inertialOffset.current = _startOffset
         inertialStartTime.current = Date.now()
     }
     /* const getLoopTranslateX = (offset: number): number => {
@@ -440,6 +497,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
 
         // 控制索引不超出范围
         index = getTrustedSwiperIndex(index)
+        if (loop && swiperItemCount <= 1) index = 0
 
         // 计算移动距离
         let trustedOffset = 0
@@ -509,8 +567,9 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         trackRef.current.getAnimations().forEach(animation => animation.cancel())
         const animation = trackRef.current?.animate(keyframes, options)
         animation?.finished.then(() => {
+            moving.current = false
             // 循环时，首尾无感切换。动画结束触发
-            if (loop) {
+            if (loop && swiperItemCount > 1) {
                 if (direction === 'horizontal') {
                     // stableTrackState().offset <= getMinOffset() 严格计算，必须小于等于它
                     if (stableTrackState().active === 0 && stableTrackState().offset <= getMinOffset()) {
@@ -595,7 +654,6 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
      * @returns 渲染的SwiperItem
      */
     const renderSwiperItems = () => {
-        // 宽高需要乘百分比
         const publcStyle: SwiperItemProps = direction === 'horizontal'
             ? { width: slideItemSize ?? stableRootSize().width }
             : { height: slideItemSize ?? stableRootSize().height }
@@ -605,17 +663,26 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
             if (loop) {
                 let translateX = 0
                 let translateY = 0
+                let minOffset = getMinOffset(false)
 
                 if (swiperItemCount === 2) {
                     // 当轮播项等于两个时，在判定是左右滑动后，再设置轮播项的偏移量
                     if (direction === 'horizontal') {
-                        if (i === 0 && stableTrackState().offset < getMinOffset(false)) {
+                        if (stableRootSize().width > 2 * stableTrackState().width) {
+                            // 容器过宽限制
+                            minOffset = -(swiperItemCount - 1) * stableTrackState().width
+                        }
+                        if (i === 0 && stableTrackState().offset < minOffset) {
                             translateX = stableTrackState().width * swiperItemCount
                         } else if (i === swiperItemCount - 1 && stableTrackState().offset > basicOffset) {
                             translateX = -(stableTrackState().width * swiperItemCount)
                         }
                     } else if (direction === 'vertical') {
-                        if (i === 0 && stableTrackState().offset < getMinOffset(false)) {
+                        if (stableRootSize().height > 2 * stableTrackState().height) {
+                            // 容器过高限制
+                            minOffset = -(swiperItemCount - 1) * stableTrackState().height
+                        }
+                        if (i === 0 && stableTrackState().offset < minOffset) {
                             translateY = stableTrackState().height * swiperItemCount
                         } else if (i === swiperItemCount - 1 && stableTrackState().offset > basicOffset) {
                             translateY = -(stableTrackState().height * swiperItemCount)
@@ -623,13 +690,21 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
                     }
                 } else if (swiperItemCount >= 3) {
                     if (direction === 'horizontal') {
-                        if (i === 0 && stableTrackState().offset <= getMinOffset(false)) {
+                        if (stableRootSize().width > 2 * stableTrackState().width) {
+                            // 容器过宽限制
+                            minOffset = -(swiperItemCount - 1) * stableTrackState().width
+                        }
+                        if (i === 0 && stableTrackState().offset <= minOffset) {
                             translateX = stableTrackState().width * (swiperItemCount)
                         } else if (i === swiperItemCount - 1 && stableTrackState().offset >= basicOffset) {
                             translateX = -(stableTrackState().width * swiperItemCount)
                         }
                     } else if (direction === 'vertical') {
-                        if (i === 0 && stableTrackState().offset <= getMinOffset(false)) {
+                        if (stableRootSize().height > 2 * stableTrackState().height) {
+                            // 容器过高限制
+                            minOffset = -(swiperItemCount - 1) * stableTrackState().height
+                        }
+                        if (i === 0 && stableTrackState().offset <= minOffset) {
                             translateY = stableTrackState().height * (swiperItemCount)
                         } else if (i === swiperItemCount - 1 && stableTrackState().offset >= basicOffset) {
                             translateY = -(stableTrackState().height * swiperItemCount)
