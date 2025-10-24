@@ -674,7 +674,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
                         }
                         if (i === 0 && stableTrackState().offset < minOffset) {
                             translateX = stableTrackState().width * swiperItemCount
-                        } else if (i === swiperItemCount - 1 && stableTrackState().offset > basicOffset) {
+                        } else if (i === swiperItemCount - 1 && stableTrackState().offset > 0) {
                             translateX = -(stableTrackState().width * swiperItemCount)
                         }
                     } else if (direction === 'vertical') {
@@ -684,19 +684,26 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
                         }
                         if (i === 0 && stableTrackState().offset < minOffset) {
                             translateY = stableTrackState().height * swiperItemCount
-                        } else if (i === swiperItemCount - 1 && stableTrackState().offset > basicOffset) {
+                        } else if (i === swiperItemCount - 1 && stableTrackState().offset > 0) {
                             translateY = -(stableTrackState().height * swiperItemCount)
                         }
                     }
-                } else if (swiperItemCount >= 3) {
+                } else if (swiperItemCount > 2) {
+                    // 与 2 个的区别是相等的时候，需不需要平移，大于三个，在第一个轮播项时，最后一个轮播项需平移至第一个左边
                     if (direction === 'horizontal') {
                         if (stableRootSize().width > 2 * stableTrackState().width) {
                             // 容器过宽限制
                             minOffset = -(swiperItemCount - 1) * stableTrackState().width
                         }
                         if (i === 0 && stableTrackState().offset <= minOffset) {
-                            translateX = stableTrackState().width * (swiperItemCount)
-                        } else if (i === swiperItemCount - 1 && stableTrackState().offset >= basicOffset) {
+                            translateX = stableTrackState().width * swiperItemCount
+                        } else if (i === swiperItemCount - 1 && stableTrackState().offset >= 0) {
+                            translateX = -(stableTrackState().width * swiperItemCount)
+                        } else if (i === swiperItemCount - 2 && stableTrackState().offset < -(swiperItemCount - 1) * stableTrackState().width) {
+                            // 第二个轮播项需要跟着第一个平移到右边
+                            translateX = stableTrackState().width * swiperItemCount
+                        } else if (i === swiperItemCount - 2 && stableTrackState().offset >= getMaxOffset()) {
+                            // 倒数第二个轮播项需要跟着最后一个平移到左边
                             translateX = -(stableTrackState().width * swiperItemCount)
                         }
                     } else if (direction === 'vertical') {
@@ -705,8 +712,14 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
                             minOffset = -(swiperItemCount - 1) * stableTrackState().height
                         }
                         if (i === 0 && stableTrackState().offset <= minOffset) {
-                            translateY = stableTrackState().height * (swiperItemCount)
-                        } else if (i === swiperItemCount - 1 && stableTrackState().offset >= basicOffset) {
+                            translateY = stableTrackState().height * swiperItemCount
+                        } else if (i === swiperItemCount - 1 && stableTrackState().offset >= 0) {
+                            translateY = -(stableTrackState().height * swiperItemCount)
+                        } else if (i === swiperItemCount - 2 && stableTrackState().offset < -(swiperItemCount - 1) * stableTrackState().height) {
+                            // 第二个轮播项需要跟着第一个平移到下边
+                            translateY = stableTrackState().height * swiperItemCount
+                        } else if (i === swiperItemCount - 2 && stableTrackState().offset >= getMaxOffset()) {
+                            // 倒数第二个轮播项需要跟着最后一个平移到上边
                             translateY = -(stableTrackState().height * swiperItemCount)
                         }
                     }

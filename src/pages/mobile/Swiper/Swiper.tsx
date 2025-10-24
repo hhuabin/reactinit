@@ -16,12 +16,35 @@ const SwiperComponent: React.FC = () => {
                         </SwiperItem>
                     </Swiper>
                 </div>
+                <div className='w-full h-[160px] mt-4'>
+                    <Swiper direction='vertical'>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#bcffbd]'>2</div>
+                        </SwiperItem>
+                    </Swiper>
+                </div>
             </div>
 
             <div className='w-[45rem] mx-auto my-8'>
                 <div className='w-full text-[#697b8c] text-[16px]'>自动播放</div>
                 <div className='w-full h-[160px] mt-4'>
                     <Swiper autoplay={true}>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#bcffbd]'>2</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ffcfac]'>3</div>
+                        </SwiperItem>
+                    </Swiper>
+                </div>
+                <div className='w-full h-[160px] mt-4'>
+                    <Swiper direction='vertical' autoplay={true}>
                         <SwiperItem>
                             <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
                         </SwiperItem>
@@ -50,13 +73,9 @@ const SwiperComponent: React.FC = () => {
                         </SwiperItem>
                     </Swiper>
                 </div>
-            </div>
-
-            <div className='w-[45rem] mx-auto my-8'>
-                <div className='w-full text-[#697b8c] text-[16px]'>纵向滚动</div>
                 <div className='w-full h-[160px] mt-4'>
                     <Swiper direction='vertical' loop={true}>
-                        <SwiperItem key={111}>
+                        <SwiperItem>
                             <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
                         </SwiperItem>
                         <SwiperItem>
@@ -70,9 +89,22 @@ const SwiperComponent: React.FC = () => {
             </div>
 
             <div className='w-[45rem] mx-auto my-8'>
-                <div className='w-full text-[#697b8c] text-[16px]'>自定义轮播项宽度</div>
+                <div className='w-full text-[#697b8c] text-[16px]'>自定义轮播项宽 / 高度</div>
                 <div className='w-full h-[160px] mt-4'>
                     <Swiper loop={true} slideItemSize={300}>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#bcffbd]'>2</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ffcfac]'>3</div>
+                        </SwiperItem>
+                    </Swiper>
+                </div>
+                <div className='w-full h-[160px] mt-4'>
+                    <Swiper direction='vertical' loop={true} slideItemSize={120}>
                         <SwiperItem>
                             <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
                         </SwiperItem>
@@ -101,12 +133,38 @@ const SwiperComponent: React.FC = () => {
                         </SwiperItem>
                     </Swiper>
                 </div>
+                <div className='w-full h-[160px] mt-4'>
+                    <Swiper direction='vertical' loop={true} basicOffset={20} slideItemSize={120}>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#bcffbd]'>2</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ffcfac]'>3</div>
+                        </SwiperItem>
+                    </Swiper>
+                </div>
             </div>
 
             <div className='w-[45rem] mx-auto my-8'>
-                <div className='w-full text-[#697b8c] text-[16px]'>无指示器</div>
+                <div className='w-full text-[#697b8c] text-[16px]'>自定义指示器</div>
                 <div className='w-full h-[160px] mt-4'>
                     <Swiper loop={true} indicator={() => (<></>)}>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#bcffbd]'>2</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ffcfac]'>3</div>
+                        </SwiperItem>
+                    </Swiper>
+                </div>
+                <div className='w-full h-[160px] mt-4'>
+                    <Swiper direction='vertical' loop={true} indicator={() => (<></>)}>
                         <SwiperItem>
                             <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
                         </SwiperItem>
