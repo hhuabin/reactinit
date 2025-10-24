@@ -7,13 +7,13 @@ type DeviceType = 'mobile' | 'pad' | 'desktop' | 'unknown'
  * @returns { DeviceType } 设备类型
  */
 const getDeviceType = (): DeviceType => {
-    if (typeof navigator === 'undefined') return 'unknown'
-    const ua = navigator.userAgent.toLowerCase()
-    if (/mobile|iphone|ipod|android.*mobile|windows phone|blackberry/.test(ua)) {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') return 'unknown'
+    const userAgent = window.navigator.userAgent.toLowerCase()
+    if (/mobile|iphone|ipod|android.*mobile|windows phone|blackberry/.test(userAgent)) {
         return 'mobile'
-    } else if (/ipad|android(?!.*mobile)|tablet/.test(ua)) {
+    } else if (/ipad|android(?!.*mobile)|tablet/.test(userAgent)) {
         return 'pad'
-    } else if (/mac|windows|linux|x11/.test(ua)) {
+    } else if (/mac|windows|linux|x11/.test(userAgent)) {
         return 'desktop'
     }
     return 'unknown'
@@ -31,7 +31,7 @@ export default function useDeviceType() {
         const handleResize = () => {
             let newDeviceType = getDeviceType()
             // 可选：通过分辨率修正
-            if (window.innerWidth < 768 && deviceType === 'desktop') {
+            if (window.innerWidth < 768 && newDeviceType === 'desktop') {
                 newDeviceType = 'mobile'
             }
             setDeviceType(newDeviceType)

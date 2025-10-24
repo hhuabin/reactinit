@@ -53,7 +53,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
         title = '',
         cancelText = '取消',
         confirmText = '确定',
-        primaryColor = '',
+        primaryColor = '#1989fa',
         visibleOptionNum = 6,
         style = {},
     } = props

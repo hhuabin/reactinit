@@ -124,7 +124,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         if (!rootRef.current) return
 
         // 确保取到正确的 offsetWidth 值
-        requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
             const { offsetWidth, offsetHeight } = rootRef.current!
             // 轮播项的宽
             let slideItemWidth = offsetWidth
@@ -403,6 +403,8 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         if (!touchable) return
         touch.move(event)
         if (stopPropagation) event.stopPropagation()
+        // 阻止 onTouchMove 事件向父组件冒泡
+        if (stopPropagation) event.stopPropagation()
 
         // let newOffset = startOffset.current + touch.deltaX.current
         let newOffset = startOffset.current
@@ -585,7 +587,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
                     }
                 }
             }
-        }, () => {})
+        }, () => { })
     }
     /* const updateAnimate = (transformValue: number, transitionDuration = 0) => {
         if (Number.isNaN(transformValue)) transformValue = 0
@@ -747,7 +749,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
 
         // 只有一张就不用显示指示器了
         if (!showIndicator || count === 1) return null
-        activeIndex = clamp(activeIndex, 0 , count - 1)
+        activeIndex = clamp(activeIndex, 0, count - 1)
 
         return (
             <div className='bin-swiper-indicators'>
@@ -775,15 +777,15 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
             <div
                 ref={trackRef}
                 className={'bin-swiper-track' + (direction === 'horizontal' ? ' forbid-scroll-x' : ' swiper-vertical forbid-scroll-y')}
-                style={ getTrackRefSize() }
+                style={getTrackRefSize()}
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
             >
-                { renderSwiperItems() }
+                {renderSwiperItems()}
             </div>
 
-            { renderIndicators() }
+            {renderIndicators()}
         </div>
     )
 })

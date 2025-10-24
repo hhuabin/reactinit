@@ -2,6 +2,14 @@ import Swiper, { SwiperItem } from '@/components/mobile/Swiper'
 
 const SwiperComponent: React.FC = () => {
 
+    const indicator = (total: number, current: number) => {
+        return (
+            <div className='absolute left-1/2 bottom-[12px] px-[6px] rounded-[2px] bg-[#000]/[0.1] translate-x-[-50%] text-[#fff] text-[14px] leading-[20px]'>
+                { (current + 1) +  ' / ' + total }
+            </div>
+        )
+    }
+
     return (
         <div className='py-4 text-[#fff]'>
             <div className='w-[45rem] mx-auto'>
@@ -151,7 +159,7 @@ const SwiperComponent: React.FC = () => {
             <div className='w-[45rem] mx-auto my-8'>
                 <div className='w-full text-[#697b8c] text-[16px]'>自定义指示器</div>
                 <div className='w-full h-[160px] mt-4'>
-                    <Swiper loop={true} indicator={() => (<></>)}>
+                    <Swiper loop={true} indicator={indicator}>
                         <SwiperItem>
                             <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
                         </SwiperItem>
@@ -164,7 +172,7 @@ const SwiperComponent: React.FC = () => {
                     </Swiper>
                 </div>
                 <div className='w-full h-[160px] mt-4'>
-                    <Swiper direction='vertical' loop={true} indicator={() => (<></>)}>
+                    <Swiper direction='vertical' loop={true} indicator={indicator}>
                         <SwiperItem>
                             <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
                         </SwiperItem>

@@ -19,9 +19,9 @@
 ```
 
 - 以上使用方式尚有首尾项连接不顺的问题
-- 问题根源：在`updateAnimate`函数中，当动画执行结束才会触发`updateAnimateByIndex(0)`或`updateAnimateByIndex(swiperItemCount - 1)`函数。动画执行过程中，如`n + 1`轮播项的右侧明显是空的
+- 问题根源：在`updateAnimate`函数中，当动画执行结束才会触发`updateAnimateByIndex(0)`或`updateAnimateByIndex(swiperItemCount - 1)`函数。动画执行过程中，如`n + 1`轮播项的右侧明显是空的（该问题使用平移第二个轮播项和倒数第二个轮播项已解决）
 - 这个问题组件库`vant`也存在，但`antd-mobile`并不存在这个问题。但我采用了与`vant`一样原理编写代码，便于理解。
-- 修复bug思路：参考`antd-mobile`。在移动的同时修改所有`SwiperItem`的`translate3d`，而不是全部依赖于滑动轨道。此改动较大，建议重写
+- 修复bug思路：参考`antd-mobile`。在移动的同时修改所有`SwiperItem`的`translate3d`，而不是全部依赖于滑动轨道。（`antd-mobile`实现了真正的无限循环）
 
 
 
@@ -52,26 +52,45 @@ const SwiperComponent: React.FC = () => {
 
 ## 参数
 
-| 参数               | 说明                                      | 类型                                                         | 默认值         |
-| ------------------ | ----------------------------------------- | ------------------------------------------------------------ | -------------- |
-| `direction`        | 滚动方向                                  | `'horizontal' | 'vertical'`                                  | `'horizontal'` |
-| `autoplay`         | 是否自动切换                              | `boolean`                                                    | `false`        |
-| `duration`         | 切换动画时长，单位为 ms                   | `number`                                                     | `500`          |
-| `loop`             | 是否循环播放                              | `boolean`                                                    | `false`        |
-| `autoplayInterval` | 自动切换的间隔，单位为 ms                 | `number`                                                     | `3000`         |
-| `defaultIndex`     | 默认位置索引值                            | `number`                                                     | `0`            |
-| `width`            | 滑块宽度，若是 number 类型，则单位是 px   | `number | string`                                            | `'100%'`       |
-| `height`           | 滑块高度，若是 number 类型，则单位是 px   | `number | string`                                            | `'100%'`       |
-| `basicOffset`      | 滑块基础偏移量，单位 px                   | `number`                                                     | `0`            |
-| `slideItemSize`    | 轮播项的宽 / 高，单位 px                  | `number`                                                     | 滑块的宽 / 高  |
-| `showIndicator`    | 是否显示指示器                            | `boolean`                                                    | `true`         |
-| `indicatorColor`   | 指示器颜色                                | `string`                                                     |                |
-| `indicator`        | 自定义指示器，优先级比 `showIndicator` 高 | `(total: number, current: number) => React.ReactNode`        | -              |
-| `touchable`        | 是否可以通过手势滑动                      | `boolean`                                                    | `true`         |
-| `stopPropagation`  | 是否阻止滑动事件冒泡                      | `boolean`                                                    | `true`         |
-| `style`            | 自定义样式                                | `React.CSSProperties`                                        | `{}`           |
-| `onChange`         | 切换时触发                                | `(index: number) => void`                                    | -              |
-| `children`         | 轮播内容(`<SwiperItem/>`)                 | `React.ReactElement<typeof SwiperItem> | React.ReactElement<typeof SwiperItem>[]` | -              |
+| 参数               | 说明                                                         | 类型                                                         | 默认值         |
+| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
+| `direction`        | 滚动方向                                                     | `'horizontal' | 'vertical'`                                  | `'horizontal'` |
+| `autoplay`         | 是否自动切换                                                 | `boolean`                                                    | `false`        |
+| `duration`         | 切换动画时长，单位为 ms                                      | `number`                                                     | `500`          |
+| `loop`             | 是否循环播放                                                 | `boolean`                                                    | `false`        |
+| `autoplayInterval` | 自动切换的间隔，单位为 ms                                    | `number`                                                     | `3000`         |
+| `defaultIndex`     | 默认位置索引值                                               | `number`                                                     | `0`            |
+| `width`            | 滑块宽度，若是 number 类型，则单位是 px                      | `number | string`                                            | `'100%'`       |
+| `height`           | 滑块高度，若是 number 类型，则单位是 px                      | `number | string`                                            | `'100%'`       |
+| `basicOffset`      | 滑块基础偏移量，单位 px                                      | `number`                                                     | `0`            |
+| `slideItemSize`    | 轮播项的宽 / 高，单位 px                                     | `number`                                                     | 滑块的宽 / 高  |
+| `showIndicator`    | 是否显示指示器                                               | `boolean`                                                    | `true`         |
+| `indicatorColor`   | 指示器颜色                                                   | `string`                                                     |                |
+| `indicator`        | 自定义指示器，优先级比 `showIndicator` 高                    | `(total: number, current: number) => React.ReactNode`        | -              |
+| `touchable`        | 是否可以通过手势滑动                                         | `boolean`                                                    | `true`         |
+| `stopPropagation`  | 是否阻止滑动事件冒泡<br />（实测：`Swiper`的子元素有`antd-mobile`的`PullToRefresh`组件，<br />`stopPropagation`需要设置成`false`才能保证`PullToRefresh`组件正常使用） | `boolean`                                                    | `true`         |
+| `style`            | 自定义样式                                                   | `React.CSSProperties`                                        | `{}`           |
+| `onChange`         | 切换时触发                                                   | `(index: number) => void`                                    | -              |
+| `children`         | 轮播内容(`<SwiperItem/>`)                                    | `React.ReactElement<typeof SwiperItem> | React.ReactElement<typeof SwiperItem>[]` | -              |
+
+
+
+## Ref
+
+| 属性      | 说明           | 类型                      |
+| --------- | -------------- | ------------------------- |
+| `next`    | 切换到下一张   | `() => void`              |
+| `prev`    | 切换到上一张   | `() => void`              |
+| `swipeTo` | 切换到指定索引 | `(index: number) => void` |
+
+
+
+## CSS 变量
+
+| 属性                   | 说明               | 默认值 |
+| ---------------------- | ------------------ | ------ |
+| `--indicator-size`     | 指示器圆点大小     | `6px`  |
+| `--indicator-duration` | 指示器切换动画时长 | `0.2s` |
 
 
 

@@ -21,6 +21,7 @@
 | `capture`      | 拍照方式（移动端生效）                                       | `boolean | 'environment' | 'user'` | -                  |
 | `disabled`     | 是否禁用文件上传                                             | `boolean`                          | `false`            |
 | `action`       | 上传的请求配置                                               | `RequestOptions`                   | `{}`               |
+| `style`        | 自定义样式                                                   | `React.CSSProperties`              | `{}`               |
 | `children`     | 自定义 Upload children                                       | `JSX.Element`                      | -                  |
 | `onChange`     | 上传文件改变时的回调，上传每个阶段都会触发该事件，需要和`fileList`配合使用 | `(info: UploadFile[]) => void`     | -                  |
 | `beforeRead`   | **读取文件之前**的回调，返回`false | resolve(false) | reject()`，则停止读取；<br/>返回 `true | resolve(false)`则上传继续；<br/>切忌不可返回 `pedding` 状态的 `Promise` | `UploaderBeforeRead`               | -                  |
@@ -60,3 +61,23 @@ type UploaderAfterRead = (newFiles: UploadFile[], fileList: UploadFile[]) => voi
 type UploaderBeforeDelete = (file: UploadFile, index: number) => boolean | Promise<boolean> | void;
 ```
 
+
+
+## Ref
+
+| 属性         | 说明             | 类型         |
+| ------------ | ---------------- | ------------ |
+| `chooseFile` | 主动调起文件选择 | `() => void` |
+
+
+
+## CSS 变量
+
+| 属性                            | 说明               | 默认值    |
+| ------------------------------- | ------------------ | --------- |
+| `--bin-upload-size`             | 单个上传           | `80px`    |
+| `--bin-upload-bg-color`         | 上传按钮背景颜色   | `#f7f8fa` |
+| `--bin-upload-border-radius`    | 上传按钮圆角       | `6px`     |
+| `--bin-upload-icon-color`       | 上传按钮`icon`颜色 | `#dcdee0` |
+| `--bin-upload-delete-icon-size` | 删除按钮大小       | `14px`    |
+| `--bin-upload-progress-color`   | 上传进度条背景颜色 | `#1677ff` |

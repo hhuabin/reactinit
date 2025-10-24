@@ -31,7 +31,6 @@ function useCallbackState<T>(
 
     useEffect(() => {
         if (callbackQueue.current.length > 0) {
-            console.log('callbackQueue----------');
             callbackQueue.current.forEach(callback => callback(state as T))
             callbackQueue.current = []
         }

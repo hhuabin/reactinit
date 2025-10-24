@@ -38,7 +38,7 @@ let defaultGlobalConfig: ConfigOptions = {}       // 全局配置
 // 获取全局配置
 const getGlobalContext = (): ConfigOptions => {
     // const { getContainer, duration = DEFAULT_DURATION, rtl, maxCount, top } = defaultGlobalConfig
-    const { getContainer, duration = DEFAULT_DURATION, prefixCls='bin' } = defaultGlobalConfig
+    const { getContainer, duration = DEFAULT_DURATION, prefixCls = 'bin' } = defaultGlobalConfig
     const mergedContainer = getContainer?.() || document.body   // 设置默认挂载点是 body
     return { getContainer: () => mergedContainer, duration, prefixCls }
 }
@@ -67,7 +67,7 @@ const GlobalHolderWrapper = forwardRef(function MessageWrapper(props: unknown, r
         setMessageConfig(getGlobalContext())
     }
 
-    // 获取 Message 实例，与 message.useMessage 一样
+    // 获取 Message 实例，与 message.useMessage 一样，同时注入全局公共配置
     const [messageInstance, holder] = useInternalMessage(messageConfig)
 
     // const dom = <GlobalHolder ref={ref} sync={sync} messageConfig={messageConfig} />
