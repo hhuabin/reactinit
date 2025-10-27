@@ -15,27 +15,28 @@ type ColumnsFieldNames = {
 }
 
 type PickerProps = {
-    visible?: boolean;                        // 是否显示
-    columns?: PickerColumn | PickerColumn[];  // 配置列的选项
-    defaultIndexs?: number[];                 // 默认选中项
-    columnsFieldNames?: ColumnsFieldNames;    // 自定义列字段名称
-    loading?: boolean;                        // 是否显示加载中
-    title?: string;                           // 标题
-    cancelText?: string;                      // 取消按钮的文字
-    confirmText?: string;                     // 确定按钮的文字
-    primaryColor?: string;                    // 主题色
-    visibleOptionNum?: number;                // 可见的选项个数
-    style?: React.CSSProperties;              // 自定义样式
+    visible?: boolean;                         // 是否显示
+    columns?: PickerColumn | PickerColumn[];   // 配置列的选项
+    defaultIndexs?: number[];                  // 默认选中项
+    columnsFieldNames?: ColumnsFieldNames;     // 自定义列字段名称
+    loading?: boolean;                         // 是否显示加载中
+    title?: string;                            // 标题
+    cancelText?: string;                       // 取消按钮的文字
+    confirmText?: string;                      // 确定按钮的文字
+    primaryColor?: string;                     // 主题色
+    visibleOptionNum?: number;                 // 可见的选项个数
+    className?: string;                        // 自定义类名
+    style?: React.CSSProperties;               // 自定义样式
     onChangeVisible?: (value: boolean) => void;                // 显示状态改变时触发函数
     onConfirm?: (params: PickerConfirmEventParams) => void;    // 确认时触发函数
-    onCancel?: () => void;                    // 取消时触发函数
+    onCancel?: () => void;                     // 取消时触发函数
 }
 
-const DEFAULT_DURATION = 200              // 默认动画时长
-const INERTIAL_SLIDE_TIME = 300           // 惯性滚动判定时间，在该时间范围内为惯性滚动
-const INERTIAL_SLIDE_DISTANCE = 15        // 惯性滚动判定距离
-const INERTIAL_SLIDE_DURATION = 1000      // 惯性滚动动画时长
-const COLUMN_HEIGHT = 44                  // 列高
+const DEFAULT_DURATION = 200                   // 默认动画时长
+const INERTIAL_SLIDE_TIME = 300                // 惯性滚动判定时间，在该时间范围内为惯性滚动
+const INERTIAL_SLIDE_DISTANCE = 15             // 惯性滚动判定距离
+const INERTIAL_SLIDE_DURATION = 1000           // 惯性滚动动画时长
+const COLUMN_HEIGHT = 44                       // 列高
 
 /**
  * Picker 选择器
@@ -60,6 +61,7 @@ const Picker: React.FC<PickerProps> = (props) => {
         confirmText = '确定',
         primaryColor = '#1989fa',
         visibleOptionNum = 6,
+        className = '',
         style = {},
     } = props
 
@@ -441,7 +443,7 @@ const Picker: React.FC<PickerProps> = (props) => {
     return createPortal(
         <>
             <div
-                className={'bin-picker-popup' + (mergeVisible ? '' : ' bin-picker-popup-hidden')}
+                className={`bin-picker-popup${className ? ' ' + className : ''}` + (mergeVisible ? '' : ' bin-picker-popup-hidden')}
                 style={{ ...style, '--primary-color': primaryColor || (style as Record<string, string>)['--primary-color'] } as React.CSSProperties }
             >
                 <div role='button' className={'bin-overlay' + (mergeVisible ? '' : ' bin-overlay-hidden')}

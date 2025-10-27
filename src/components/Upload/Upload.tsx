@@ -24,6 +24,7 @@ type UploadProps = {
     capture?: boolean | 'environment' | 'user'; // 拍照方式（移动端生效）
     disabled?: boolean;                         // 是否禁用文件上传
     action?: RequestOptions;                    // 上传的请求配置
+    className?: string;                         // 自定义类名
     style?: React.CSSProperties;                // 自定义样式
     children?: JSX.Element;                     // 自定义 Upload children
     onChange?: (info: UploadFile[]) => void;    // 上传文件改变时的回调，上传每个阶段都会触发该事件
@@ -47,6 +48,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
         drag = true,
         disabled = false,
         action = {} as RequestOptions,
+        className = '',
         style = {},
         children,
         beforeRead,
@@ -399,7 +401,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
     }))
 
     return (
-        <div className='bin-upload-wrapper'>
+        <div className={`bin-upload-wrapper${className ? ' ' + className : ''}`}>
             {mergedFileList.map((uploadFile, index) => (
                 <div
                     key={uploadFile.key}

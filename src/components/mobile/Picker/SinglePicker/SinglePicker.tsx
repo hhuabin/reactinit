@@ -18,6 +18,7 @@ type PickerProps<T extends string | number | PickerOption = string | number | Pi
     confirmText?: string;                   // 确定按钮的文字
     primaryColor?: string;                  // 主题色
     visibleOptionNum?: number;              // 可见的选项个数
+    className?: string;                     // 自定义类名
     style?: React.CSSProperties;            // 自定义样式
     onChangeVisible?: (value: boolean) => void;                   // 显示状态改变时触发函数
     onConfirm?: (params: PickerConfirmEventParams<T>) => void;    // 确认时触发函数
@@ -55,6 +56,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
         confirmText = '确定',
         primaryColor = '#1989fa',
         visibleOptionNum = 6,
+        className = '',
         style = {},
     } = props
 
@@ -275,7 +277,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
     return createPortal(
         <>
             <div
-                className={styles['picker-popup'] + ' ' + (mergeVisible ? '' : styles['picker-popup-hidden'])}
+                className={styles['picker-popup'] + `${className ? ' ' + className : ''}` + ' ' + (mergeVisible ? '' : styles['picker-popup-hidden'])}
                 style={{ ...style, '--primary-color': primaryColor || (style as Record<string, string>)['--primary-color'] } as React.CSSProperties }
             >
                 <div role='button' className={styles['overlay'] + ' ' + (mergeVisible ? '' : styles['overlay-hidden'])}

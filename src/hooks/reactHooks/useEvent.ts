@@ -1,6 +1,5 @@
 /* https://github.com/react-component/util/blob/master/src/hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-types */
 import { useCallback, useRef } from 'react'
 
 /**
@@ -15,7 +14,7 @@ import { useCallback, useRef } from 'react'
  * @example const memoFn = useEvent(() => {}, [])
  */
 export default function useEvent<T extends (...args: any[]) => any>(callback: T, deps?: React.DependencyList) {
-    const fnRef = useRef<T>()
+    const fnRef = useRef<T>(callback)
     // 最新闭包：重点代码，每次渲染都会执行。重新定义 fnRef.current = callback，即可获取最新闭包值
     fnRef.current = callback
 

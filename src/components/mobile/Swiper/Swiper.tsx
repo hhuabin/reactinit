@@ -26,6 +26,7 @@ type SwiperProps = {
     indicator?: (total: number, current: number) => React.ReactNode;     // 自定义指示器，优先级比 showIndicator 高
     touchable?: boolean;                    // 是否可以通过手势滑动，默认为 true
     stopPropagation?: boolean;              // 是否阻止滑动事件冒泡，默认为 true
+    className?: string;                     // 自定义类名
     style?: React.CSSProperties;            // 自定义样式
     onChange?: (index: number) => void;     // 切换时触发
     children?: React.ReactElement<typeof SwiperItem> | React.ReactElement<typeof SwiperItem>[];       // 轮播内容(`<SwiperItem/>`)
@@ -61,6 +62,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         indicator,
         touchable = true,
         stopPropagation = true,
+        className = '',
         style = {},
         children,
         onChange,
@@ -130,16 +132,13 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
             let slideItemWidth = offsetWidth
             // 轮播项的高
             let slideItemHeight = offsetHeight
-            let _basicOffset = basicOffset
             // 默认索引
             const trusteddefaultIndex = clamp(defaultIndex, 0, swiperItemCount - 1)
 
             if (direction === 'horizontal') {
                 slideItemWidth = slideItemSize ?? offsetWidth
-                _basicOffset -= slideItemWidth * trusteddefaultIndex
             } else if (direction === 'vertical') {
                 slideItemHeight = slideItemSize ?? offsetHeight
-                _basicOffset -= slideItemHeight * trusteddefaultIndex
             }
 
             setStableRootSize({
@@ -150,12 +149,11 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
                 ...prevState,
                 width: slideItemWidth,
                 height: slideItemHeight,
-                offset: _basicOffset,
-                active: trusteddefaultIndex,
             }))
 
             // 更新
-            updateAnimate(_basicOffset)
+            // updateAnimate(_basicOffset)
+            updateAnimateByIndex(trusteddefaultIndex)
         })
     }
 
@@ -214,10 +212,6 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
      */
     const getMinOffset = (isLoop = loop): number => {
         let minOffset: number = 0
-        /**
-         * bug：此处有个问题，由于最小偏移量引入了 stableRootSize()
-         * 在使用固定宽时，会造成在超大屏幕下的所有 stableTrackState().width 相加都小于 stableRootSize().width 的情况
-         */
         if (isLoop) {
             // 循环时最小偏移量可向左 / 下滚动多一项
             if (direction === 'horizontal') {
@@ -411,9 +405,16 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         if (direction === 'horizontal' && touch.isHorizontal()) {
             moving.current = true
             if (loop) {
-                // 不搞那么花里胡哨了，直接限制 touch.deltaX.current 的取值范围即可
-                // newOffset += clamp(touch.deltaX.current, -stableTrackState().width * 0.8, stableTrackState().width * 0.8)
-                newOffset = clamp(newOffset + touch.deltaX.current, getMinOffset(), getMaxOffset())
+                if (swiperItemCount === 1) {
+                    newOffset = newOffset + touch.deltaX.current / 5
+                    // 边界限制
+                    const boundaryDistance = stableTrackState().width / 2
+                    newOffset = clamp(newOffset, getMinOffset(false) - boundaryDistance, getMaxOffset(false) + boundaryDistance)
+                } else {
+                    // 不搞那么花里胡哨了，直接限制 touch.deltaX.current 的取值范围即可
+                    // newOffset += clamp(touch.deltaX.current, -stableTrackState().width * 0.8, stableTrackState().width * 0.8)
+                    newOffset = clamp(newOffset + touch.deltaX.current, getMinOffset(), getMaxOffset())
+                }
             } else {
                 // 未开启循环要做边界处理
                 const maxOffset = getMaxOffset()
@@ -433,8 +434,15 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         } else if (direction === 'vertical' && touch.isVertical()) {
             moving.current = true
             if (loop) {
-                // newOffset += clamp(touch.deltaY.current, -stableTrackState().height * 0.8, stableTrackState().height * 0.8)
-                newOffset = clamp(newOffset + touch.deltaY.current, getMinOffset(), getMaxOffset())
+                if (swiperItemCount === 1) {
+                    newOffset = newOffset + touch.deltaY.current / 5
+                    // 边界限制
+                    const boundaryDistance = stableTrackState().height / 2
+                    newOffset = clamp(newOffset, getMinOffset(false) - boundaryDistance, getMaxOffset(false) + boundaryDistance)
+                } else {
+                    // newOffset += clamp(touch.deltaY.current, -stableTrackState().height * 0.8, stableTrackState().height * 0.8)
+                    newOffset = clamp(newOffset + touch.deltaY.current, getMinOffset(), getMaxOffset())
+                }
             } else {
                 // 未开启循环要做边界处理
                 const maxOffset = getMaxOffset()
@@ -767,7 +775,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
     return (
         <div
             ref={rootRef}
-            className='bin-swiper'
+            className={`bin-swiper${className ? ' ' + className : ''}`}
             style={{
                 ...style,
                 width: width ? (typeof width === 'number' ? `${width}px` : width) : style['width'],
@@ -792,10 +800,10 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
 
 // 添加子组件
 type SwiperComponent = typeof Swiper & {
-    SwiperItem: typeof SwiperItem
+    Item: typeof SwiperItem
 }
 
 const ExportedSwiper = Swiper as SwiperComponent
-ExportedSwiper.SwiperItem = SwiperItem
+ExportedSwiper.Item = SwiperItem
 
 export default ExportedSwiper
