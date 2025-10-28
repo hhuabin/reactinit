@@ -68,6 +68,7 @@ const Notice: React.FC<NoticeProps> = (props) => {
     return (
         <div
             className={'bin-message-notice-wrapper' + (notice.isClose ? ' bin-message-notice-wrapper-leave' : '')}
+            style={{ ...(notice.style ?? {}) }}
             onAnimationEnd={(e) => onAnimationEnd(e)}
         >
             <div className='bin-message-notice'>

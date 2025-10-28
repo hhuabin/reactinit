@@ -22,8 +22,10 @@
 
     .bin-message-notice-wrapper {
         width: 100%;
+        // min-height: 56px;
         padding: 8px;
         text-align: center;
+        overflow: hidden;
         animation: message-move-in 300ms;
 
         @keyframes message-move-in {
@@ -42,6 +44,7 @@
 
             .bin-message-notice-content {
                 display: inline-block;
+                min-height: 40px;
                 padding: 9px 12px;
                 border-radius: 8px;
                 box-sizing: border-box;
@@ -96,19 +99,18 @@
         }
     }
 
+    // 离开动画
     .bin-message-notice-wrapper-leave {
         overflow: hidden;
         animation: message-move-out 300ms forwards;
 
         @keyframes message-move-out {
             from {
-                display: block;
-                max-height: 56px;
+                height: 56px;
                 opacity: 1;
             }
             to {
-                display: none;
-                max-height: 0;
+                height: 0;
                 opacity: 0;
             }
         }
