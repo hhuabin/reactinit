@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-08-19 17:20:05
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:47:46
+ */
 import type { UploadFile } from './Upload.d'
 
 /**

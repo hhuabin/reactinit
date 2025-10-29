@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-09-22 09:14:25
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:51:52
+ */
 import { useState, useRef, useEffect, useCallback } from 'react'
 
 type StateAction<T> = T | ((prevState: T) => T);

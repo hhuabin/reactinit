@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-08-25 08:47:22
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:50:56
+ */
 /* https://github.com/react-component/util/blob/master/src/hooks */
 import { useReducer, useRef } from 'react'
 import useEvent from './useEvent'

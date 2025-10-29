@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-08-19 17:21:51
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:47:08
+ */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface UploadFile {
     url?: string;                               // 文件地址

@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-06-05 16:52:51
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:50:54
+ */
 import { useState, useEffect } from 'react'
 
 type DeviceType = 'mobile' | 'pad' | 'desktop' | 'unknown'

@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-09-17 16:58:55
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:49:35
+ */
 export type SwiperItemProps = {
     width?: number;
     height?: number;

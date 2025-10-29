@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-08-25 08:47:22
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:51:20
+ */
 /* https://github.com/react-component/util/blob/master/src/hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useRef } from 'react'

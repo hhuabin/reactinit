@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-08-25 08:47:22
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:51:29
+ */
 /* https://github.com/react-component/util/blob/master/src/hooks */
 import { useEffect, useLayoutEffect, useRef } from 'react'
 

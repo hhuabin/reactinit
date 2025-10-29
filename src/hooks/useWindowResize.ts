@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2024-12-03 16:32:40
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:50:26
+ */
 import { useLayoutEffect, useEffect } from 'react'
 
 import ThrottleDebounce from '@/utils/functionUtils/ThrottleDebounce'

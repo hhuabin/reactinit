@@ -1,4 +1,10 @@
 /**
+ * @Author: bin
+ * @Date: 2025-07-11 18:23:24
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:45:16
+ */
+/**
  * 参考源码：notification/src/Notice.tsx
  */
 import { useState, useEffect, useContext } from 'react'

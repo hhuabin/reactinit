@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-07-01 16:37:01
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:46:31
+ */
 import { useContext, useMemo } from 'react'
 import { ConfigContext } from './context'
 import type { ConfigConsumerProps } from './context'

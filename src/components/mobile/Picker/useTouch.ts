@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-06-04 10:44:56
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:49:20
+ */
 import { useRef } from 'react'
 
 // const INERTIAL_SLIDE_TIME = 300      // 建议惯性滚动判定时间，在该时间范围内为惯性滚动

@@ -1,4 +1,10 @@
 /**
+ * @Author: bin
+ * @Date: 2025-06-30 15:24:14
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:45:53
+ */
+/**
  * 参考源码：ant-design/components/message/useMessage.tsx
  */
 import { useState, useRef, forwardRef, useImperativeHandle } from 'react'

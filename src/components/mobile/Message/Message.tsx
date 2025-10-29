@@ -1,4 +1,10 @@
 /**
+ * @Author: bin
+ * @Date: 2025-09-12 15:28:38
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:48:07
+ */
+/**
  * 参考源码：ant-design/components/message/index.tsx
  * 基本理念：创建代理(useInternalMessage)，代理message所有(config、useMessage除外)的方法
  * 1. 函数给 message 注册方法open、info...等方法，方法中将参数视作 task 添加进 taskQueue 中------open() / typeOpen()

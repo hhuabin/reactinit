@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-09-12 15:28:38
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:47:56
+ */
 export type NoticeType = 'info' | 'success' | 'error' | 'warning' | 'loading'
 
 // message.config() 的参数类型

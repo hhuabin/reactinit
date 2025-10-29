@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-10-24 11:46:46
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:50:42
+ */
 import { useState, useEffect } from 'react'
 
 export type OSType = 'windows' | 'macos' | 'ipados' | 'ios' | 'android' | 'linux' | 'unknown'

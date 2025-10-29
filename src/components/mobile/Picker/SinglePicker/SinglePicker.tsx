@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-09-11 15:02:42
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:48:59
+ */
 /* eslint-disable max-lines */
 import { useEffect, useState, useRef } from 'react'
 import { createPortal } from 'react-dom'

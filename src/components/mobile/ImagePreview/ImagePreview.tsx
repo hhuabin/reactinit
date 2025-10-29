@@ -2,9 +2,9 @@
  * @Author: bin
  * @Date: 2025-09-15 17:36:13
  * @LastEditors: bin
- * @LastEditTime: 2025-10-27 10:38:26
+ * @LastEditTime: 2025-10-29 09:36:54
  */
-import Swiper from '@/components/mobile/Swiper'
+import Swiper, { SwiperItem } from '@/components/mobile/Swiper'
 
 import useMergedState from '@/hooks/reactHooks/useMergedState'
 import './ImagePreview.less'

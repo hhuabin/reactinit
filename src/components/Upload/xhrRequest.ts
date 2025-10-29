@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-08-21 08:58:12
+ * @LastEditors: bin
+ * @LastEditTime: 2025-10-29 09:47:22
+ */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface XhrRequestOptions {
     url: string;
