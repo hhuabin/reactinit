@@ -5,8 +5,8 @@ import { getters, saveUserInfo } from '@/store/slice/userSlice'
 import type { RootState } from '@/store/store'
 import AppRouter from '@/router'
 
-import usePerformanceMonitor from '@/hooks/usePerformanceMonitor'
-import useProjectAutoUpdate from '@/hooks/useProjectAutoUpdate'
+import usePerformanceMonitor from '@/hooks/utilsHooks/usePerformanceMonitor'
+import useProjectAutoUpdate from '@/hooks/utilsHooks/useProjectAutoUpdate'
 import './App.less'
 
 const App: React.FC = () => {

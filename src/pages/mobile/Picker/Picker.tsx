@@ -83,11 +83,11 @@ const PickerComponent: React.FC = () => {
         setPickerColumns3(pickerColumns32)
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         setTimeout(() => {
             changePickerColumns3()
         }, 3000)
-    }, [])
+    }, []) */
 
     return (
         <>
@@ -243,7 +243,7 @@ const PickerComponent: React.FC = () => {
             <Picker
                 visible={pickerVisible3}
                 onChangeVisible={(value) => setPickerVisible3(value)}
-                defaultIndexs={[10, 10, 10]}
+                defaultIndexs={[0, 0, 0]}
                 columns={pickerColumns3}
                 columnsFieldNames={{ label: 'cityName' }}
                 onConfirm={handleConfirmPicker3}

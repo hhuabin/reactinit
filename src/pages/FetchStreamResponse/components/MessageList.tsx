@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, memo } from 'react'
 
-import { useDebounce } from '@/hooks/useDebounceThrottle'
+import { useDebounce } from '@/hooks/utilsHooks/useDebounceThrottle'
 
 type MessageItem = {
     id: string;
@@ -27,7 +27,6 @@ const MessageList: React.FC<Props> = memo(({ messageItem }: Props) => {
                 break
             }
         }
-        console.log('asdjk')
         changeMessageQueue([...messageQueue])
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [messageItem])

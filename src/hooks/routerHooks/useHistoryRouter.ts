@@ -1,4 +1,10 @@
 /**
+ * @Author: bin
+ * @Date: 2025-08-07 09:16:05
+ * @LastEditors: bin
+ * @LastEditTime: 2025-11-13 14:24:47
+ */
+/**
  * @description 自定义history路由跳转方法
  * @example const router = useHistoryRouter()
  * @example router.push('/')
