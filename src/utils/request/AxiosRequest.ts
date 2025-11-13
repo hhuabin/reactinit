@@ -1,5 +1,9 @@
-import axios from 'axios'
-import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+import axios, {
+    type AxiosInstance,
+    type InternalAxiosRequestConfig,
+    type AxiosResponse,
+    type AxiosError,
+} from 'axios'
 import { message } from 'antd'
 
 import { version as packageVersion } from '@/../package.json'

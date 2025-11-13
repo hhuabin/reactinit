@@ -2,11 +2,11 @@
  * @Author: bin
  * @Date: 2024-12-03 16:32:40
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:50:26
+ * @LastEditTime: 2025-11-13 10:00:08
  */
-import { useLayoutEffect, useEffect } from 'react'
+import { useCallback, useEffect, useLayoutEffect } from 'react'
 
-import ThrottleDebounce from '@/utils/functionUtils/ThrottleDebounce'
+import { useDebounce } from '@/hooks/useDebounceThrottle'
 
 /**
  * 监听浏览器窗口变化，实现自适应（大屏使用）
@@ -16,12 +16,14 @@ import ThrottleDebounce from '@/utils/functionUtils/ThrottleDebounce'
  */
 export default function useWindowResize(designWidth = 1920, designHeight = 1080, renderDOM = '#root') {
 
-    const htmlResize = () => {
+    const htmlResize = useCallback(() => {
         const htmlElement = document.documentElement      // html元素
         const htmlClientWidth = htmlElement.clientWidth
         const htmlClientHeight = htmlElement.clientHeight
+        console.group('clientSize')
         console.log('浏览器可视窗口宽度', htmlElement.clientWidth)
         console.log('浏览器可视窗口高度', htmlElement.clientHeight)
+        console.groupEnd()
 
         // 获取挂载元素
         const renderDomElement = document.querySelector(renderDOM)
@@ -52,20 +54,20 @@ export default function useWindowResize(designWidth = 1920, designHeight = 1080,
         htmlElement.style.overflow = 'hidden'
         // document.body.style.overflow = 'hidden'
         // document.body.style.scrollbarWidth = 'none'
-    }
+    }, [designHeight, designWidth, renderDOM])
 
-    const listenerFunction = ThrottleDebounce.debounce((event: UIEvent) => {
+    const [listenerFunction] = useDebounce(() => {
         htmlResize()
     }, 50)
 
     useLayoutEffect(() => {
         htmlResize()
-    }, [])
+    }, [htmlResize])
 
     useEffect(() => {
         window.addEventListener('resize', listenerFunction)
         return () => {
             window.removeEventListener('resize', listenerFunction)
         }
-    }, [])
+    }, [listenerFunction])
 }

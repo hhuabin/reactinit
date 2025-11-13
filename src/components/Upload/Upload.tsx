@@ -2,11 +2,13 @@
  * @Author: bin
  * @Date: 2025-08-13 11:52:25
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:47:19
+ * @LastEditTime: 2025-11-13 10:59:19
  */
 /* eslint-disable max-lines */
-import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useMemo } from 'react'
-import type { ForwardedRef } from 'react'
+import {
+    forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState,
+    type ForwardedRef,
+} from 'react'
 import { flushSync } from 'react-dom'
 
 import './Upload.less'
@@ -43,6 +45,7 @@ export type UploadRef = {
     chooseFile: VoidFunction;
 }
 
+// eslint-disable-next-line prefer-arrow-callback
 export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<UploadRef>) {
     const {
         fileList,
@@ -103,7 +106,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                     uploadFile.key = `upload-${Date.now()}-${uploadKeyIndex++}`
                 }
             })
-    }, [fileList])
+    }, [fileList, maxCount])
 
     /**
      * @description 文件列表改变后更新状态函数

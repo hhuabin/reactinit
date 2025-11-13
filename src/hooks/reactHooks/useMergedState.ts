@@ -9,8 +9,7 @@
 import { useCallback, useRef } from 'react'
 import useEvent from './useEvent'
 import useLayoutUpdateEffect from './useLayoutUpdateEffect'
-import useSafeState from './useSafeState'
-import type { SetStateAction } from './useSafeState'
+import useSafeState, { type SetStateAction } from './useSafeState'
 
 /** We only think `undefined` is empty */
 const hasValue = (value: any) => {

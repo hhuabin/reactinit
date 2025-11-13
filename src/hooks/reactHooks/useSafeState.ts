@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-08-22 15:47:25
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:51:03
+ * @LastEditTime: 2025-11-12 20:00:08
  */
 /* https://github.com/react-component/util/blob/master/src/hooks */
 import { useEffect, useRef, useState } from 'react'
@@ -23,6 +23,7 @@ export type SetStateAction<T> = (
  */
 function useSafeState<T>(initialValue: T | (() => T)): [T, SetStateAction<T>]
 function useSafeState<T>(): [T | undefined, SetStateAction<T | undefined>]
+// eslint-disable-next-line func-style
 function useSafeState<T>(
     initialValue?: T | (() => T),
 ): [T, SetStateAction<T>] {

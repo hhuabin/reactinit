@@ -5,8 +5,7 @@
  * @LastEditTime: 2025-10-29 09:46:31
  */
 import { useContext, useMemo } from 'react'
-import { ConfigContext } from './context'
-import type { ConfigConsumerProps } from './context'
+import { ConfigContext, type ConfigConsumerProps } from './context'
 
 const { Provider, Consumer } = ConfigContext
 

@@ -34,7 +34,7 @@ const CHUNK_SIZE = 5 * 1024 * 1024             // 5MB
  * @param { File } file 文件对象
  * @returns { Promise<string> } 哈希值
  */
-async function calculateFileHash(file: File): Promise<string> {
+const calculateFileHash = async (file: File): Promise<string> => {
     return new Promise<string>((resolve) => {
         const reader = new FileReader()
         reader.onload = async (e) => {

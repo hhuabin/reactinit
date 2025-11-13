@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-12 15:28:38
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:48:12
+ * @LastEditTime: 2025-11-13 11:15:03
  */
 /**
  * 参考源码：notification/src/Notice.tsx
@@ -62,6 +62,7 @@ const Notice: React.FC<NoticeProps> = (props) => {
             // 销毁时清除定时器
             if (timer) clearTimeout(timer)
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // 动画执行完毕，删除该元素
@@ -83,12 +84,12 @@ const Notice: React.FC<NoticeProps> = (props) => {
                         { notice.icon
                             ? notice.icon
                             : (
-                                notice.type && (
-                                    <span className='bin-message-icon'>
-                                        { renderIcon(notice.type) }
-                                    </span>
+                                    notice.type && (
+                                        <span className='bin-message-icon'>
+                                            { renderIcon(notice.type) }
+                                        </span>
+                                    )
                                 )
-                            )
                         }
                         <span className='bin-message-content'>{notice.content}</span>
                         { notice.showCloseBtn && (
@@ -135,6 +136,7 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
             setNoticeList(resultList)
         }
         setForbidClick(getForbidClick(messageConfigList))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.messageConfigList])
 
     const getForbidClick = (messageConfigList: MessageConfig[]): boolean => {
@@ -202,11 +204,13 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
                     const newConfig = messageConfigList.slice(configListHead, configIndex)
                     // 从开始查找下标开始查找，将 newConfig 插入到 resultList 中
                     for (let j = insertStartIndex; j <= resultList.length; j++) {
+                        // eslint-disable-next-line max-depth
                         if (resultList[j]!.key === configKeys[configIndex]) {
                             resultList.splice(j, 0, ...newConfig)
                             insertStartIndex = j + 1
                             break
                         }
+                        // eslint-disable-next-line max-depth
                         if (j === resultList.length) {
                             resultList.push(...newConfig)
                             insertStartIndex = j

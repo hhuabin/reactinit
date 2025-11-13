@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-11 15:02:42
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:48:59
+ * @LastEditTime: 2025-11-13 11:16:28
  */
 /* eslint-disable max-lines */
 import { useEffect, useState, useRef } from 'react'
@@ -97,6 +97,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
         // columns 更新，重置选中项目为默认选中项
         setIsInertialScrolling(false)
         updateValueByIndex(+defaultIndex || 0, 0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [columns])
 
     useEffect(() => {
@@ -110,6 +111,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
         return () => {
             document.body.style.overflow = origin
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mergeVisible])
 
     /**

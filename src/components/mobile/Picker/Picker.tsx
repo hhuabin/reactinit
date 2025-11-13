@@ -139,6 +139,7 @@ const Picker: React.FC<PickerProps> = (props) => {
             setCurrentColumns(newColumns)
             initializeBaseData(newColumns)
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [columns])
 
     useEffect(() => {
@@ -156,6 +157,7 @@ const Picker: React.FC<PickerProps> = (props) => {
          * 添加 currentColumns.length 依赖是因为初始化 columns 变化时，currentColumns 还是 []
          * 当currentColumns 是 [] 时，DOM 还未未生成，无法更新动画
          */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentColumns.length])
 
     useEffect(() => {
@@ -194,6 +196,7 @@ const Picker: React.FC<PickerProps> = (props) => {
         return () => {
             document.body.style.overflow = origin
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mergeVisible])
 
     // 根据 columnCount 列数，初始化每一列的数据

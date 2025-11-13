@@ -2,13 +2,15 @@
  * @Author: bin
  * @Date: 2025-06-30 15:24:14
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:45:53
+ * @LastEditTime: 2025-11-12 20:11:44
  */
 /**
  * 参考源码：ant-design/components/message/useMessage.tsx
  */
-import { useState, useRef, forwardRef, useImperativeHandle } from 'react'
-import type { ForwardedRef } from 'react'
+import {
+    useState, useRef, forwardRef, useImperativeHandle,
+    type ForwardedRef,
+} from 'react'
 import { createPortal } from 'react-dom'
 
 import { wrapPromiseFn } from './utils/utils'
@@ -55,7 +57,7 @@ const mergeConfig = <T extends object>(...objList: Partial<T>[]): T => {
  * 2. 渲染消息列表
  * 3. 消息列表 configList 将会被 <NoticeList /> 监控
  */
-// eslint-disable-next-line react-refresh/only-export-components
+// eslint-disable-next-line react-refresh/only-export-components, prefer-arrow-callback
 const Notifications = forwardRef(function Notifications(props: ConfigOptions, ref: ForwardedRef<NotificationsRef>) {
 
     const {

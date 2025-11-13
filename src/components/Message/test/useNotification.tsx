@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 已弃用，功能合并到 useMessage 中，简化组件结构
  * 参考源码：notification/src/hooks/useNotification.tsx
  */
-import { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react'
-import type { ForwardedRef } from 'react'
+import {
+    useRef, useState, useEffect, forwardRef, useImperativeHandle,
+    type ForwardedRef,
+} from 'react'
 import { createPortal } from 'react-dom'
 
 import type { ConfigOptions, ArgsProps } from '../Message.d'
@@ -138,6 +141,7 @@ const useNotification = (
         ></Notifications>
     )
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         setContainer(getContainer())
     })
@@ -147,16 +151,16 @@ const useNotification = (
         if (notificationsRef.current && taskQueue.length) {
             taskQueue.forEach((task) => {
                 switch (task.type) {
-                case 'open':
-                    notificationsRef.current!.open(task.config)
-                    break
-                case 'close':
-                    notificationsRef.current!.close(task.key)
-                    break
+                    case 'open':
+                        notificationsRef.current!.open(task.config)
+                        break
+                    case 'close':
+                        notificationsRef.current!.close(task.key)
+                        break
 
-                case 'destroy':
-                    notificationsRef.current!.destroy()
-                    break
+                    case 'destroy':
+                        notificationsRef.current!.destroy()
+                        break
                 }
             })
         }

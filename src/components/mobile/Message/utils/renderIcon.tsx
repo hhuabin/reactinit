@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-09-12 15:28:38
+ * @LastEditors: bin
+ * @LastEditTime: 2025-11-12 16:07:39
+ */
 import type { NoticeType } from '../Message.d'
 import '../style/message.less'
 
@@ -42,18 +48,18 @@ const loading = (
 )
 const renderIcon = (noticeType: NoticeType = 'info'): JSX.Element => {
     switch (noticeType) {
-    case 'info':
-        return info
-    case 'success':
-        return success
-    case 'error':
-        return error
-    case 'warning':
-        return warning
-    case 'loading':
-        return loading
-    default:
-        return info
+        case 'info':
+            return info
+        case 'success':
+            return success
+        case 'error':
+            return error
+        case 'warning':
+            return warning
+        case 'loading':
+            return loading
+        default:
+            return info
     }
 }
 

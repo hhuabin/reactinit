@@ -2,17 +2,18 @@
  * @Author: bin
  * @Date: 2025-09-16 14:40:22
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:49:31
+ * @LastEditTime: 2025-11-13 11:11:30
  */
 /* eslint-disable max-lines */
-import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
+import React, {
+    useEffect, useRef, forwardRef, useImperativeHandle,
+    type ForwardedRef,
+} from 'react'
 import { flushSync } from 'react-dom'
 import { useInternalLayoutEffect } from '@/hooks/reactHooks/useLayoutUpdateEffect'
-import type { ForwardedRef } from 'react'
 
 import useSyncState from '@/hooks/reactHooks/useSyncState'
-import SwiperItem from './SwiperItem'
-import type { SwiperItemProps } from './SwiperItem'
+import SwiperItem, { type SwiperItemProps } from './SwiperItem'
 import useTouch from './useTouch'
 import './Swiper.less'
 
@@ -50,6 +51,7 @@ const INERTIAL_SLIDE_DISTANCE = 15          // 惯性滚动判定距离
 // 获取中间的数字
 const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max)
 
+// eslint-disable-next-line prefer-arrow-callback
 const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<SwiperRef>) {
 
     const {
@@ -119,6 +121,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         return () => {
             window.removeEventListener('resize', resizeHandler)
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     // 监听宽度、高度，获取 swiper 的大小
     useInternalLayoutEffect(() => {
@@ -171,6 +174,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         return () => {
             if (autoplayTimer.current) clearTimeout(autoplayTimer.current)
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [autoplay, autoplayInterval])
 
     // 获取非循环 / 循环状态下的可信任的 Swiper 下标

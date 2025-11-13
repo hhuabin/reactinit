@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 
-import Upload from '@/components/Upload'
-import type { UploadFile } from '@/components/Upload'
+import Upload, { type UploadFile } from '@/components/Upload'
 
 import { clamp } from '@/utils/functionUtils/mathUtils'
 import {
@@ -9,8 +8,8 @@ import {
     singleThreadCreateFileChunks,
     mergeFileChunks,
     uploadFileChunks,
+    type FileChunk,
 } from '@/utils/bigFileUploadUtils'
-import type { FileChunk } from '@/utils/bigFileUploadUtils'
 
 type Props = {
     uploadUrl: string;
@@ -99,7 +98,7 @@ const BigFileUpload: React.FC<Props> = (props) => {
                     onError: (error, fileChunk) => {
                         // console.error(`分片${fileChunk.index + 1}上传失败`)
                     },
-                }, 5,3)
+                }, 5, 3)
             })
             .then(res => {
                 // 3. 单个文件上传成功

@@ -147,16 +147,16 @@ const useNotification = (
         if (notificationsRef.current && taskQueue.length) {
             taskQueue.forEach((task) => {
                 switch (task.type) {
-                case 'open':
-                    notificationsRef.current!.open(task.config)
-                    break
-                case 'close':
-                    notificationsRef.current!.close(task.key)
-                    break
+                    case 'open':
+                        notificationsRef.current!.open(task.config)
+                        break
+                    case 'close':
+                        notificationsRef.current!.close(task.key)
+                        break
 
-                case 'destroy':
-                    notificationsRef.current!.destroy()
-                    break
+                    case 'destroy':
+                        notificationsRef.current!.destroy()
+                        break
                 }
             })
         }

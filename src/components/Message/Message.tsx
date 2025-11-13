@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-10 11:22:20
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:44:54
+ * @LastEditTime: 2025-11-12 20:11:18
  */
 /**
  * 参考源码：ant-design/components/message/index.tsx
@@ -11,8 +11,10 @@
  * 2. 执行 flushNotice()，消费 taskQueue，消费成功后删除 taskQueue------执行flushNotice()
  * 3. flushNotice() 的循环中设置代理，open、info...等方法会转成代理的调用------flushNotice => taskQueue.forEach
  */
-import { useState, forwardRef, useImperativeHandle, useEffect } from 'react'
-import type { ForwardedRef } from 'react'
+import {
+    useState, forwardRef, useImperativeHandle, useEffect,
+    type ForwardedRef,
+} from 'react'
 
 import ConfigProvider from '@/components/ConfigProvider/ConfigProvider'
 
@@ -62,7 +64,7 @@ const setMessageGlobalConfig = (config: ConfigOptions) => {
  * 生成 messageInstance 实例，将实例方法暴露出去
  * 并将其包括在全局组件 <ConfigProvider> 中
  */
-// eslint-disable-next-line react-refresh/only-export-components
+// eslint-disable-next-line react-refresh/only-export-components, prefer-arrow-callback
 const GlobalHolderWrapper = forwardRef(function MessageWrapper(props: unknown, ref: ForwardedRef<GlobalHolderRef>) {
     // useState(getGlobalContext) 惰性初始化
     // React 检测到你传的是一个函数，而不是一个普通值，它会在初始化时执行这个函数一次，把返回值当作初始值
@@ -153,28 +155,28 @@ const flushNotice = () => {
         // 当用户不跳过提示时，进行渲染
         if (!skipped) {
             switch (task.type) {
-            case 'open': {
-                // 获取关闭函数
-                const closeFn = message!.instance!.open({
-                    ...defaultGlobalConfig,
-                    ...task.config,
-                })
-                // 链式调用关闭函数，message 实例关闭函数调用后调用用户定义的 .then()
-                closeFn?.then(task.resolve)
-                // 设置 open / typeOpen 的 closeFn 函数赋值，方便外部调用关闭函数
-                task.setCloseFn(closeFn)
-                break
-            }
-            case 'destroy': {
-                message?.instance!.destroy(task.key)
-                break
-            }
-            default: {
-                const closeFn = message!.instance![type as NoticeType](...task.args)
+                case 'open': {
+                    // 获取关闭函数
+                    const closeFn = message!.instance!.open({
+                        ...defaultGlobalConfig,
+                        ...task.config,
+                    })
+                    // 链式调用关闭函数，message 实例关闭函数调用后调用用户定义的 .then()
+                    closeFn?.then(task.resolve)
+                    // 设置 open / typeOpen 的 closeFn 函数赋值，方便外部调用关闭函数
+                    task.setCloseFn(closeFn)
+                    break
+                }
+                case 'destroy': {
+                    message?.instance!.destroy(task.key)
+                    break
+                }
+                default: {
+                    const closeFn = message!.instance![type as NoticeType](...task.args)
 
-                closeFn?.then(task.resolve)
-                task.setCloseFn(closeFn)
-            }
+                    closeFn?.then(task.resolve)
+                    task.setCloseFn(closeFn)
+                }
             }
         }
     })

@@ -30,5 +30,6 @@ export default function usePreviousEffect(
             callback(prevRef.current)
         }
         prevRef.current = deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, deps)
 }

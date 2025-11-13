@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, memo } from 'react'
 
-import ThrottleDebounce from '@/utils/functionUtils/ThrottleDebounce'
+import { useDebounce } from '@/hooks/useDebounceThrottle'
 
 type MessageItem = {
     id: string;
@@ -29,11 +29,13 @@ const MessageList: React.FC<Props> = memo(({ messageItem }: Props) => {
         }
         console.log('asdjk')
         changeMessageQueue([...messageQueue])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [messageItem])
 
-    const changeMessageQueue = useCallback(ThrottleDebounce.debounce((messageQueue: MessageItem[]) => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const [changeMessageQueue] = useDebounce((messageQueue: MessageItem[]) => {
         setMessageQueue(messageQueue)
-    }, 500), [])
+    }, 500)
 
     // TODO 渲染消息队列，有需要可以做模拟滚动
     if (!!messageQueue.length) {

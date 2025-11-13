@@ -1,6 +1,5 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import type { Root } from 'react-dom/client'
+import { createRoot, type Root } from 'react-dom/client'
 
 // eslint-disable-next-line react-refresh/only-export-components
 const MARK = '__rc_react_root__'
@@ -50,7 +49,7 @@ let unstableRender: RenderType = defaultReactRender
 /**
  * 渲染函数
  */
-export function unstableSetRender(render?: RenderType) {
+export const unstableSetRender = (render?: RenderType) => {
     if (render) {
         unstableRender = render
     }

@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-22 09:14:25
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:51:52
+ * @LastEditTime: 2025-11-13 11:17:07
  */
 import { useState, useRef, useEffect, useCallback } from 'react'
 
@@ -22,6 +22,7 @@ export type SetStateAction<T> = (
  */
 function useCallbackState<T>(initialValue: T | (() => T)): [T, SetStateAction<T>]
 function useCallbackState<T>(): [T | undefined, SetStateAction<T | undefined>]
+// eslint-disable-next-line func-style
 function useCallbackState<T>(
     initialValue?: T | (() => T),
 ): [T, SetStateAction<T>] {

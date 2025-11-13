@@ -42,18 +42,18 @@ const loading = (
 )
 const renderIcon = (noticeType: NoticeType = 'info'): JSX.Element => {
     switch (noticeType) {
-    case 'info':
-        return info
-    case 'success':
-        return success
-    case 'error':
-        return error
-    case 'warning':
-        return warning
-    case 'loading':
-        return loading
-    default:
-        return info
+        case 'info':
+            return info
+        case 'success':
+            return success
+        case 'error':
+            return error
+        case 'warning':
+            return warning
+        case 'loading':
+            return loading
+        default:
+            return info
     }
 }
 

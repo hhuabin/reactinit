@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-08-22 15:46:26
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:51:36
+ * @LastEditTime: 2025-11-12 19:53:15
  */
 /* https://github.com/react-component/util/blob/master/src/hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -19,6 +19,7 @@ import { useCallback, useRef } from 'react'
  * @returns { (...args: Parameters<T>) => any } 返回 useCallback 的返回值（即一个新函数（地址））
  * @example const memoFn = useEvent(() => {}, [])
  */
+// eslint-disable-next-line space-before-function-paren
 export default function useEvent<T extends (...args: any[]) => any>(callback: T, deps?: React.DependencyList) {
     const fnRef = useRef<T>(callback)
     // 最新闭包：重点代码，每次渲染都会执行。重新定义 fnRef.current = callback，即可获取最新闭包值
@@ -30,6 +31,7 @@ export default function useEvent<T extends (...args: any[]) => any>(callback: T,
      */
     const memoFn = useCallback(
         (...args: Parameters<T>) => fnRef.current?.(...args),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         deps ?? [],
     )
 

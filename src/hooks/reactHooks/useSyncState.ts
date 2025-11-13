@@ -26,6 +26,7 @@ export type SetStateAction<T> = (stateAction: StateAction<T>) => void
  */
 function useSyncState<T>(initialValue: T): [() => T, SetStateAction<T>]
 function useSyncState<T>(): [() => T | undefined, SetStateAction<T | undefined>]
+// eslint-disable-next-line func-style
 function useSyncState<T>(initialValue?: T) {
     // 使用 useReducer 来强制组件重新渲染。这里不关心 reducer 的值本身，只是用 forceUpdate() 来触发渲染
     const [, forceUpdate] = useReducer(x => x + 1, 0)

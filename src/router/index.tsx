@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createHashRouter, redirect, RouterProvider } from 'react-router-dom'
-import type {
-    RouteObject,
-    LoaderFunction,
-    LazyRouteFunction,
-    NonIndexRouteObject,
-    LoaderFunctionArgs,
+import {
+    createHashRouter,
+    redirect,
+    RouterProvider,
+    type RouteObject,
+    type LoaderFunction,
+    type LazyRouteFunction,
+    type NonIndexRouteObject,
+    type LoaderFunctionArgs,
 } from 'react-router-dom'
 
 import store from '@/store/store'

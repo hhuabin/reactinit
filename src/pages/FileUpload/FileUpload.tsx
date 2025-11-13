@@ -3,8 +3,7 @@ import { useState } from 'react'
 import { Modal } from 'antd'
 
 import { message } from '@/components/Message'
-import Upload from '@/components/Upload'
-import type { UploadFile } from '@/components/Upload'
+import Upload, { type UploadFile } from '@/components/Upload'
 import BigFileUpload from './components/BigFileUpload'
 
 import useSyncState from '@/hooks/reactHooks/useSyncState'
