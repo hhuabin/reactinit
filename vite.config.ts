@@ -1,5 +1,4 @@
-import { defineConfig } from 'vite'
-import type { ConfigEnv } from 'vite'
+import { defineConfig, type ConfigEnv } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import { visualizer } from 'rollup-plugin-visualizer'
 

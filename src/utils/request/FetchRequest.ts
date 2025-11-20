@@ -1,4 +1,10 @@
-import { message } from 'antd'
+/**
+ * @Author: bin
+ * @Date: 2025-02-26 21:05:44
+ * @LastEditors: bin
+ * @LastEditTime: 2025-11-14 10:53:16
+ */
+import { message } from '@/components/Message'
 
 export default class FetchRequest {
 

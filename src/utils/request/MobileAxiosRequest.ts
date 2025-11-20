@@ -1,3 +1,10 @@
+/* eslint-disable max-lines */
+/**
+ * @Author: bin
+ * @Date: 2025-06-04 10:59:21
+ * @LastEditors: bin
+ * @LastEditTime: 2025-11-20 19:42:54
+ */
 import axios, {
     type AxiosInstance,
     type InternalAxiosRequestConfig,
@@ -16,8 +23,9 @@ import HTTP_STATUS_CODES from './httpStatusCodes'
 
 /**
  * @description AxiosRequest
+ * 只适合单例 Toast 的移动端请求，多例的 message 请使用 AxiosRequest
  * 1. cancelLastRequest：取消上次请求，适合用在请求数据接口，不适合在提交数据接口使用，以避免重复提交
- * 2. showLoading：可使用showLoading开启请求loading
+ * 2. showLoading：可使用 showLoading 开启请求 loading
  * 3. refreshToken：配置token过期的result_code，配置新token请求的url
  * 4. requestRetry 存在间隔 loading 问题，建议修复为只有一个loading
  */
@@ -149,8 +157,8 @@ export default class MobileAxiosRequest {
     private clearTimerId = () => {
         if (this.timerId) {
             /**
-             * 这里会产生一个问题，在多个请求同时携带loading参数时
-             * 第一个请求成功，则会进入此函数。清空timerId，关闭loadingToast，尽管后续请求失败也会造成关闭
+             * 这里会产生一个问题，在多个请求同时携带 showLoading 参数时
+             * 第一个请求成功，则会进入此函数。清空timerId，关闭 loadingToast，尽管后续请求失败也会造成关闭
              * 故而如非特殊需要，请不要在多个请求中（如Promise.all中）同时携带loading参数
              * 请自行在请求中处理
              */

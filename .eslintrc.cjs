@@ -26,14 +26,16 @@ module.exports = {
         'prefer-const': ['error'],                                 // not use let
         'no-unused-vars': ['off'],                                 // 允许未使用的变量
         'quotes': ['warn', 'single'],                              // use single quotes
+        'eqeqeq': ['warn', 'always', { null: 'ignore' }],          // use ===
         'no-extra-boolean-cast': ['off'],                          // allow !! and Boolean()
         'no-duplicate-imports': ['warn'],                          // 禁止重复 import，不分开导入,  import a, { b } from 'x'
         // function
+        'no-empty': ['warn'],                                      // 禁止空代码块
+        'func-style': ['warn', 'expression'],                      // 统一使用函数表达式  function f() {} -> const f = function() {}
         'prefer-arrow-callback': ['warn'],                         // 回调优先用箭头函数  [1, 2].map(x => x * 2)
         'no-return-await': ['warn'],                               // 避免多余 return await,  return await fetch() -> return fetch()
         'max-depth': ['warn', 4],                                  // 限制函数嵌套层级为 4
-        'max-params': ['warn', 6],                                 // 函数参数个数限制为 6
-        'func-style': ['warn', 'expression'],                      // 统一使用函数表达式  function f() {} -> const f = function() {}
+        'max-params': ['warn', 5],                                 // 函数参数个数限制为 5
         // space
         'comma-dangle': ['warn', 'always-multiline'],              // use , end in object and array
         'comma-spacing': ['warn', { before: false, after: true }], // 逗号后有空格  let a, b;

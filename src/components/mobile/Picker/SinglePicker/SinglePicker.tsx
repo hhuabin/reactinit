@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-11 15:02:42
  * @LastEditors: bin
- * @LastEditTime: 2025-11-13 11:16:28
+ * @LastEditTime: 2025-11-14 10:44:19
  */
 /* eslint-disable max-lines */
 import { useEffect, useState, useRef } from 'react'
@@ -332,7 +332,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
                                         className={styles['picker-column-item']}
                                         key={index}
                                         onClick={() => onClickOption(index)}
-                                        style={{ color: ((index == getCurrentIndex() && !isInertialScrolling) ? 'var(--primary-color)' : '') }}
+                                        style={{ color: ((index === getCurrentIndex() && !isInertialScrolling) ? 'var(--primary-color)' : '') }}
                                     >
                                         <div className={styles['line-ellipsis']}>
                                             { ['string', 'number'].includes(typeof item) ? item.toString() : (item as PickerOption).label }

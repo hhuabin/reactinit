@@ -54,7 +54,7 @@ const createPublicLazy = (route: RouteConfig): LazyRouteFunction<RouteObject> =>
         const publicDataFunctionValue = await publicLoader(args)
 
         if (publicDataFunctionValue && !isEmptyObject(publicDataFunctionValue)) {
-            // 当 publicLoader 不返回 null | {}
+            // 当 publicLoader 不返回 null | {} 时执行，兼容未登录重定向等返回
             return publicDataFunctionValue
         } else {
             const loaderDataFunctionValue = await (lazyOrRouteLoader as LoaderFunction)(args)

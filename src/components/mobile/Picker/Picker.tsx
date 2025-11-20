@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-04 10:46:02
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:48:36
+ * @LastEditTime: 2025-11-14 10:44:03
  */
 /* eslint-disable max-lines */
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -502,7 +502,7 @@ const Picker: React.FC<PickerProps> = (props) => {
                                                 className='bin-picker-column-item'
                                                 key={index}
                                                 onClick={() => onClickOption(columnIndex, index)}
-                                                style={{ color: ((index == getCurrentIndexByColumnIndex(columnIndex) && !isInertialScrollings[columnIndex]) ? 'var(--primary-color)' : '') }}
+                                                style={{ color: ((index === getCurrentIndexByColumnIndex(columnIndex) && !isInertialScrollings[columnIndex]) ? 'var(--primary-color)' : '') }}
                                             >
                                                 <div className='bin-line-ellipsis'>
                                                     {item[columnsFieldNames.label || 'label']}

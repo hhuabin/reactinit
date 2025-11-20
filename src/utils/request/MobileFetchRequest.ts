@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-06-04 11:01:56
+ * @LastEditors: bin
+ * @LastEditTime: 2025-11-14 10:52:54
+ */
 export default class MobileFetchRequest {
 
     private baseURL = import.meta.env.VITE_API_BASE_URL
