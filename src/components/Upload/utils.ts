@@ -17,7 +17,7 @@ export const isImageFile = (uploadFile: UploadFile): boolean => {
         return uploadFile.file.type.indexOf('image/') === 0
     }
 
-    const url = uploadFile.tempUrl || uploadFile.url || ''
+    const url = uploadFile.url || uploadFile.tempUrl || ''
     const base64 = url.indexOf('data:image') === 0
     const isImageUrl = IMAGE_REGEXP.test(url)
     return base64 || isImageUrl

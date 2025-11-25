@@ -421,7 +421,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                         isImageFile(uploadFile) ? (
                             // 图片显示
                             <div className='bin-upload-image'>
-                                <img src={uploadFile.tempUrl || uploadFile.url} className={imageFit} />
+                                <img src={uploadFile.url || uploadFile.tempUrl} className={imageFit} />
                             </div>
                         ) : (
                             // 文件显示
@@ -432,7 +432,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                                             fill='none' strokeLinecap='round' strokeLinejoin='round' />
                                     </svg>
                                 </div>
-                                <div className='bin-upload-file-name'>{ uploadFile.name || uploadFile.tempUrl || uploadFile.url || '' }</div>
+                                <div className='bin-upload-file-name'>{ uploadFile.name || uploadFile.url || uploadFile.tempUrl || '' }</div>
                             </div>
                         )
                     }
