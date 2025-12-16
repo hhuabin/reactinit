@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { base64Encode, base64Decode } from '@/utils/functionUtils/base64'
 
 /**
  * LocalStorageUtil 兼容 localStorage，可以使用 localStorage 的所有 API
@@ -16,12 +17,18 @@ export default class LocalStorageUtil {
      * @param { string } key localStorage 的键
      * @param { any } value 需要存储的值，此处不需要调用stringify序列化对象
      * @param { boolean } prefixFlag 是否添加公共前缀，默认为 true
+     * @param { boolean } encrypt 是否需要对存储的 json 进行加密处理，默认为 false
+     * @example localStorageUtil.setItem('user_info', '', true, false)
      */
-    public static setItem = (key: string, value: any, prefixFlag = true) => {
+    public static setItem = (key: string, value: any, prefixFlag = true, encrypt = false) => {
         const _key = prefixFlag ? LocalStorageUtil.STORAGE_PREFIX + key : key
 
         try {
-            const serializedValue = JSON.stringify(value)
+            let serializedValue = JSON.stringify(value)
+            if (encrypt) {
+                // 字符串加密方法可以更换成其他的
+                serializedValue = base64Encode(serializedValue)
+            }
             localStorage.setItem(_key, serializedValue)
         } catch (error) {
             console.error(`Error setting localStorage key '${_key}':`, error)
@@ -33,24 +40,29 @@ export default class LocalStorageUtil {
      * @param { string } key localStorage 的键
      * @param { any } defaultValue 默认返回值，默认为null
      * @param { boolean } prefixFlag 是否添加公共前缀，默认为 true
+     * @param { boolean } prefixFlag 是否需要对存储的 json 进行解密处理，默认为 false
      * @returns { T | null } 本地缓存的值或 defaultValue 默认返回值
      * @example localStorageUtil.getItem<User>('', '')
      */
     public static getItem: {
-        <T = any>(key: string, defaultValue?: null, prefixFlag?: boolean): T | null;
-        <T = any>(key: string, defaultValue: T, prefixFlag?: boolean): T;
+        <T = any>(key: string, defaultValue?: null, prefixFlag?: boolean, decrypt?: boolean): T | null;
+        <T = any>(key: string, defaultValue: T, prefixFlag?: boolean, decrypt?: boolean): T;
     } = <T = any>(
         key: string,
         defaultValue?: T | null,
         prefixFlag = true,
+        decrypt = false,
     ): T | null => {
         const _key = prefixFlag ? LocalStorageUtil.STORAGE_PREFIX + key : key
         const _defaultValue = defaultValue ?? null
 
         try {
-            const serializedValue = localStorage.getItem(_key)
+            let serializedValue = localStorage.getItem(_key)
             if (serializedValue === null) {
                 return _defaultValue
+            }
+            if (decrypt) {
+                serializedValue = base64Decode(serializedValue)
             }
             const parsed = JSON.parse(serializedValue)
             if (defaultValue !== null && typeof defaultValue !== 'undefined' && typeof parsed !== typeof defaultValue) {

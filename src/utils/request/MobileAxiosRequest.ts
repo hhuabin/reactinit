@@ -3,7 +3,7 @@
  * @Author: bin
  * @Date: 2025-06-04 10:59:21
  * @LastEditors: bin
- * @LastEditTime: 2025-11-20 19:42:54
+ * @LastEditTime: 2025-12-16 17:31:31
  */
 import axios, {
     type AxiosInstance,
@@ -16,8 +16,8 @@ import { Toast } from 'antd-mobile'
 import { version as packageVersion } from '@/../package.json'
 
 // import { navigate } from '@/hooks/useRouter'
-import store from '@/store/store'
-import { saveUserInfo, removeUserInfo } from '@/store/slice/userSlice'
+import authStore from '@/store/slice/auth.store'
+import { saveUserInfo, removeUserInfo } from '@/store/slice/userInfoSlice'
 import { getDateStrByTimeAndCurrentOffset } from '@/utils/stringUtils/dateUtils'
 import HTTP_STATUS_CODES from './httpStatusCodes'
 
@@ -41,7 +41,7 @@ type PublicParams = {
 }
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-    requestRetryNumber?: number;
+    requestRetryNumber?: number;               // 请求失败重试次数
 }
 
 export default class MobileAxiosRequest {
@@ -109,7 +109,7 @@ export default class MobileAxiosRequest {
             const timestamp: string = getDateStrByTimeAndCurrentOffset()
             publicParams.timestamp = timestamp
 
-            publicParams.token = store.getState().user.userInfo.token
+            publicParams.token = authStore.getAuthState().userInfo.token
             config.data = { ...publicParams, ...data }
             // 默认使用POST方法
             config.method = config.method || 'POST'
@@ -130,7 +130,7 @@ export default class MobileAxiosRequest {
                     // 重新发送请求，如果此时接口还是报token过期，则会继续请求
                     return this.requestRetry(
                         response.config,
-                        { token: store.getState().user.userInfo.token },
+                        { token: authStore.getAuthState().userInfo.token },
                         response,
                     )
                 } catch (error) {
@@ -203,20 +203,21 @@ export default class MobileAxiosRequest {
         retryDelay = 0,
     ): Promise<AxiosResponse<unknown>> => {
         return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const requestRetryNumber = (config.requestRetryNumber || 0)
-                if (+requestRetryNumber > maxRetries) {
-                    console.error('请求重发次数过多', config)
-                    reject(response)
-                    return
-                }
-                // 每个data都需要解压
-                config.data = {
-                    ...JSON.parse(response.config.data),
-                    ...data,
-                }
-                config.requestRetryNumber = requestRetryNumber + 1
+            maxRetries = Math.min(Math.max(maxRetries, 0), 10)
+            const requestRetryNumber = (config.requestRetryNumber || 0)
+            if (+requestRetryNumber >= maxRetries) {
+                console.error('请求重发次数过多', config)
+                reject(response)
+                return
+            }
+            // 每个data都需要解压
+            config.data = {
+                ...JSON.parse(response.config.data),
+                ...data,
+            }
+            config.requestRetryNumber = requestRetryNumber + 1
 
+            setTimeout(() => {
                 resolve(this.instance(config))
             }, retryDelay)
         })
@@ -232,7 +233,7 @@ export default class MobileAxiosRequest {
         if (this.refreshTokenPromise) return this.refreshTokenPromise
 
         console.log('refresh-token')
-        store.dispatch(removeUserInfo())
+        authStore.logout()
         // 开发者自行修改
         const refreshToken = 'refreshToken'
 
@@ -249,9 +250,7 @@ export default class MobileAxiosRequest {
                 const newToken = res.data.token
                 if (newToken) {
                     // 存储新的 token 到 store 中
-                    store.dispatch(saveUserInfo({
-                        token: newToken,
-                    }))
+                    authStore.login({ token: newToken })
                     resolve()
                 }
                 return Promise.reject(res)

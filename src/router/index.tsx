@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-04-16 14:12:24
+ * @LastEditors: bin
+ * @LastEditTime: 2025-12-16 16:56:13
+ */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     createHashRouter,
@@ -10,9 +16,9 @@ import {
     type LoaderFunctionArgs,
 } from 'react-router-dom'
 
-import store from '@/store/store'
+import authStore from '@/store/slice/auth.store'
 import { routes } from './router'
-import type { RouteConfig } from './types'
+import { type RouteConfig } from './types'
 
 import Loading from '@/components/Loading/Loading'
 
@@ -28,11 +34,14 @@ const isEmptyObject = (obj: any) =>
  * @param route 路由配置对象
  * @returns { LoaderFunction }
  */
-const createPublicLoader = (route: RouteConfig): LoaderFunction => (args: LoaderFunctionArgs<any>) => {
-    // 公共路由守卫
-    const token = store.getState().user.userInfo.token
-    if (!token && route.meta?.auth) {
-        throw redirect('/login')
+const createPublicLoader = (route: RouteConfig): LoaderFunction => (loaderFunctionArgs: LoaderFunctionArgs<any>) => {
+    // 登录路由守卫
+    const { isLogin } = authStore.getAuthState()
+    if (!isLogin && route.meta?.auth) {
+        const url = new URL(loaderFunctionArgs.request.url)
+        const redirectTo = url.pathname + url.search
+        // 跳转到登录页面，并携带当前页面链接
+        throw redirect(`/login?redirect=${encodeURIComponent(redirectTo)}`)
     }
     document.title = (route.meta?.title as string) || 'react'
     // 功能正常返回 null
@@ -46,18 +55,19 @@ const createPublicLazy = (route: RouteConfig): LazyRouteFunction<RouteObject> =>
     const publicLoader = createPublicLoader(route)
 
     /**
-     * @description 合并 公共loader 与自定义 loader
-     * 默认公共 loader 优先级高，因为公共 loader 可能处理未登录重定向的问题
-     * 有需要可自行修改
+     * @description 合并 公共 loader 与自定义 loader
      */
     const loader: LoaderFunction = lazyOrRouteLoader ? async (args: LoaderFunctionArgs<any>) => {
+        // 当 lazy.loader ?? route.loader 有值，也要执行 publicLoader 的逻辑
         const publicDataFunctionValue = await publicLoader(args)
 
+        // 默认公共 loader 优先级高，因为公共 loader 可能处理未登录重定向的问题，有需要可自行修改
         if (publicDataFunctionValue && !isEmptyObject(publicDataFunctionValue)) {
             // 当 publicLoader 不返回 null | {} 时执行，兼容未登录重定向等返回
             return publicDataFunctionValue
         } else {
-            const loaderDataFunctionValue = await (lazyOrRouteLoader as LoaderFunction)(args)
+            if (lazyOrRouteLoader === true) return lazyOrRouteLoader
+            const loaderDataFunctionValue = await lazyOrRouteLoader(args)
             return loaderDataFunctionValue
         }
     } : publicLoader

@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-07-01 16:37:01
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:46:31
+ * @LastEditTime: 2025-12-16 10:48:39
  */
 import { useContext, useMemo } from 'react'
 import { ConfigContext, type ConfigConsumerProps } from './context'
@@ -10,13 +10,13 @@ import { ConfigContext, type ConfigConsumerProps } from './context'
 const { Provider, Consumer } = ConfigContext
 
 type ConfigProviderProps = Partial<ConfigConsumerProps> & {
-    children?: React.ReactNode
+    children?: React.ReactNode;
 }
 
 // 全局配置组件
 const ConfigProvider: React.FC<ConfigProviderProps> = (props) => {
 
-    // 解构出除了 children 的属性
+    // 解构出除 children 外的所有属性
     const { children, ...config } = props
 
     const context = useContext(ConfigContext)

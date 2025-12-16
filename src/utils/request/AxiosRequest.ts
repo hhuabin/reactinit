@@ -4,7 +4,7 @@
  * @Author: bin
  * @Date: 2025-02-26 21:05:44
  * @LastEditors: bin
- * @LastEditTime: 2025-11-20 19:51:29
+ * @LastEditTime: 2025-12-10 14:26:02
  */
 import axios, {
     type AxiosInstance,
@@ -17,8 +17,7 @@ import { message } from '@/components/Message'
 import { version as packageVersion } from '@/../package.json'
 
 // import { navigate } from '@/hooks/useRouter'
-import store from '@/store/store'
-import { saveUserInfo, removeUserInfo } from '@/store/slice/userSlice'
+import authStore from '@/store/slice/auth.store'
 import { getDateStrByTimeAndCurrentOffset } from '@/utils/stringUtils/dateUtils'
 import HTTP_STATUS_CODES from './httpStatusCodes'
 
@@ -42,10 +41,10 @@ type PublicParams = {
 }
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-    loadingSymbol?: symbol;               // loading 的取消函数标识
-    timerId?: NodeJS.Timeout;             // loading 的定时器Id
-    maxRequestRetryNumber?: number;       // 最大请求失败重试次数
-    requestRetryNumber?: number;          // 请求失败重试次数
+    loadingSymbol?: symbol;                    // loading 的取消函数标识
+    timerId?: ReturnType<typeof setTimeout>;   // loading 的定时器Id
+    maxRequestRetryNumber?: number;            // 最大请求失败重试次数
+    requestRetryNumber?: number;               // 请求失败重试次数
 }
 
 export default class AxiosRequest {
@@ -105,8 +104,8 @@ export default class AxiosRequest {
             }
 
             // 记录请求重试次数，当请求失败才会发起 请求重试
-            if (data.requestRetryNumber) {
-                config.maxRequestRetryNumber = data.requestRetryNumber
+            if (data.maxRequestRetryNumber) {
+                config.maxRequestRetryNumber = data.maxRequestRetryNumber
                 delete data.maxRequestRetryNumber
             }
 
@@ -122,7 +121,7 @@ export default class AxiosRequest {
             const timestamp: string = getDateStrByTimeAndCurrentOffset()
             publicParams.timestamp = timestamp
 
-            publicParams.token = store.getState().user.userInfo.token
+            publicParams.token = authStore.getAuthState().userInfo.token
             config.data = { ...publicParams, ...data }
             // 默认使用POST方法
             config.method = config.method || 'POST'
@@ -131,6 +130,7 @@ export default class AxiosRequest {
 
         this.instance.interceptors.response.use(async (response: AxiosResponse) => {
             const config: CustomAxiosRequestConfig = response.config
+            const maxRequestRetryNumber = Number(config.maxRequestRetryNumber) || 0
 
             // response.status === 200
             if (response.data.result_code === '0') {
@@ -145,7 +145,7 @@ export default class AxiosRequest {
                     // 重新发送原来的请求，如果此时接口还是报token过期，则会继续请求
                     return this.requestRetry(
                         config,
-                        { token: store.getState().user.userInfo.token },
+                        { token: authStore.getAuthState().userInfo.token },
                         response,
                     )
                 } catch (error) {
@@ -155,24 +155,18 @@ export default class AxiosRequest {
                     // 需返回原来接口的报错
                     return Promise.reject(response)
                 }
+            } else if (maxRequestRetryNumber) {
+                // 进入请求重试，可以不关闭原来的 loading，继续使用，只有给接口返回值才需要清除 loading
+                return this.requestRetry(
+                    config,
+                    {},
+                    response,
+                    maxRequestRetryNumber,
+                )
             } else {
                 console.error(response)
-
-                const maxRequestRetryNumber = Number(config.maxRequestRetryNumber) || 0
-                // 请求重试次数应该控制在 1-10 之间，避免傻逼开发者赋值到 100 甚至更多
-                if (maxRequestRetryNumber > 0 && maxRequestRetryNumber <= 10) {
-                    // 进入请求重试，可以不关闭原来的 loading，继续使用，只有给接口返回值才需要清除 loading
-                    // 最大请求次数不为空且不为 0
-                    return this.requestRetry(
-                        config,
-                        {},
-                        response,
-                        maxRequestRetryNumber,
-                    )
-                } else {
-                    this.clearTimeoutTimer(config)       // 失败返回，清除定时器并且关闭 loading
-                    return Promise.reject(response)
-                }
+                this.clearTimeoutTimer(config)       // 失败返回，清除定时器并且关闭 loading
+                return Promise.reject(response)
             }
             // 诸如没网络，500等报错，应该不用进行请求重试，有时候网络超时可能也需要重试，参考上面的做法也可以实现
         }, this.handleRequestError)
@@ -230,23 +224,26 @@ export default class AxiosRequest {
         retryDelay = 0,
     ): Promise<AxiosResponse<unknown>> => {
         return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const requestRetryNumber = (config.requestRetryNumber || 1)
-                if (+requestRetryNumber > maxRetries) {
-                    // 失败返，回删除 loading
-                    this.clearTimeoutTimer(config)
-                    console.error(`请求重发次数达到限制次数${maxRetries}`, config)
-                    reject(response)
-                    return
-                }
-                // 每个data都需要解压
-                config.data = {
-                    ...JSON.parse(response.config.data),
-                    ...mergeData,
-                }
-                // 给 config 添加 requestRetryNumber 记录
-                config.requestRetryNumber = requestRetryNumber + 1
+            // 确保最大重试次数在 0 到 10 之间，避免傻逼开发者赋值到 10000 甚至更多
+            maxRetries = Math.min(Math.max(maxRetries, 0), 10)
+            const requestRetryNumber = (config.requestRetryNumber || 0)
+            if (+requestRetryNumber >= maxRetries) {
+                // 请求重发次数达到限制次数，返回失败结果，删除 loading
+                this.clearTimeoutTimer(config)
+                console.error(`请求重发次数达到限制次数${maxRetries}`, response)
+                reject(response)
+                return
+            }
+            // 每个data都需要解压
+            config.data = {
+                ...JSON.parse(response.config.data),
+                ...mergeData,
+            }
+            // 给 config 添加 requestRetryNumber 记录
+            config.requestRetryNumber = requestRetryNumber + 1
 
+            setTimeout(() => {
+                // 间隔 retryDelay 重新请求
                 resolve(this.instance(config))
             }, retryDelay)
         })
@@ -262,7 +259,7 @@ export default class AxiosRequest {
         if (this.refreshTokenPromise) return this.refreshTokenPromise
 
         console.log('start-refresh-token')
-        store.dispatch(removeUserInfo())
+        authStore.logout()
         // 开发者自行修改
         const refreshToken = 'refreshToken'
 
@@ -279,9 +276,7 @@ export default class AxiosRequest {
                 const newToken = res.data.token
                 if (newToken) {
                     // 存储新的 token 到 store 中
-                    store.dispatch(saveUserInfo({
-                        token: newToken,
-                    }))
+                    authStore.login({ token: newToken })
                     resolve()
                 }
                 return Promise.reject(res)

@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-04-16 14:12:24
+ * @LastEditors: bin
+ * @LastEditTime: 2025-12-16 16:53:32
+ */
 import { redirect, Navigate } from 'react-router-dom'
 
 import { mobileRoute } from './mobileRoute'

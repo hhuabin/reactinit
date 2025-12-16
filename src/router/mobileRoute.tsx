@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-06-05 15:41:52
+ * @LastEditors: bin
+ * @LastEditTime: 2025-12-16 16:53:34
+ */
 import { Navigate } from 'react-router-dom'
 
 import type { RouteConfig } from './types'
