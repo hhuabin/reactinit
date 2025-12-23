@@ -1,2 +1,2 @@
-export { default as message } from './Message'
+export { default } from './Message'
 export * from './Message.d'

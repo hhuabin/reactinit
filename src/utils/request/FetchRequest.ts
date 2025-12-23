@@ -4,7 +4,7 @@
  * @LastEditors: bin
  * @LastEditTime: 2025-11-14 10:53:16
  */
-import { message } from '@/components/Message'
+import message from '@/components/Message'
 
 export default class FetchRequest {
 

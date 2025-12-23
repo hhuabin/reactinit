@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { Modal } from 'antd'
 
-import { message } from '@/components/Message'
+import message from '@/components/Message'
 import Upload, { type UploadFile } from '@/components/Upload'
 import BigFileUpload from './components/BigFileUpload'
 

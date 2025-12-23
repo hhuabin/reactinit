@@ -12,7 +12,7 @@ import axios, {
     type AxiosResponse,
     type AxiosError,
 } from 'axios'
-import { message } from '@/components/Message'
+import message from '@/components/Message'
 
 import { version as packageVersion } from '@/../package.json'
 

@@ -1,4 +1,10 @@
 /**
+ * @Author: bin
+ * @Date: 2025-08-04 14:37:21
+ * @LastEditors: bin
+ * @LastEditTime: 2025-12-18 16:17:07
+ */
+/**
  * @description 居民身份证号码格式校验，默认使用第二代身份证校验
  * @param { string } idCardNumber 身份证号码
  * @param { boolean } enableFirst 是否开启第一代身份证校验
@@ -26,8 +32,8 @@ const validateFirstIdCard = (idCardNumber: string): boolean => {
     if (typeof idCardNumber !== 'string') return false
 
     const pattern = /^([1-6][1-9]|50)\d{4}\d{2}((0[1-9])|1[0-2])(([0-2][1-9])|10|20|30|31)\d{3}/
-    const reg = new RegExp(pattern)
-    if (!reg.test(idCardNumber)) return false
+    const regex = new RegExp(pattern)
+    if (!regex.test(idCardNumber)) return false
 
     // 补全年份为19xx
     const [year, month, day] = [+('19' + idCardNumber.substring(6, 8)), +idCardNumber.substring(8, 10), +idCardNumber.substring(10, 12)]
@@ -58,8 +64,8 @@ const validateSecondIdCard = (idCardNumber: string): boolean => {
         supportYear += `|${year}`
     }
     const pattern = `^([1-6][1-9]|50)\\d{4}(${supportYear})\\d{2}((0[1-9])|1[0-2])(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$`
-    const reg = new RegExp(pattern)
-    if (!reg.test(idCardNumber)) return false
+    const regex = new RegExp(pattern)
+    if (!regex.test(idCardNumber)) return false
 
     // 验证日期
     const [year, month, day] = [+idCardNumber.substring(6, 10), +idCardNumber.substring(10, 12), +idCardNumber.substring(12, 14)]

@@ -3,7 +3,7 @@ import { useState, useLayoutEffect, useEffect, useRef } from 'react'
 import { SunOutlined, MoonOutlined } from '@ant-design/icons'
 import { Popover } from 'antd'
 
-import { message, type NoticeType } from '@/components/Message'
+import message, { type NoticeType } from '@/components/Message'
 import { randomIntInRange } from '@/utils/functionUtils/mathUtils'
 
 type Theme = 'light' | 'dark'

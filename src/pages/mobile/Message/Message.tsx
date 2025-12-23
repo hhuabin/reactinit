@@ -1,4 +1,4 @@
-import { message } from '@/components/mobile/Message'
+import message from '@/components/mobile/Message'
 
 const Message: React.FC = () => {
 

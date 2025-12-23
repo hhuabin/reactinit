@@ -83,12 +83,12 @@ export const getDateStrByTimeAndCurrentOffset = (
         'mss': String(targetTime.getUTCMilliseconds()),
     }
     for (const key in dateFmtObj) {
-        const reg = new RegExp(`(${key})`)
-        if (reg.test(fmt)) {
+        const regex = new RegExp(`(${key})`)
+        if (regex.test(fmt)) {
             let dateValue = dateFmtObj[key]       // 获取对应的值
-            const fmtStrLength = (fmt.match(reg) as RegExpMatchArray)[0].length         // 获取匹配的字符串的长度
+            const fmtStrLength = (fmt.match(regex) as RegExpMatchArray)[0].length         // 获取匹配的字符串的长度
             dateValue = dateValue.padStart(fmtStrLength, '0').slice(-fmtStrLength)      // 填充字符串
-            fmt = fmt.replace(reg, dateValue)
+            fmt = fmt.replace(regex, dateValue)
         }
     }
     return fmt */
@@ -147,12 +147,12 @@ export const getDateStrByTimeAndOffset = (
         'mss': String(targetTime.getUTCMilliseconds()),
     }
     for (const key in dateFmtObj) {
-        const reg = new RegExp(`(${key})`)
-        if (reg.test(fmt)) {
+        const regex = new RegExp(`(${key})`)
+        if (regex.test(fmt)) {
             let dateValue = dateFmtObj[key]       // 获取对应的值
-            const fmtStrLength = (fmt.match(reg) as RegExpMatchArray)[0].length         // 获取匹配的字符串的长度
+            const fmtStrLength = (fmt.match(regex) as RegExpMatchArray)[0].length         // 获取匹配的字符串的长度
             dateValue = dateValue.padStart(fmtStrLength, '0').slice(-fmtStrLength)      // 填充字符串
-            fmt = fmt.replace(reg, dateValue)
+            fmt = fmt.replace(regex, dateValue)
         }
     }
     return fmt
