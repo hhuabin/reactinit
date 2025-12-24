@@ -57,6 +57,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
     useEffect(() => {
         setTransitionDuration(0)
         updateValueByIndex(lastIndex.current)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [visible])
 
     /**
@@ -246,7 +247,7 @@ const SinglePicker: React.FC<PickerProps> = (props) => {
                                         className={styles['picker-column-item']}
                                         key={index}
                                         onClick={() => onClickOption(index)}
-                                        style={{ color: ((index == currentIndex() && transitionDuration !== 1000) ? 'var(--primary-color)' : '') }}
+                                        style={{ color: ((index === currentIndex() && transitionDuration !== 1000) ? 'var(--primary-color)' : '') }}
                                     >
                                         <div className={styles['line-ellipsis']}>
                                             { typeof item === 'string' ? item.toString() : item.label }

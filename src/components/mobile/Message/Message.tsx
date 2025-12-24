@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-12 15:28:38
  * @LastEditors: bin
- * @LastEditTime: 2025-11-13 11:14:09
+ * @LastEditTime: 2025-12-24 10:28:19
  */
 /**
  * 参考源码：ant-design/components/message/index.tsx
@@ -37,7 +37,6 @@ const DEFAULT_DURATION = 3000
 
 let message: GlobalMessage | null = null
 
-// eslint-disable-next-line prefer-const
 let taskQueue: Task[] = []          // 任务队列，用于接收任务队列，接收成功进行渲染，渲染完成即可删除该任务队列
 let defaultGlobalConfig: ConfigOptions = {}       // 全局配置
 

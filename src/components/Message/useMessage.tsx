@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-30 15:24:14
  * @LastEditors: bin
- * @LastEditTime: 2025-11-12 20:11:44
+ * @LastEditTime: 2025-12-24 10:19:15
  */
 /**
  * 参考源码：ant-design/components/message/useMessage.tsx
@@ -32,7 +32,6 @@ type NotificationsRef = {
 let keyIndex = 0      // message key
 
 // 合并对象
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mergeConfig = <T extends object>(...objList: Partial<T>[]): T => {
     const clone: T = {} as T
 

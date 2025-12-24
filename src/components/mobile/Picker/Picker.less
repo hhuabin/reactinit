@@ -7,7 +7,7 @@
 
     width: 100%;
 
-    .bin-overlay {
+    .bin-picker-overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -29,7 +29,7 @@
         }
     }
 
-    .bin-overlay-hidden {
+    .bin-picker-overlay-hidden {
         opacity: 0;
         animation: mask-out var(--animation-duration);
 
@@ -44,7 +44,7 @@
         }
     }
 
-    .bin-popup-body {
+    .bin-picker-popup-body {
         position: fixed;
         left: 0;
         bottom: 0;
@@ -155,7 +155,7 @@
                             color: #323233;
                             cursor: grab;
 
-                            .bin-line-ellipsis {
+                            .bin-picker-line-ellipsis {
                                 white-space: nowrap;
                                 overflow: hidden;
                                 text-overflow: ellipsis;
@@ -226,7 +226,7 @@
         }
     }
 
-    .bin-popup-hidden {
+    .bin-picker-popup-body-hidden {
         animation: fade-out var(--animation-duration);
         transform: translateY(100%);
 

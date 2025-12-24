@@ -1,6 +1,11 @@
+/**
+ * @Author: bin
+ * @Date: 2025-09-12 15:28:38
+ * @LastEditors: bin
+ * @LastEditTime: 2025-12-24 10:21:09
+ */
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import type { Root } from 'react-dom/client'
+import { createRoot, type Root } from 'react-dom/client'
 
 // eslint-disable-next-line react-refresh/only-export-components
 const MARK = '__rc_react_root__'
@@ -50,6 +55,7 @@ let unstableRender: RenderType = defaultReactRender
 /**
  * 渲染函数
  */
+// eslint-disable-next-line func-style
 export function unstableSetRender(render?: RenderType) {
     if (render) {
         unstableRender = render

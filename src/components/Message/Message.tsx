@@ -39,7 +39,6 @@ const DEFAULT_DURATION = 3000
 
 let message: GlobalMessage | null = null
 
-// eslint-disable-next-line prefer-const
 let taskQueue: Task[] = []          // 任务队列，用于接收任务队列，接收成功进行渲染，渲染完成即可删除该任务队列
 let defaultGlobalConfig: ConfigOptions = {}       // 全局配置
 

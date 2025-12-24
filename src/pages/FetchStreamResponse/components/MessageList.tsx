@@ -31,7 +31,6 @@ const MessageList: React.FC<Props> = memo(({ messageItem }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [messageItem])
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const [changeMessageQueue] = useDebounce((messageQueue: MessageItem[]) => {
         setMessageQueue(messageQueue)
     }, 500)

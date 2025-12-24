@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-04 10:46:02
  * @LastEditors: bin
- * @LastEditTime: 2025-11-14 10:44:03
+ * @LastEditTime: 2025-12-24 14:20:07
  */
 /* eslint-disable max-lines */
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -455,11 +455,11 @@ const Picker: React.FC<PickerProps> = (props) => {
                 className={`bin-picker-popup${className ? ' ' + className : ''}` + (mergeVisible ? '' : ' bin-picker-popup-hidden')}
                 style={{ ...style, '--primary-color': primaryColor || (style as Record<string, string>)['--primary-color'] } as React.CSSProperties }
             >
-                <div role='button' className={'bin-overlay' + (mergeVisible ? '' : ' bin-overlay-hidden')}
+                <div role='button' className={'bin-picker-overlay' + (mergeVisible ? '' : ' bin-picker-overlay-hidden')}
                     onClick={() => onClickMask()}
                 ></div>
 
-                <div className={'bin-popup-body' + (mergeVisible ? '' : ' bin-popup-hidden')}>
+                <div className={'bin-picker-popup-body' + (mergeVisible ? '' : ' bin-picker-popup-body-hidden')}>
                     <div className='bin-picker-header'>
                         <button
                             type='button'
@@ -504,7 +504,7 @@ const Picker: React.FC<PickerProps> = (props) => {
                                                 onClick={() => onClickOption(columnIndex, index)}
                                                 style={{ color: ((index === getCurrentIndexByColumnIndex(columnIndex) && !isInertialScrollings[columnIndex]) ? 'var(--primary-color)' : '') }}
                                             >
-                                                <div className='bin-line-ellipsis'>
+                                                <div className='bin-picker-line-ellipsis'>
                                                     {item[columnsFieldNames.label || 'label']}
                                                 </div>
                                             </li>

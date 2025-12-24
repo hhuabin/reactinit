@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 已弃用，功能合并到 useMessage 中，简化组件结构
  * 参考源码：notification/src/hooks/useNotification.tsx
  */
-import { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react'
-import type { ForwardedRef } from 'react'
+import { useRef, useState, useEffect, forwardRef, useImperativeHandle, type ForwardedRef } from 'react'
 import { createPortal } from 'react-dom'
 
 import type { ConfigOptions, ArgsProps } from '../Message.d'
@@ -41,7 +41,6 @@ interface NotificationsProps {
 let uniqueKey = 0      // 唯一key
 
 // 合并对象
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mergeConfig = <T extends object>(...objList: Partial<T>[]): T => {
     const clone: T = {} as T
 
@@ -138,6 +137,7 @@ const useNotification = (
         ></Notifications>
     )
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         setContainer(getContainer())
     })

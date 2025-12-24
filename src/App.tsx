@@ -29,7 +29,6 @@ const App: React.FC = () => {
     useEffect(() => {
         console.log('import.meta.env', import.meta.env)
         /* login({ token: 'token' }) */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (<AppRouter></AppRouter>)

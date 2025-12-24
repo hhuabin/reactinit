@@ -1,5 +1,10 @@
-import { useNavigate } from 'react-router-dom'
-import type { NavigateFunction } from 'react-router-dom'
+/**
+ * @Author: bin
+ * @Date: 2025-03-07 20:08:55
+ * @LastEditors: bin
+ * @LastEditTime: 2025-12-24 10:20:26
+ */
+import { useNavigate, type NavigateFunction } from 'react-router-dom'
 
 /**
  * @description react-router-dom路由跳转封装，供组件外路由跳转使用

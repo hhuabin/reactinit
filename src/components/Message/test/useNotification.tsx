@@ -44,7 +44,6 @@ interface NotificationsProps {
 let uniqueKey = 0      // 唯一key
 
 // 合并对象
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mergeConfig = <T extends object>(...objList: Partial<T>[]): T => {
     const clone: T = {} as T
 
