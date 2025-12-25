@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-04-16 14:12:24
  * @LastEditors: bin
- * @LastEditTime: 2025-12-16 16:56:13
+ * @LastEditTime: 2025-12-25 15:43:13
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
@@ -17,7 +17,7 @@ import {
 } from 'react-router-dom'
 
 import authStore from '@/store/slice/auth.store'
-import { routes } from './router'
+import { routes } from './mainRoutes'
 import { type RouteConfig } from './types'
 
 import Loading from '@/components/Loading/Loading'

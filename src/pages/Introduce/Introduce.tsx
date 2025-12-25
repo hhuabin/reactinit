@@ -40,13 +40,13 @@ const Introduce: React.FC = () => {
                         <button type='button' className='w-full h-full' onClick={() => goToMobileGuide()}>移动端<br/>工具</button>
                     </li>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
+                        <button type='button' className='w-full h-full' onClick={() => navigate('/fileupload')}>文件上传</button>
+                    </li>
+                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
                         <button type='button' className='w-full h-full' onClick={() => navigate('/fetchStream')}>fetch流式数据获取</button>
                     </li>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
                         <button type='button' className='w-full h-full' onClick={() => navigate('/timezoneTime')}>TimezoneTime</button>
-                    </li>
-                    <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)] break-all'>
-                        <button type='button' className='w-full h-full' onClick={() => navigate('/fileupload')}>文件上传</button>
                     </li>
                     <li className='h-[400px] p-10 rounded-[16px] [box-shadow:var(--box-shadow)] hover:bg-[var(--item-bg-hover)]'>
                         <button type='button' className='w-full h-full' onClick={() => navigate('/svgicon')}>svg</button>

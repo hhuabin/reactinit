@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-04-16 14:12:24
  * @LastEditors: bin
- * @LastEditTime: 2025-12-16 16:53:32
+ * @LastEditTime: 2025-12-25 15:52:19
  */
 import { redirect, Navigate } from 'react-router-dom'
 
@@ -46,6 +46,28 @@ export const routes: RouteConfig[] = [
         children: [
             ...mobileRoute,
             {
+                path: '/login',
+                lazy: async () => {
+                    const { default: Login } = await import('@/pages/Login/Login')
+                    return { Component: Login }
+                },
+                meta: {
+                    title: 'login',
+                    auth: false,
+                },
+            },
+            {
+                path: '/fileupload',
+                lazy: async () => {
+                    const { default: FileUpload } = await import('@/pages/FileUpload/FileUpload')
+                    return { Component: FileUpload }
+                },
+                meta: {
+                    title: 'fileupload',
+                    auth: false,
+                },
+            },
+            {
                 path: '/fetchStream',
                 lazy: async () => {
                     const { default: FetchStreamResponse } = await import('@/pages/FetchStreamResponse/FetchStreamResponse')
@@ -64,17 +86,6 @@ export const routes: RouteConfig[] = [
                 },
                 meta: {
                     title: 'timezone',
-                    auth: false,
-                },
-            },
-            {
-                path: '/fileupload',
-                lazy: async () => {
-                    const { default: FileUpload } = await import('@/pages/FileUpload/FileUpload')
-                    return { Component: FileUpload }
-                },
-                meta: {
-                    title: 'fileupload',
                     auth: false,
                 },
             },
