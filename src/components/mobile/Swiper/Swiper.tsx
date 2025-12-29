@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-16 14:40:22
  * @LastEditors: bin
- * @LastEditTime: 2025-11-13 11:11:30
+ * @LastEditTime: 2025-12-26 14:28:27
  */
 /* eslint-disable max-lines */
 import React, {
@@ -18,24 +18,24 @@ import useTouch from './useTouch'
 import './Swiper.less'
 
 type SwiperProps = {
-    direction?: 'horizontal' | 'vertical';  // 滚动方向，默认为 'horizontal'
-    autoplay?: boolean;                     // 是否自动切换，默认为 false
-    duration?: number;                      // 切换动画时长，单位为 ms，默认为 500
-    loop?: boolean;                         // 是否循环播放，默认值 false
-    autoplayInterval?: number;              // 自动切换的间隔，单位为 ms，默认为 3000
-    defaultIndex?: number;                  // 默认位置索引值
-    width?: number | string;                // 滑块宽度，默认值 100%，若是 number 类型，则单位是 px
-    height?: number | string;               // 滑块高度，默认值 100%，若是 number 类型，则单位是 px
-    basicOffset?: number;                   // 滑块基础偏移量，单位 px
-    slideItemSize?: number;                 // 轮播项的宽 / 高，单位 px
-    showIndicator?: boolean;                // 是否显示指示器，默认为 true
-    indicatorColor?: string;                // 指示器颜色，默认为 #1989fa
+    direction?: 'horizontal' | 'vertical';     // 滚动方向，默认为 'horizontal'
+    autoplay?: boolean;                        // 是否自动切换，默认为 false
+    duration?: number;                         // 切换动画时长，单位为 ms，默认为 500
+    loop?: boolean;                            // 是否循环播放，默认值 false
+    autoplayInterval?: number;                 // 自动切换的间隔，单位为 ms，默认为 3000
+    defaultIndex?: number;                     // 默认位置索引值
+    width?: number | string;                   // 滑块宽度，默认值 100%，若是 number 类型，则单位是 px
+    height?: number | string;                  // 滑块高度，默认值 100%，若是 number 类型，则单位是 px
+    basicOffset?: number;                      // 滑块基础偏移量，单位 px
+    slideItemSize?: number;                    // 轮播项的宽 / 高，单位 px
+    showIndicator?: boolean;                   // 是否显示指示器，默认为 true
+    indicatorColor?: string;                   // 指示器颜色，默认为 #1989fa
     indicator?: (total: number, current: number) => React.ReactNode;     // 自定义指示器，优先级比 showIndicator 高
-    touchable?: boolean;                    // 是否可以通过手势滑动，默认为 true
-    stopPropagation?: boolean;              // 是否阻止滑动事件冒泡，默认为 true
-    className?: string;                     // 自定义类名
-    style?: React.CSSProperties;            // 自定义样式
-    onChange?: (index: number) => void;     // 切换时触发
+    touchable?: boolean;                       // 是否可以通过手势滑动，默认为 true
+    stopPropagation?: boolean;                 // 是否阻止滑动事件冒泡，默认为 true
+    className?: string;                        // 自定义类名
+    style?: React.CSSProperties;               // 自定义样式
+    onChange?: (index: number) => void;        // 切换时触发
     children?: React.ReactElement<typeof SwiperItem> | React.ReactElement<typeof SwiperItem>[];       // 轮播内容(`<SwiperItem/>`)
 }
 export type SwiperRef = {
@@ -406,7 +406,6 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
     const onTouchMove = (event: React.TouchEvent) => {
         if (!touchable) return
         touch.move(event)
-        if (stopPropagation) event.stopPropagation()
         // 阻止 onTouchMove 事件向父组件冒泡
         if (stopPropagation) event.stopPropagation()
 
@@ -799,6 +798,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
+                onTouchCancel={onTouchEnd}
             >
                 {renderSwiperItems()}
             </div>

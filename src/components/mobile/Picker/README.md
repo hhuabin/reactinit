@@ -27,21 +27,22 @@
 
 ## 参数
 
-| 参数                | 说明                   | 类型                                         | 默认值                               |
-| ------------------- | ---------------------- | -------------------------------------------- | ------------------------------------ |
-| `visible`           | 是否显示               | `boolean`                                    | `true`                               |
-| `columns`           | 配置列的选项           | `PickerColumn[]`                             | `[]`                                 |
-| `defaultIndexs`     | 默认选中项             | `number[]`                                   | `[]`                                 |
-| `columnsFieldNames` | 自定义列字段名称       | `{ label?: string, value?: string }`         | `{ label: 'label', value: 'value' }` |
-| `loading`           | 是否显示加载中         | `boolean`                                    | `false`                              |
-| `title`             | 标题                   | `string`                                     | `''`                                 |
-| `cancelText`        | 取消按钮的文字         | `string`                                     | `'取消'`                             |
-| `confirmText`       | 确定按钮的文字         | `string`                                     | `'确定'`                             |
-| `primaryColor`      | 主题色                 | `string`                                     | `'#1989fa'`                          |
-| `visibleOptionNum`  | 可见的选项个数         | `number`                                     | `6`                                  |
-| `onChangeVisible`   | 显示状态改变时触发函数 | `(value: boolean) => void`                   | -                                    |
-| `onConfirm`         | 确认时触发函数         | `(params: PickerConfirmEventParams) => void` | -                                    |
-| `onCancel`          | 取消时触发函数         | `() => void`                                 | -                                    |
+| 参数                | 说明                             | 类型                                         | 默认值                               |
+| ------------------- | -------------------------------- | -------------------------------------------- | ------------------------------------ |
+| `visible`           | 是否显示                         | `boolean`                                    | `true`                               |
+| `columns`           | 配置列的选项                     | `PickerColumn[]`                             | `[]`                                 |
+| `defaultIndexs`     | 默认选中项                       | `number[]`                                   | `[]`                                 |
+| `columnsFieldNames` | 自定义列字段名称                 | `{ label?: string, value?: string }`         | `{ label: 'label', value: 'value' }` |
+| `loading`           | 是否显示加载中                   | `boolean`                                    | `false`                              |
+| `title`             | 标题                             | `string`                                     | `''`                                 |
+| `cancelText`        | 取消按钮的文字                   | `string`                                     | `'取消'`                             |
+| `confirmText`       | 确定按钮的文字                   | `string`                                     | `'确定'`                             |
+| `primaryColor`      | 主题色                           | `string`                                     | `'#1989fa'`                          |
+| `visibleOptionNum`  | 可见的选项个数                   | `number`                                     | `6`                                  |
+| `closeOnPopstate`   | 是否在 `popstate` 时关闭图片预览 | `boolean`                                    | `true`                               |
+| `onChangeVisible`   | 显示状态改变时触发函数           | `(value: boolean) => void`                   | -                                    |
+| `onConfirm`         | 确认时触发函数                   | `(params: PickerConfirmEventParams) => void` | -                                    |
+| `onCancel`          | 取消时触发函数                   | `() => void`                                 | -                                    |
 
 `PickerColumn`
 
@@ -286,5 +287,41 @@ const pickerColumns31: PickerColumn = [
     onConfirm={handleConfirmPicker}
     onCancel={() => setPickerVisible(false)}
 ></Picker>
+```
+
+
+
+# 返回关闭弹窗而不退出当前路由
+
+该设计尚处于实验阶段
+
+```typescript
+    /**
+     * @description Picker 返回行为处理：
+     * 1. 预览打开时通过 pushState 注入一条 history
+     * 2. 监听 popstate，在浏览器返回时关闭 Picker
+     */
+    useEffect(() => {
+        // 打开 Picker 时压入一条 history，用于拦截浏览器返回并关闭预览
+        if (closeOnPopstate && mergeVisible && history.state?.ui !== 'picker') {
+            window.history.pushState({ ui: 'picker' }, '', location.href)
+        } else if (!mergeVisible && history.state?.ui === 'picker') {
+            window.history.back()
+        }
+        // 手动关闭 mergeVisible 没有回退路由
+    }, [closeOnPopstate, mergeVisible])
+
+    useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            if (closeOnPopstate && event.state?.ui === 'picker') {
+                setMergeVisible(false)
+            }
+        }
+
+        window.addEventListener('popstate', handlePopState)
+        return () => {
+            window.removeEventListener('popstate', handlePopState)
+        }
+    }, [closeOnPopstate, setMergeVisible])
 ```
 

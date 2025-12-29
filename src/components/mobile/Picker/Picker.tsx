@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-04 10:46:02
  * @LastEditors: bin
- * @LastEditTime: 2025-12-24 14:20:07
+ * @LastEditTime: 2025-12-29 09:45:08
  */
 /* eslint-disable max-lines */
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -31,6 +31,7 @@ type PickerProps = {
     confirmText?: string;                      // 确定按钮的文字
     primaryColor?: string;                     // 主题色
     visibleOptionNum?: number;                 // 可见的选项个数
+    closeOnPopstate?: boolean;                 // 是否在 popstate 时关闭图片预览，默认值 true
     className?: string;                        // 自定义类名
     style?: React.CSSProperties;               // 自定义样式
     onChangeVisible?: (value: boolean) => void;                // 显示状态改变时触发函数
@@ -67,6 +68,7 @@ const Picker: React.FC<PickerProps> = (props) => {
         confirmText = '确定',
         primaryColor = '#1989fa',
         visibleOptionNum = 6,
+        closeOnPopstate = true,
         className = '',
         style = {},
     } = props
@@ -198,6 +200,22 @@ const Picker: React.FC<PickerProps> = (props) => {
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mergeVisible])
+
+    /**
+     * @description 监听 popstate 事件，返回时关闭弹窗
+     */
+    useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            if (closeOnPopstate) {
+                setMergeVisible(false)
+            }
+        }
+
+        window.addEventListener('popstate', handlePopState)
+        return () => {
+            window.removeEventListener('popstate', handlePopState)
+        }
+    }, [closeOnPopstate, setMergeVisible])
 
     // 根据 columnCount 列数，初始化每一列的数据
     const initializeBaseData = (newColumns: PickerColumn[]) => {

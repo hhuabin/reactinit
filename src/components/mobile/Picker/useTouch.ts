@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-04 10:44:56
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:49:20
+ * @LastEditTime: 2025-12-29 17:12:21
  */
 import { useRef } from 'react'
 
@@ -25,17 +25,17 @@ const getDirection = (x: number, y: number) => {
  */
 const useTouch = () => {
 
-    const LOCK_DIRECTION_DISTANCE = 20  // 锁定手势方向的距离
-    const TAP_DETECTION_RADIUS = 10     // 点击检测半径，触摸点移动距离在此范围内才会被视为点击
+    const LOCK_DIRECTION_DISTANCE = 20         // 锁定手势方向的距离
+    const TAP_DETECTION_RADIUS = 10            // 点击检测半径，触摸点移动距离在此范围内才会被视为点击
 
-    const startX = useRef(0)       // 触摸时 X 的坐标
-    const startY = useRef(0)       // 触摸时 y 的坐标
-    const deltaX = useRef(0)       // x 轴移动的距离，具有正负（方向）
-    const deltaY = useRef(0)       // y 轴移动的距离，具有正负（方向）
-    const offsetX = useRef(0)      // x 轴移动的距离，无方向
-    const offsetY = useRef(0)      // y 轴移动的距离，无方向
-    const direction = useRef('')   // 移动方向
-    const isTap = useRef(true)     // 是否是点击事件，默认是点击，超过距离 TAP_DETECTION_RADIUS 即为滑动
+    const startX = useRef(0)                   // 触摸时 X 的坐标
+    const startY = useRef(0)                   // 触摸时 y 的坐标
+    const deltaX = useRef(0)                   // x 轴移动的距离，具有正负（方向）
+    const deltaY = useRef(0)                   // y 轴移动的距离，具有正负（方向）
+    const offsetX = useRef(0)                  // x 轴移动的距离，无方向
+    const offsetY = useRef(0)                  // y 轴移动的距离，无方向
+    const direction = useRef('')               // 移动方向
+    const isTap = useRef(true)                 // 是否是点击事件，默认是点击，超过距离 TAP_DETECTION_RADIUS 即为滑动
 
     const isVertical = () => direction.current === 'vertical'
     const isHorizontal = () => direction.current === 'horizontal'

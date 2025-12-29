@@ -25,6 +25,15 @@
 
 
 
+# 设计
+
+1. **动态设置滑轨的宽 / 高**：在 `getTrackRefSize` 中根据 `swiperItemCount` 动态获取滑轨宽度，然后以 `React.CSSProperties` 形式传给 `html` 的 `style` 动态设置滑轨的宽度
+2. **滑动**：使用 `onTouchStart`、`onTouchMove`、`onTouchEnd onTouchCancel` 事件监听用户滑动，同步改动 `Swiper` 的 `trackRef` 滑轨的 `transform` 实现滑动
+3. **`SwiperItem` 边界处理**：在 `renderSwiperItems` 渲染子组件中，拦截子组件生成，使用 `React.Children.map` +  `React.cloneElement` 克隆子组件并添加 `transform` `CSS` 属性以适应滑动抵达边界的显示问题（最难）
+4. **暴露事件**：`prev`、`next`、`swipeTo` 都是调用 `updateAnimateByIndex` 事件
+
+
+
 # 使用说明
 
 ```tsx

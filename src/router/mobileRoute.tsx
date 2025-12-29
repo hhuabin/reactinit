@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-05 15:41:52
  * @LastEditors: bin
- * @LastEditTime: 2025-12-16 16:53:34
+ * @LastEditTime: 2025-12-25 16:28:14
  */
 import { Navigate } from 'react-router-dom'
 
@@ -63,6 +63,17 @@ export const mobileRoute: RouteConfig[] = [
                 meta: {
                     auth: false,
                     title: 'swiper',
+                },
+            },
+            {
+                path: 'imagePreview',
+                lazy: async () => {
+                    const { default: ImagePreview } = await import('@/pages/mobile/ImagePreview/ImagePreview')
+                    return { Component: ImagePreview }
+                },
+                meta: {
+                    auth: false,
+                    title: 'ImagePreview',
                 },
             },
         ],
