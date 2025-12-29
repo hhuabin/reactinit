@@ -1,4 +1,10 @@
-import { useState, useLayoutEffect } from 'react'
+/**
+ * @Author: bin
+ * @Date: 2025-08-07 09:16:04
+ * @LastEditors: bin
+ * @LastEditTime: 2025-12-29 09:53:02
+ */
+import { useState, useEffect } from 'react'
 
 /**
  * @description 简单的hash路由
@@ -9,19 +15,21 @@ export default function useHashRoute() {
     const [route, setRoute] = useState<string>('/')
     const [routeData, setRouteData] = useState<object | null>(null)
 
-    useLayoutEffect(() => {
-        const hash = window.location.hash.slice(1).split('?')[0]
-        setRoute(hash || '/')
+    useEffect(() => {
+        const getHashRoute = () => window.location.hash.replace(/^#/, '').split('?')[0] || '/'
 
-        window.addEventListener('hashchange', () => {
-            const newHash = window.location.hash.slice(1).split('?')[0]
-            setRoute(newHash || '/')
-        })
+        const handleHashChange = (event?: HashChangeEvent) => {
+            setRoute(getHashRoute())
+        }
+
+        handleHashChange()
+
+        window.addEventListener('hashchange', handleHashChange)
 
         return () => {
-            window.removeEventListener('hashchange ', () => {})
+            window.removeEventListener('hashchange', handleHashChange)
         }
     }, [])
 
-    return [route, routeData]
+    return [route, routeData] as const
 }

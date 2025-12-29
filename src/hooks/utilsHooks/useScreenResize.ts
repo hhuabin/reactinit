@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2024-12-03 16:32:40
  * @LastEditors: bin
- * @LastEditTime: 2025-11-13 10:00:08
+ * @LastEditTime: 2025-12-29 17:34:19
  */
 import { useCallback, useEffect, useLayoutEffect } from 'react'
 
@@ -14,8 +14,11 @@ import { useDebounce } from '@/hooks/utilsHooks/useDebounceThrottle'
  * @param designHeight 设计稿高度
  * @param renderDom 需要挂载的元素（注意不能挂载在根html上，移动端可能会出现适配问题）
  */
-export default function useWindowResize(designWidth = 1920, designHeight = 1080, renderDOM = '#root') {
+export default function useScreenResize(designWidth = 1920, designHeight = 1080, renderDOM = '#root') {
 
+    /**
+     * @description 更新 html 元素大小样式
+     */
     const htmlResize = useCallback(() => {
         const htmlElement = document.documentElement      // html元素
         const htmlClientWidth = htmlElement.clientWidth

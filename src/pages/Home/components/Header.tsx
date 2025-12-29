@@ -38,14 +38,15 @@ const Header: React.FC = () => {
 
     useEffect(() => {
         // 监听浏览器主题变化
-        const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)')
-        colorSchemeQuery.addEventListener('change', (event) => {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+        const handleColorSchemeChange = (event: MediaQueryListEvent) => {
             // 此处禁止调用changeTheme()，否则造成闭包陷阱，changeTheme()读取theme错误
             setTheme(event.matches ? 'dark' : 'light')
-        })
+        }
+        mediaQuery.addEventListener('change', handleColorSchemeChange)
 
         return () => {
-            colorSchemeQuery.removeEventListener('change', () => {})
+            mediaQuery.removeEventListener('change', handleColorSchemeChange)
         }
     }, [])
 
