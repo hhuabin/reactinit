@@ -1,0 +1,42 @@
+.bin-image {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    .contain {
+        object-fit: contain;     /* 包含：保持原始宽高比，内容完全显示在框内，可能留有空白区域 */
+    }
+    .cover {
+        object-fit: cover;       /*  覆盖：保持原始宽高比，内容可能被裁剪，但会填满整个框 */
+    }
+    .fill {
+        object-fit: fill;        /* 填充：不保持宽高比 */
+    }
+
+    .bin-image-loading,
+    .bin-image-error {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transform: translate(-50%, -50%);
+    }
+    .bin-image-loading {
+        width: 50px;
+        height: 50px;
+    }
+    .bin-image-error {
+        width: 36px;
+        height: 24px;
+    }
+}

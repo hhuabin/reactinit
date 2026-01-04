@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2024-12-10 16:04:08
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:50:31
+ * @LastEditTime: 2025-12-31 16:21:04
  */
 import { useRef, useEffect } from 'react'
 
@@ -103,7 +103,13 @@ export default function useProjectAutoUpdate(projectLink = '/', intervalRefresh 
             clearTntervalRefreshTimer()
             // 弹出用户更新的弹窗
             if (window.confirm('检测到更新，是否刷新页面？')) {
+                // 相当于 F5，仍然有可能命中强缓存
                 window.location.reload()
+
+                // 保险措施：绕过缓存
+                // const url = new URL(location.href)
+                // url.searchParams.set('v', version)
+                // location.replace(url.toString())
             }
         }
     }

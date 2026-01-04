@@ -14,7 +14,7 @@ export default defineConfig((env: ConfigEnv) => ({
             name: 'inject-version',
             transformIndexHtml(html) {
                 html = html.replace(/__VERSION__/g, version)
-                    .replace(/__BUILD_TIME__/g, String(new Date().getTime()))
+                    .replace(/__BUILD_TIME__/g, String(Date.now()))
                 return html
             },
         },

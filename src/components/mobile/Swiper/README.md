@@ -78,6 +78,7 @@ const SwiperComponent: React.FC = () => {
 | `indicator`        | 自定义指示器，优先级比 `showIndicator` 高                    | `(total: number, current: number) => React.ReactNode`        | -              |
 | `touchable`        | 是否可以通过手势滑动                                         | `boolean`                                                    | `true`         |
 | `stopPropagation`  | 是否阻止滑动事件冒泡<br />（实测：`Swiper`的子元素有`antd-mobile`的`PullToRefresh`组件，<br />`stopPropagation`需要设置成`false`才能保证`PullToRefresh`组件正常使用） | `boolean`                                                    | `true`         |
+| `className`        | 自定义类名                                                   | `string`                                                     | `''`           |
 | `style`            | 自定义样式                                                   | `React.CSSProperties`                                        | `{}`           |
 | `onChange`         | 切换时触发                                                   | `(index: number) => void`                                    | -              |
 | `children`         | 轮播内容(`<SwiperItem/>`)                                    | `React.ReactElement<typeof SwiperItem> | React.ReactElement<typeof SwiperItem>[]` | -              |

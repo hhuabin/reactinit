@@ -443,7 +443,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                             <div className='bin-upload-error'>
                                 <div className='bin-upload-error-icon'>
                                     <svg width='100%' height='100%' viewBox='0 0 100 75' xmlns='http://www.w3.org/2000/svg'>
-                                        <path d='M3 60L3 3L97 3L97 72L3 72L3 57L20 40L45 60L75 30L100 60' stroke='white' strokeWidth='6'
+                                        <path d='M3 60L3 3L97 3L97 72L3 72L3 57L20 40L45 60L75 30L97 60' stroke='white' strokeWidth='6'
                                             fill='none' strokeLinecap='round' strokeLinejoin='round' />
                                         <circle cx='25' cy='20' r='6' stroke='white' strokeWidth='5' fill='none' strokeLinecap='round' />
                                     </svg>
