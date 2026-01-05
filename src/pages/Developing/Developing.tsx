@@ -1,3 +1,9 @@
+/**
+ * @Author: bin
+ * @Date: 2025-06-09 10:10:06
+ * @LastEditors: bin
+ * @LastEditTime: 2026-01-05 11:11:55
+ */
 import { useEffect, useState } from 'react'
 
 import { Button, Image, ImageViewer, Swiper } from 'antd-mobile'
@@ -10,10 +16,12 @@ const Developing: React.FC = () => {
     const [antdVisible, setAntdVisible] = useState(false)
 
     const demoViewImages = [
-        'https://images.unsplash.com/photo-1620476214170-1d8080f65cdb?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3150&q=80',
+        'https://fastly.picsum.photos/id/61/800/1600.jpg?hmac=8w5YZlCCmheDmzJBSunayYfvTaJEDTRpJO82P6nYm_c',
+        'https://fastly.picsum.photos/id/361/400/2400.jpg?hmac=-ZmwFiEqRxZmnmNY8Gmj9im4r9XKpmCyx3H1GQKwFhU',
+        'https://fastly.picsum.photos/id/355/2400/400.jpg?hmac=J100SKrb_04nR2yMCz1LwGXCaXTb4rXvkRtTt6kE408',
         'https://images.unsplash.com/photo-1601128533718-374ffcca299b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3128&q=80',
-        'https://images.unsplash.com/photo-1567945716310-4745a6b7844b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3113&q=80',
-        'https://images.unsplash.com/photo-1624993590528-4ee743c9896e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=1000&q=80',
+        // 'https://images.unsplash.com/photo-1567945716310-4745a6b7844b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3113&q=80',
+        // 'https://images.unsplash.com/photo-1624993590528-4ee743c9896e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=1000&q=80',
     ]
 
     return (

@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-15 17:36:13
  * @LastEditors: bin
- * @LastEditTime: 2025-12-29 10:08:06
+ * @LastEditTime: 2026-01-05 09:43:08
  */
 import { useEffect } from 'react'
 
@@ -10,6 +10,8 @@ import Swiper, { SwiperItem } from '@/components/mobile/Swiper'
 import ImagePreviewItem from './ImagePreviewItem'
 
 import useMergedState from '@/hooks/reactHooks/useMergedState'
+import useWindowSize from '@/hooks/utilsHooks/useWindowSize'
+import { renderToContainer } from './utils'
 import './ImagePreview.less'
 
 type ImagePreviewProps = {
@@ -30,7 +32,7 @@ type ImagePreviewProps = {
     indicator?: (total: number, current: number) => React.ReactNode;     // 自定义指示器，优先级比 showIndicator 高
     className?: string;                        // 自定义类名
     style?: React.CSSProperties;               // 自定义样式
-    getContainer?: string;                     // 指定挂载的节点
+    getContainer?: HTMLElement | (() => HTMLElement) | null;                     // 指定挂载的节点
     onClose?: () => void;                      // 关闭时触发
     onIndexChange?: (index: number) => void;   // 切换时触发
 }
@@ -57,9 +59,12 @@ const ImagePreview: React.FC<ImagePreviewProps> = (props) => {
         indicator,
         className = '',
         style = {},
+        getContainer,
         onClose,
         onIndexChange,
     } = props
+
+    const { width: rootWidth, height: rootHeight } = useWindowSize()
 
     const [mergeVisible, setMergeVisible] = useMergedState(true, {
         value: visible,
@@ -98,7 +103,8 @@ const ImagePreview: React.FC<ImagePreviewProps> = (props) => {
     }
 
     if (mergeVisible) {
-        return (
+        // 默认挂载到 document.body
+        return renderToContainer(
             <div
                 role='button'
                 className={`bin-image-preview-overlay${className ? ' ' + className : ''}`}
@@ -120,6 +126,8 @@ const ImagePreview: React.FC<ImagePreviewProps> = (props) => {
                                     src={image}
                                     maxZoom={maxZoom}
                                     minZoom={minZoom}
+                                    rootWidth={rootWidth}
+                                    rootHeight={rootHeight}
                                     closeOnClickImage={closeOnClickImage}
                                     closeOnClickOverlay={closeOnClickOverlay}
                                     doubleScale={doubleScale}
@@ -129,7 +137,8 @@ const ImagePreview: React.FC<ImagePreviewProps> = (props) => {
                         ))
                     }
                 </Swiper>
-            </div>
+            </div>,
+            getContainer,
         )
     } else {
         return null

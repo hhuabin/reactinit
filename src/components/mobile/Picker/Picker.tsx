@@ -2,15 +2,14 @@
  * @Author: bin
  * @Date: 2025-06-04 10:46:02
  * @LastEditors: bin
- * @LastEditTime: 2025-12-29 09:45:08
+ * @LastEditTime: 2026-01-05 09:58:38
  */
 /* eslint-disable max-lines */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 
 import useMergedState from '@/hooks/reactHooks/useMergedState'
 import useTouch from './useTouch'
-import { isMultiColumn, clamp, getPickerColumnDepth } from './utils'
+import { renderToContainer, clamp, isMultiColumn, getPickerColumnDepth } from './utils'
 import './Picker.less'
 
 import type { PickerOption, PickerColumn, PickerConfirmEventParams } from './Picker.d'
@@ -466,8 +465,7 @@ const Picker: React.FC<PickerProps> = (props) => {
         setMergeVisible(false)
         props.onConfirm?.({ selectedIndexs, selectedOptions, selectedValues })
     }
-
-    return createPortal(
+    return renderToContainer(
         <>
             <div
                 className={`bin-picker-popup${className ? ' ' + className : ''}` + (mergeVisible ? '' : ' bin-picker-popup-hidden')}

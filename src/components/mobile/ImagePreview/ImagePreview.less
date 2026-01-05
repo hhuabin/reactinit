@@ -23,38 +23,21 @@
     }
 
     .bin-image-preview {
-        position: absolute;
-        top: 0;
-        left: 0;
         display: flex;
         justify-content: center;
         align-items: center;
+        position: relative;
         width: 100%;
         height: 100%;
-        z-index: 1;
 
         .bin-image-preview-image {
-            position: relative;
             width: 100%;
             height: auto;
             transition-property: transform;
-            overflow: hidden;
-
-            img {
-                display: block;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-            .contain {
-                object-fit: contain;
-            }
-            .cover {
-                object-fit: cover;
-            }
-            .fill {
-                object-fit: fill;
-            }
+        }
+        .bin-image-preview-image-vertical {
+            width: auto;
+            height: 100%;
         }
     }
 
