@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { Modal } from 'antd'
 
-import useDeviceType from '@/hooks/utilsHooks/useDeviceType'
+import useDeviceType from '@/hooks/deviceHooks/useDeviceType'
 
 const Introduce: React.FC = () => {
 

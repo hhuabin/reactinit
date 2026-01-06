@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 import message from '@/components/Message'
-import useAuth from '@/hooks/auth/useAuth'
+import useAuth from '@/hooks/authHooks/useAuth'
 
 const Login: React.FC = () => {
 

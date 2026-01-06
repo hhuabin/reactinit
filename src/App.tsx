@@ -1,10 +1,16 @@
+/**
+ * @Author: bin
+ * @Date: 2024-05-29 22:12:59
+ * @LastEditors: bin
+ * @LastEditTime: 2026-01-06 15:25:48
+ */
 import { useLayoutEffect, useEffect } from 'react'
 
 import AppRouter from '@/router'
 
-import useAuth from '@/hooks/auth/useAuth'
+import useAuth from '@/hooks/authHooks/useAuth'
 import usePerformanceMonitor from '@/hooks/utilsHooks/usePerformanceMonitor'
-import useProjectAutoUpdate from '@/hooks/utilsHooks/useProjectAutoUpdate'
+import useProjectAutoUpdate from '@/hooks/domHooks/useProjectAutoUpdate'
 import './App.less'
 
 const App: React.FC = () => {
