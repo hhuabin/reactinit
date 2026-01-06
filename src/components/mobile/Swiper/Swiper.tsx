@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-16 14:40:22
  * @LastEditors: bin
- * @LastEditTime: 2025-12-26 14:28:27
+ * @LastEditTime: 2026-01-06 15:27:11
  */
 /* eslint-disable max-lines */
 import React, {
@@ -14,7 +14,7 @@ import { useInternalLayoutEffect } from '@/hooks/reactHooks/useLayoutUpdateEffec
 
 import useSyncState from '@/hooks/reactHooks/useSyncState'
 import SwiperItem, { type SwiperItemProps } from './SwiperItem'
-import useTouch from './useTouch'
+import useTouch from '@/hooks/domHooks/useTouch'
 import './Swiper.less'
 
 type SwiperProps = {
@@ -36,6 +36,8 @@ type SwiperProps = {
     className?: string;                        // 自定义类名
     style?: React.CSSProperties;               // 自定义样式
     onChange?: (index: number) => void;        // 切换时触发
+    onDragStart?: () => void;                  // 当用户开始拖动轮播组件时触发
+    onDragEnd?: () => void;                    // 当用户结束拖动轮播组件时触发
     children?: React.ReactElement<typeof SwiperItem> | React.ReactElement<typeof SwiperItem>[];       // 轮播内容(`<SwiperItem/>`)
 }
 export type SwiperRef = {
@@ -74,21 +76,23 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         style = {},
         children,
         onChange,
+        onDragStart,
+        onDragEnd,
     } = props
 
-    const rootRef = useRef<HTMLDivElement | null>(null)        // 最外层元素，框框
-    const trackRef = useRef<HTMLDivElement | null>(null)       // 滚动块
-    const [stableRootSize, setStableRootSize] = useSyncState({               // 存放最外层 swiper(rootRef) 的样式
+    const rootRef = useRef<HTMLDivElement | null>(null)                // 最外层元素，框框
+    const trackRef = useRef<HTMLDivElement | null>(null)               // 滚动块
+    const [stableRootSize, setStableRootSize] = useSyncState({         // 存放最外层 swiper(rootRef) 的样式
         width: 0,
         height: 0,
     })
     // trackState 会被闭包取值，故使用 useSyncState
-    const [stableTrackState, setTrackState] = useSyncState({             // 滚动块(trackRef)的状态
+    const [stableTrackState, setTrackState] = useSyncState({           // 滚动块(trackRef)的状态
         width: 0,                    // 单个 item 宽
         height: 0,                   // 单个 item 高
         offset: 0,                   // track 当前的偏移量
         active: defaultIndex,        // 当前激活的索引
-        moving: false,               // 滚动判定，正在滚动时点击无效
+        // moving: false,               // 滚动判定，正在滚动时点击无效
     })
 
     const autoplayTimer = useRef<ReturnType<typeof setTimeout>>()      // 自动滚动的定时器
@@ -142,7 +146,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
             // 轮播项的高
             let slideItemHeight = offsetHeight
             // 默认索引
-            const trusteddefaultIndex = clamp(defaultIndex, 0, swiperItemCount - 1)
+            const trustedDefaultIndex = clamp(defaultIndex, 0, swiperItemCount - 1)
 
             if (direction === 'horizontal') {
                 slideItemWidth = slideItemSize ?? offsetWidth
@@ -162,7 +166,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
 
             // 更新
             // updateAnimate(_basicOffset)
-            updateAnimateByIndex(trusteddefaultIndex)
+            updateAnimateByIndex(trustedDefaultIndex)
         })
     }
 
@@ -412,7 +416,10 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         // let newOffset = startOffset.current + touch.deltaX.current
         let newOffset = startOffset.current
         if (direction === 'horizontal' && touch.isHorizontal()) {
-            moving.current = true
+            if (!moving.current) {
+                moving.current = true
+                onDragStart?.()
+            }
             if (loop) {
                 if (swiperItemCount === 1) {
                     newOffset = newOffset + touch.deltaX.current / 5
@@ -441,7 +448,10 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
                 newOffset = clamp(newOffset, minOffset - boundaryDistance, maxOffset + boundaryDistance)
             }
         } else if (direction === 'vertical' && touch.isVertical()) {
-            moving.current = true
+            if (!moving.current) {
+                moving.current = true
+                onDragStart?.()
+            }
             if (loop) {
                 if (swiperItemCount === 1) {
                     newOffset = newOffset + touch.deltaY.current / 5
@@ -503,6 +513,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
 
         setTimeout(() => {
             moving.current = false
+            onDragEnd?.()
         }, 0)
     }
 

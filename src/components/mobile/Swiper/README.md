@@ -81,6 +81,8 @@ const SwiperComponent: React.FC = () => {
 | `className`        | 自定义类名                                                   | `string`                                                     | `''`           |
 | `style`            | 自定义样式                                                   | `React.CSSProperties`                                        | `{}`           |
 | `onChange`         | 切换时触发                                                   | `(index: number) => void`                                    | -              |
+| `onDragStart`      | 当用户开始拖动轮播组件时触发                                 | `() => void`                                                 | -              |
+| `onDragEnd`        | 当用户结束拖动轮播组件时触发                                 | `() => void`                                                 | -              |
 | `children`         | 轮播内容(`<SwiperItem/>`)                                    | `React.ReactElement<typeof SwiperItem> | React.ReactElement<typeof SwiperItem>[]` | -              |
 
 

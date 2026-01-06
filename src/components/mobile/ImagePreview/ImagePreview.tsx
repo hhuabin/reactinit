@@ -2,15 +2,15 @@
  * @Author: bin
  * @Date: 2025-09-15 17:36:13
  * @LastEditors: bin
- * @LastEditTime: 2026-01-05 09:43:08
+ * @LastEditTime: 2026-01-06 18:40:21
  */
-import { useEffect } from 'react'
+import { useRef, useEffect, forwardRef, useImperativeHandle, type ForwardedRef } from 'react'
 
-import Swiper, { SwiperItem } from '@/components/mobile/Swiper'
+import Swiper, { SwiperItem, type SwiperRef } from '@/components/mobile/Swiper'
 import ImagePreviewItem from './ImagePreviewItem'
 
 import useMergedState from '@/hooks/reactHooks/useMergedState'
-import useWindowSize from '@/hooks/utilsHooks/useWindowSize'
+import useWindowSize from '@/hooks/deviceHooks/useWindowSize'
 import { renderToContainer } from './utils'
 import './ImagePreview.less'
 
@@ -35,12 +35,17 @@ type ImagePreviewProps = {
     getContainer?: HTMLElement | (() => HTMLElement) | null;                     // 指定挂载的节点
     onClose?: () => void;                      // 关闭时触发
     onIndexChange?: (index: number) => void;   // 切换时触发
+    onLongPress?: (index: number) => void;     // 长按当前图片时触发
+}
+export type ImagePreviewRef = {
+    swipeTo: (index: number) => void;
+    resetScale: () => void;
 }
 
 const TAP_TIME = 250                           // 双击缩放手势的点击间隔
 
-const ImagePreview: React.FC<ImagePreviewProps> = (props) => {
-
+// eslint-disable-next-line prefer-arrow-callback
+export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: ForwardedRef<ImagePreviewRef>) {
     const {
         visible,
         direction = 'horizontal',
@@ -62,6 +67,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = (props) => {
         getContainer,
         onClose,
         onIndexChange,
+        onLongPress,
     } = props
 
     const { width: rootWidth, height: rootHeight } = useWindowSize()
@@ -72,6 +78,8 @@ const ImagePreview: React.FC<ImagePreviewProps> = (props) => {
             onClose?.()      // 只有 closeImagePreview 触发关闭事件，其他事件均不调用 setMergeVisible
         },
     })
+
+    const swiperRef = useRef<SwiperRef>(null)
 
     /**
      * @description 监听 popstate 事件，返回时关闭弹窗
@@ -89,10 +97,19 @@ const ImagePreview: React.FC<ImagePreviewProps> = (props) => {
         }
     }, [closeOnPopstate, setMergeVisible])
 
-    const closeImagePreview = () => {
+    const onCloseImagePreview = () => {
         setMergeVisible(false)
         onClose?.()
     }
+
+    const swipeTo = (index: number) => {
+        swiperRef.current?.swipeTo(index)
+    }
+
+    useImperativeHandle(ref, () => ({
+        swipeTo,
+        resetScale: () => {},
+    }))
 
     // 默认指示器
     const defaultIndicator = (total: number, current: number): React.ReactNode => {
@@ -102,47 +119,48 @@ const ImagePreview: React.FC<ImagePreviewProps> = (props) => {
         return (<div className='bin-image-preview-indicator'>{ (current + 1) +  ' / ' + total }</div>)
     }
 
-    if (mergeVisible) {
-        // 默认挂载到 document.body
-        return renderToContainer(
-            <div
-                role='button'
-                className={`bin-image-preview-overlay${className ? ' ' + className : ''}`}
-                style={style}
-            >
-                <Swiper
-                    direction={direction}
-                    loop={loop}
-                    defaultIndex={defaultIndex}
-                    stopPropagation={stopPropagation}
-                    showIndicator={showIndicator}
-                    indicator={defaultIndicator}
-                    onChange={onIndexChange}
-                >
-                    {
-                        images.map((image, index) => (
-                            <SwiperItem key={index}>
-                                <ImagePreviewItem
-                                    src={image}
-                                    maxZoom={maxZoom}
-                                    minZoom={minZoom}
-                                    rootWidth={rootWidth}
-                                    rootHeight={rootHeight}
-                                    closeOnClickImage={closeOnClickImage}
-                                    closeOnClickOverlay={closeOnClickOverlay}
-                                    doubleScale={doubleScale}
-                                >
-                                </ImagePreviewItem>
-                            </SwiperItem>
-                        ))
-                    }
-                </Swiper>
-            </div>,
-            getContainer,
-        )
-    } else {
-        return null
-    }
-}
+    if (!mergeVisible) return null
 
-export default ImagePreview
+    // 默认挂载到 document.body
+    return renderToContainer(
+        <div
+            role='button'
+            className={`bin-image-preview-overlay${className ? ' ' + className : ''}`}
+            style={style}
+        >
+            <Swiper
+                ref={swiperRef}
+                direction={direction}
+                loop={loop}
+                defaultIndex={defaultIndex}
+                stopPropagation={stopPropagation}
+                showIndicator={showIndicator}
+                indicator={defaultIndicator}
+                onChange={onIndexChange}
+            >
+                {
+                    images.map((image, index) => (
+                        <SwiperItem key={index}>
+                            <ImagePreviewItem
+                                ref={node => {}}
+                                src={image}
+                                direction={direction}
+                                maxZoom={maxZoom}
+                                minZoom={minZoom}
+                                rootWidth={rootWidth}
+                                rootHeight={rootHeight}
+                                closeOnClickImage={closeOnClickImage}
+                                closeOnClickOverlay={closeOnClickOverlay}
+                                doubleScale={doubleScale}
+                                onCloseImagePreview={onCloseImagePreview}
+                                onLongPress={() => onLongPress?.(index)}
+                            >
+                            </ImagePreviewItem>
+                        </SwiperItem>
+                    ))
+                }
+            </Swiper>
+        </div>,
+        getContainer,
+    )
+})
