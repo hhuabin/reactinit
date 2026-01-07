@@ -145,8 +145,10 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
             let slideItemWidth = offsetWidth
             // 轮播项的高
             let slideItemHeight = offsetHeight
-            // 默认索引
-            const trustedDefaultIndex = clamp(defaultIndex, 0, swiperItemCount - 1)
+            // 窗口变化，重置到默认索引
+            // const trustedDefaultIndex = clamp(defaultIndex, 0, swiperItemCount - 1)
+            // 窗口变化，不重置到默认索引
+            const trustedDefaultIndex = getNearIndexByOffset()
 
             if (direction === 'horizontal') {
                 slideItemWidth = slideItemSize ?? offsetWidth

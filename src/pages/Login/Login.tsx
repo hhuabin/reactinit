@@ -19,7 +19,6 @@ const Login: React.FC = () => {
         /* if (isLogin) {
             goBackOrGoRoot()
         } */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const goToLogin = () => {

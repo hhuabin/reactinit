@@ -44,6 +44,7 @@ export const getRect = (el: HTMLElement | null): Rect => {
 /**
  * @description useRect 用于监听元素尺寸和位置信息的变化（基于 ResizeObserver）
  * 设计约束：
+ * - useRect 能不能拿到正确尺寸，取决于：该元素的尺寸是否能在 CSS 布局中被“确定地计算出来”
  * - 只接受 React RefObject，不接受直接传入的 DOM
  * - 保证 DOM 生命周期完全由 React 管理
  * - 避免因 DOM 查询或并发渲染导致的潜在问题
@@ -54,8 +55,7 @@ export const getRect = (el: HTMLElement | null): Rect => {
  * return <div ref={ref} />
  * ```
  */
-// eslint-disable-next-line func-style
-export default function useRect(ref: RefObject<HTMLElement>) {
+export default function useRect(ref: RefObject<HTMLElement>): Rect {
     const [rect, setRect] = useState<Rect>(() => getRect(ref.current))
 
     useLayoutEffect(() => {

@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-08-25 08:47:22
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:50:56
+ * @LastEditTime: 2026-01-07 09:11:06
  */
 /* https://github.com/react-component/util/blob/master/src/hooks */
 import { useReducer, useRef } from 'react'
@@ -23,6 +23,9 @@ export type SetStateAction<T> = (stateAction: StateAction<T>) => void
  * @returns [a, setA]
  * @example const [a, setA] = useSyncState(0)
  * @example a()、setA(a() + 1)
+ * 问题1：返回的 getValue 是一个稳定依赖函数，不可以作为依赖项被写入依赖数组
+ * - const [imageState, setImageState] = useSyncState({})
+ * - useEffect(() => {}, [imageState])      检测不到 imageState 状态更新
  */
 function useSyncState<T>(initialValue: T): [() => T, SetStateAction<T>]
 function useSyncState<T>(): [() => T | undefined, SetStateAction<T | undefined>]

@@ -3,11 +3,11 @@
  * @Author: bin
  * @Date: 2025-12-25 19:45:38
  * @LastEditors: bin
- * @LastEditTime: 2026-01-06 19:01:44
+ * @LastEditTime: 2026-01-07 14:37:32
  */
 // https://picsum.photos/800/1600 随机生成图片尺寸的网址
 import {
-    useState, useRef, useEffect, useMemo,
+    useState, useRef, useEffect,
     forwardRef, useImperativeHandle, type ForwardedRef,
 } from 'react'
 
@@ -20,12 +20,14 @@ import { isBrowser, clamp } from './utils'
 type ImagePreviewItemProps = {
     src: string;
     direction?: 'horizontal' | 'vertical';     // 滚动方向，默认为 'horizontal'
+    active?: number;                           // 当前正在显示的图片索引，默认值为第一张，索引 0
     maxZoom?: number;                          // 最大缩放倍数，默认值 3
     minZoom?: number;                          // 最小缩放倍数，默认值 1 / 3
     rootWidth?: number;                        // 窗口宽度
     rootHeight?: number;                       // 窗口高度
     closeOnClickImage?: boolean;               // 是否允许点击图片关闭，默认值 true
     closeOnClickOverlay?: boolean;             // 是否在点击遮罩层后关闭图片预览，默认值 true
+    disableZoom?: boolean;                     // 是否禁止缩放，防止触摸事件冲突，默认值 false
     doubleScale?: boolean;                     // 是否启用双击缩放手势，禁用后，点击时会立即关闭图片预览，默认值 true
     onCloseImagePreview?: () => void;          // 关闭图片预览
     onLongPress?: () => void;                  // 长按当前图片时触发
@@ -34,7 +36,7 @@ export type ImagePreviewItemRef = {
     resetScale: () => void;
 }
 
-const TAP_TIME = 250                           // 双击超时时间。与iOS双击超时的默认值相同
+const TAP_TIME = 250                           // 双击超时时间。250ms内再次点击即是双击。与iOS双击超时的默认值相同
 const LONG_PRESS_START_TIME = 500              // 长按判定时长，超过即是长按
 const longImageRatio = 2.6                     // 长图 高宽 比，超过该比例为长图（只处理长图，不对宽图进行特殊处理）
 
@@ -55,12 +57,14 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
     const {
         src,
         direction = 'horizontal',
+        active = 0,
         maxZoom = 3,
         minZoom = 1 / 3,
         rootWidth = 0,
         rootHeight = 0,
         closeOnClickImage = true,
         closeOnClickOverlay = true,
+        disableZoom = false,
         doubleScale = true,
         onCloseImagePreview,
         onLongPress,
@@ -77,6 +81,8 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
     })
     const [isLongImage, setIsLongImage] = useState(false)            // 是否长图
     const [isVerticalImage, setIsVerticalImage] = useState(false)    // (屏幕宽高比 < 图片宽高比 < 长图)为 true 时，改动 css 样式
+
+    const imageWrapRef = useRef<HTMLDivElement | null>(null)         // 包裹图片的元素
 
     const initialMoveY = useRef(0)                         // 只用于 长图 的初始化，让中段内容可见而计算出来的 初始纵向平移距离，
     const fingerNum = useRef(0)                            // 当前手势起始时的手指数，只在 touchStart 赋值一次
@@ -96,8 +102,12 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
         resize()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.rootWidth, props.rootHeight])
+    useEffect(() => {
+        resetScale()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [active])
 
-    const imageStyle = useMemo(() => {
+    const imageStyle = () => {
         const { scale, moveX, moveY, moving, zooming, initializing } = imageState()
         /**
          * 当 zooming || moving || initializing 时，没有动画（动画时长为0）
@@ -107,16 +117,17 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
         }
 
         if (scale !== 1 || isLongImage) {
-            // use matrix to solve the problem of elements not rendering due to safari optimization
+            // 使用矩阵解决safari优化导致元素不渲染的问题
             style.transform = `matrix(${scale}, 0, 0, ${scale}, ${moveX}, ${moveY})`
         }
 
         return style
-    }, [imageState, isLongImage])
+    }
 
-    // x 轴最大移动距离
-    const maxMoveX = (): number => {
-        if (imageState().imageRatio) {
+    // 根据放大倍数计算 x 轴最大移动距离
+    const maxMoveX = (scale = imageState().scale): number => {
+        const { imageRatio } = imageState()
+        if (imageRatio) {
             /**
              * @description 当图片以「高度撑满」的方式显示（竖图场景）
              * 此时需要使用 rootHeight / imageState().imageRatio 计算图片真实宽度(imageWidth)，避免横向拖出空白
@@ -124,18 +135,17 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
              * 则 imageWidth = rootHeight / imageState().imageRatio
              */
             const displayWidth = isVerticalImage
-                ? rootHeight / imageState().imageRatio
+                ? rootHeight / imageRatio
                 : rootWidth
-            return Math.max(0, (imageState().scale * displayWidth - rootWidth) / 2)
+            return Math.max(0, (scale * displayWidth - rootWidth) / 2)
         }
 
         return 0
     }
-    // y 轴最大移动距离
-    const maxMoveY = (): number => {
-        if (imageState().imageRatio) {
-            // 当图片以「宽度撑满」的方式显示（横图 / 普通图场景）
-            // 此时需要使用 rootWidth * imageState().imageRatio 计算，避免纵向拖出空白
+    // 根据放大倍数计算 y 轴最大移动距离
+    const maxMoveY = (scale = imageState().scale): number => {
+        const { imageRatio } = imageState()
+        if (imageRatio) {
             /**
              * @description 当图片以「宽度撑满」的方式显示（横图 / 普通图场景）
              * 此时需要使用 rootWidth * imageState().imageRatio 计算图片真实高度(imageHeight)，避免纵向拖出空白
@@ -144,8 +154,8 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
              */
             const displayHeight = isVerticalImage
                 ? rootHeight
-                : rootWidth * imageState().imageRatio
-            return Math.max(0, (imageState().scale * displayHeight - rootHeight) / 2)
+                : rootWidth * imageRatio
+            return Math.max(0, (scale * displayHeight - rootHeight) / 2)
         }
         return 0
     }
@@ -170,11 +180,14 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
 
             // 计算放大后的位移
             // TODO: 怎么计算？
-            const nextMoveX = center.x - (center.x - moveX) * ratio
-            const nextMoveY = center.y - (center.y - moveY) * ratio
-            // 风险控制
-            const _maxMoveX = maxMoveX()
-            const _maxMoveY = maxMoveY()
+            const cx = center.x - rootWidth / 2
+            const cy = center.y - rootHeight / 2
+
+            const nextMoveX = cx - (cx - moveX) * ratio
+            const nextMoveY = cy - (cy - moveY) * ratio
+            // 边界控制
+            const _maxMoveX = maxMoveX(scale)
+            const _maxMoveY = maxMoveY(scale)
 
             setImageState((prevState) => ({
                 ...prevState,
@@ -183,12 +196,12 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
                 moveY: clamp(nextMoveY, -_maxMoveY, _maxMoveY),
             }))
         } else {
-            // resetScale()
+            // 等于 resetScale()
             setImageState((prevState) => ({
                 ...prevState,
                 scale,
                 moveX: 0,
-                moveY: 0,
+                moveY: isLongImage ? initialMoveY.current : 0,
             }))
         }
 
@@ -211,8 +224,8 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
     const onTouchStart = (event: React.TouchEvent) => {
         const { touches } = event
         fingerNum.current = touches.length
-        // 处理 Swiper 和 ImagePreview 冲突
-        // if (fingerNum.current === 2 && doubleZoom) return
+        // disableZoom = true时，Swiper正在处理touch事件，防止 Swiper 和 ImagePreview 冲突
+        if (fingerNum.current === 2 && disableZoom) return
 
         // 记录触摸开始的位移、时间
         const { scale, moveX, moveY } = imageState()
@@ -250,13 +263,15 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
         if (moving) {
             const { deltaX, deltaY } = touch
             // 计算当前移动
-            const moveX = deltaX.current + startMoveX.current
-            const moveY = deltaY.current + startMoveY.current
+            let moveX = deltaX.current + startMoveX.current
+            let moveY = deltaY.current + startMoveY.current
+            const _maxMoveX = maxMoveX()
+            const _maxMoveY = maxMoveY()
 
             // 如果图像被移动到边缘，允许用户滑动到下一个图像
             const beyondBoundary = direction === 'horizontal'
-                ? touch.isHorizontal() && Math.abs(moveX) > maxMoveX()
-                : touch.isVertical() && Math.abs(moveY) > maxMoveY()
+                ? touch.isHorizontal() && Math.abs(moveX) > _maxMoveX
+                : touch.isVertical() && Math.abs(moveY) > _maxMoveY
 
             // 超出边缘 并且 图片没有在拖动，返回，允许滑动事件传导到 Swiper
             // （功能点：图片处于放大时，一次滑动不能穿透到 Swiper）
@@ -271,6 +286,9 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
             isImageMoved.current = true
             // 正在移动，禁止传导事件至 Swiper
             event.stopPropagation()
+            // 边界控制
+            moveX = clamp(moveX, -_maxMoveX, _maxMoveX)
+            moveY = clamp(moveY, -_maxMoveY, _maxMoveY)
             // 更新图片位移
             setImageState((prevState) => ({
                 ...prevState,
@@ -369,13 +387,13 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
                     } else {
                         doubleTapTimer.current = setTimeout(() => {
                             // TAP_TIME 之后执行单击事件
-                            tapAndCheckClose(event)
+                            isTapAndCheckClose(event)
                             doubleTapTimer.current = null
                         }, TAP_TIME)
                     }
                 } else {
                     // 如果禁止双击缩放，即刻执行单击事件
-                    tapAndCheckClose(event)
+                    isTapAndCheckClose(event)
                 }
             }
 
@@ -388,17 +406,32 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
     /**
      * @description 单击事件 并且 检测能不能关闭 ImagePreview
      */
-    const tapAndCheckClose = (event: React.TouchEvent) => {
+    const isTapAndCheckClose = (event: React.TouchEvent) => {
+        if (!imageWrapRef.current) return
+
+        // 获取图片元素
+        const imageEle = imageWrapRef.current.firstElementChild
+
+        // 点击蒙层
+        const isClickOverlay = event.target === imageWrapRef.current
+        // 点击图片
+        const isClickImage = imageEle?.contains(event.target as HTMLElement)
+
+        if (!closeOnClickImage && isClickImage) return
+        if (!closeOnClickOverlay && isClickOverlay) return
+
         onCloseImagePreview?.()
     }
-    // 双击事件，执行缩放切换
+    /**
+     * @description 双击事件，执行缩放切换
+     */
     const doubleTap = () => {
         const scale = imageState().scale > 1 ? 1 : 2
-        console.log('doubleTap', scale);
-        setScale(scale, {
-            x: touch.startX.current,
-            y: touch.startY.current,
-        })
+
+        const center = (scale === 2 || isLongImage)
+            ? { x: touch.startX.current, y: touch.startY.current }
+            : undefined
+        setScale(scale, center)
     }
 
     const resize = () => {
@@ -454,9 +487,10 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
         resetScale,
     }))
 
-
     return (
-        <div className='bin-image-preview'
+        <div
+            ref={imageWrapRef}
+            className='bin-image-preview'
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -465,7 +499,7 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
             <Image
                 src={src}
                 className={'bin-image-preview-image' + (isVerticalImage ? ' bin-image-preview-image-vertical' : '')}
-                style={ imageStyle }
+                style={imageStyle()}
                 onLoad={onLoad}
             ></Image>
         </div>

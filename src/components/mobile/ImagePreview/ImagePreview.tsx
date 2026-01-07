@@ -2,9 +2,12 @@
  * @Author: bin
  * @Date: 2025-09-15 17:36:13
  * @LastEditors: bin
- * @LastEditTime: 2026-01-06 18:40:21
+ * @LastEditTime: 2026-01-07 14:19:57
  */
-import { useRef, useEffect, forwardRef, useImperativeHandle, type ForwardedRef } from 'react'
+import {
+    useState, useRef, useEffect,
+    forwardRef, useImperativeHandle, type ForwardedRef,
+} from 'react'
 
 import Swiper, { SwiperItem, type SwiperRef } from '@/components/mobile/Swiper'
 import ImagePreviewItem from './ImagePreviewItem'
@@ -42,8 +45,6 @@ export type ImagePreviewRef = {
     resetScale: () => void;
 }
 
-const TAP_TIME = 250                           // 双击缩放手势的点击间隔
-
 // eslint-disable-next-line prefer-arrow-callback
 export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: ForwardedRef<ImagePreviewRef>) {
     const {
@@ -70,16 +71,22 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
         onLongPress,
     } = props
 
-    const { width: rootWidth, height: rootHeight } = useWindowSize()
-
     const [mergeVisible, setMergeVisible] = useMergedState(true, {
         value: visible,
         onChange: (value) => {
             onClose?.()      // 只有 closeImagePreview 触发关闭事件，其他事件均不调用 setMergeVisible
         },
     })
+    const [swiperState, setSwiperState] = useState({
+        active: 0,
+        disableZoom: false,
+    })
 
+    const swiperWrapRef = useRef<HTMLDivElement>(null)
     const swiperRef = useRef<SwiperRef>(null)
+
+    // 此处的宽高应该使用 Swiper 的宽高，目前仅用屏幕宽高代替
+    const { width: rootWidth, height: rootHeight } = useWindowSize()
 
     /**
      * @description 监听 popstate 事件，返回时关闭弹窗
@@ -124,6 +131,7 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
     // 默认挂载到 document.body
     return renderToContainer(
         <div
+            ref={swiperWrapRef}
             role='button'
             className={`bin-image-preview-overlay${className ? ' ' + className : ''}`}
             style={style}
@@ -145,12 +153,14 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
                                 ref={node => {}}
                                 src={image}
                                 direction={direction}
+                                active={swiperState.active}
                                 maxZoom={maxZoom}
                                 minZoom={minZoom}
                                 rootWidth={rootWidth}
                                 rootHeight={rootHeight}
                                 closeOnClickImage={closeOnClickImage}
                                 closeOnClickOverlay={closeOnClickOverlay}
+                                disableZoom={swiperState.disableZoom}
                                 doubleScale={doubleScale}
                                 onCloseImagePreview={onCloseImagePreview}
                                 onLongPress={() => onLongPress?.(index)}
