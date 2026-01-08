@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-15 17:36:13
  * @LastEditors: bin
- * @LastEditTime: 2026-01-07 14:19:57
+ * @LastEditTime: 2026-01-08 19:30:19
  */
 import {
     useState, useRef, useEffect,
@@ -29,20 +29,21 @@ type ImagePreviewProps = {
     closeOnClickImage?: boolean;               // 是否允许点击图片关闭，默认值 true
     closeOnClickOverlay?: boolean;             // 是否在点击遮罩层后关闭图片预览，默认值 true
     doubleScale?: boolean;                     // 是否启用双击缩放手势，禁用后，点击时会立即关闭图片预览，默认值 true
-
     stopPropagation?: boolean;                 // 是否阻止滑动事件冒泡，默认为 true
     showIndicator?: boolean;                   // 是否显示指示器，默认为 true
-    indicator?: (total: number, current: number) => React.ReactNode;     // 自定义指示器，优先级比 showIndicator 高
+    indicator?: (total: number, current: number) => React.ReactNode;         // 自定义指示器，优先级比 showIndicator 高
+    showCloseBtn?: boolean;                    // 是否显示关闭按钮，默认值 false
+    renderFooter?: (index: number) => React.ReactNode;                       // 渲染底部额外内容
     className?: string;                        // 自定义类名
     style?: React.CSSProperties;               // 自定义样式
-    getContainer?: HTMLElement | (() => HTMLElement) | null;                     // 指定挂载的节点
+    getContainer?: HTMLElement | (() => HTMLElement) | null;                 // 指定挂载的节点
     onClose?: () => void;                      // 关闭时触发
     onIndexChange?: (index: number) => void;   // 切换时触发
     onLongPress?: (index: number) => void;     // 长按当前图片时触发
 }
 export type ImagePreviewRef = {
-    swipeTo: (index: number) => void;
-    resetScale: () => void;
+    swipeTo: (index: number) => void;          // 切换到指定位置
+    resetScale: () => void;                    // 重置当前图片的缩放比
 }
 
 // eslint-disable-next-line prefer-arrow-callback
@@ -59,10 +60,11 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
         closeOnClickImage = true,
         closeOnClickOverlay = true,
         doubleScale = true,
-
         stopPropagation = false,
         showIndicator = true,
         indicator,
+        showCloseBtn = false,
+        renderFooter,
         className = '',
         style = {},
         getContainer,
@@ -107,10 +109,36 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
     const onCloseImagePreview = () => {
         setMergeVisible(false)
         onClose?.()
+        /* setTimeout(() => {
+            if (!swiperWrapRef.current) return
+            swiperWrapRef.current.style.display = 'none'
+        }, 300) */
     }
 
     const swipeTo = (index: number) => {
         swiperRef.current?.swipeTo(index)
+    }
+
+    const onSwiperChange = (index: number) => {
+        setSwiperState(prevswiperState => ({
+            ...prevswiperState,
+            active: index,
+        }))
+        onIndexChange?.(index)
+    }
+
+    const onSwiperDragStart = () => {
+        setSwiperState(prevswiperState => ({
+            ...prevswiperState,
+            disableZoom: true,
+        }))
+    }
+
+    const onSwiperDragEnd = () => {
+        setSwiperState(prevswiperState => ({
+            ...prevswiperState,
+            disableZoom: false,
+        }))
     }
 
     useImperativeHandle(ref, () => ({
@@ -118,12 +146,67 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
         resetScale: () => {},
     }))
 
-    // 默认指示器
+    // 默认指示器，传给 Swiper 显示
     const defaultIndicator = (total: number, current: number): React.ReactNode => {
         if (indicator) return indicator(total, current)
         if (!showIndicator) return null
 
         return (<div className='bin-image-preview-indicator'>{ (current + 1) +  ' / ' + total }</div>)
+    }
+
+    const renderImages = () => (
+        <Swiper
+            ref={swiperRef}
+            direction={direction}
+            loop={loop}
+            defaultIndex={defaultIndex}
+            stopPropagation={stopPropagation}
+            showIndicator={showIndicator}
+            indicator={defaultIndicator}
+            onChange={onSwiperChange}
+            onDragStart={onSwiperDragStart}
+            onDragEnd={onSwiperDragEnd}
+        >
+            {
+                images.map((image, index) => (
+                    <SwiperItem key={index}>
+                        <ImagePreviewItem
+                            ref={node => {}}
+                            src={image}
+                            direction={direction}
+                            active={swiperState.active}
+                            maxZoom={maxZoom}
+                            minZoom={minZoom}
+                            rootWidth={rootWidth}
+                            rootHeight={rootHeight}
+                            closeOnClickImage={closeOnClickImage}
+                            closeOnClickOverlay={closeOnClickOverlay}
+                            disableZoom={swiperState.disableZoom}
+                            doubleScale={doubleScale}
+                            onCloseImagePreview={onCloseImagePreview}
+                            onLongPress={() => onLongPress?.(index)}
+                        >
+                        </ImagePreviewItem>
+                    </SwiperItem>
+                ))
+            }
+        </Swiper>
+    )
+
+    const renderClose = () => {
+        if (!showCloseBtn) return null
+        return (
+            <div
+                role='button'
+                className='bin-image-preview-close-btn'
+                onClick={() => onCloseImagePreview()}
+            >
+                <svg width='100%' height='100%' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+                    <line x1='32' y1='32' x2='68' y2='68' stroke='currentColor' strokeWidth='4' strokeLinecap='round' />
+                    <line x1='68' y1='32' x2='32' y2='68' stroke='currentColor' strokeWidth='4' strokeLinecap='round' />
+                </svg>
+            </div>
+        )
     }
 
     if (!mergeVisible) return null
@@ -133,43 +216,12 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
         <div
             ref={swiperWrapRef}
             role='button'
-            className={`bin-image-preview-overlay${className ? ' ' + className : ''}`}
+            className={'bin-image-preview-overlay' + (className ? ' ' + className : '')}
             style={style}
         >
-            <Swiper
-                ref={swiperRef}
-                direction={direction}
-                loop={loop}
-                defaultIndex={defaultIndex}
-                stopPropagation={stopPropagation}
-                showIndicator={showIndicator}
-                indicator={defaultIndicator}
-                onChange={onIndexChange}
-            >
-                {
-                    images.map((image, index) => (
-                        <SwiperItem key={index}>
-                            <ImagePreviewItem
-                                ref={node => {}}
-                                src={image}
-                                direction={direction}
-                                active={swiperState.active}
-                                maxZoom={maxZoom}
-                                minZoom={minZoom}
-                                rootWidth={rootWidth}
-                                rootHeight={rootHeight}
-                                closeOnClickImage={closeOnClickImage}
-                                closeOnClickOverlay={closeOnClickOverlay}
-                                disableZoom={swiperState.disableZoom}
-                                doubleScale={doubleScale}
-                                onCloseImagePreview={onCloseImagePreview}
-                                onLongPress={() => onLongPress?.(index)}
-                            >
-                            </ImagePreviewItem>
-                        </SwiperItem>
-                    ))
-                }
-            </Swiper>
+            { renderImages() }
+            { renderClose() }
+            { renderFooter?.(swiperState.active) }
         </div>,
         getContainer,
     )

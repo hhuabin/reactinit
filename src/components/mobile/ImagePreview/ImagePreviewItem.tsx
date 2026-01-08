@@ -3,7 +3,7 @@
  * @Author: bin
  * @Date: 2025-12-25 19:45:38
  * @LastEditors: bin
- * @LastEditTime: 2026-01-07 14:37:32
+ * @LastEditTime: 2026-01-08 17:39:54
  */
 // https://picsum.photos/800/1600 随机生成图片尺寸的网址
 import {
@@ -113,7 +113,7 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
          * 当 zooming || moving || initializing 时，没有动画（动画时长为0）
          */
         const style: React.CSSProperties = {
-            transitionDuration: zooming || moving || initializing ? '0s' : '.3s',
+            transitionDuration: zooming || moving || initializing ? '0s' : '0.3s',
         }
 
         if (scale !== 1 || isLongImage) {
@@ -196,7 +196,7 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
                 moveY: clamp(nextMoveY, -_maxMoveY, _maxMoveY),
             }))
         } else {
-            // 等于 resetScale()
+            // resetScale() 调用
             setImageState((prevState) => ({
                 ...prevState,
                 scale,
@@ -419,7 +419,7 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
 
         if (!closeOnClickImage && isClickImage) return
         if (!closeOnClickOverlay && isClickOverlay) return
-
+        resetScale()
         onCloseImagePreview?.()
     }
     /**

@@ -10,6 +10,7 @@
     height: 100%;
     background-color: rgba(0, 0, 0, .55);
     z-index: var(--z-index);
+    opacity: 1;
     animation: mask-in var(--animation-duration);
 
     @keyframes mask-in {
@@ -48,10 +49,43 @@
         top: 16px;
         display: flex;
         transform: translateX(-50%);
-        z-index: 2;
+        z-index: var(--z-index);
         color: #fff;
         font-size: 14px;
         line-height: 20px;
         text-shadow: 0 1px 1px #323233;
+    }
+
+    .bin-image-preview-close-btn {
+        position: absolute;
+        right: 16px;
+        top: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background-color: #c8c9cc;
+        color: #000;
+        z-index: var(--z-index);
+    }
+}
+.bin-image-preview-overlay-hidden {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+    animation: mask-out var(--animation-duration);
+
+    @keyframes mask-out {
+        from {
+            display: block;
+            opacity: 1;
+        }
+
+        to {
+            display: none;
+            opacity: 0;
+        }
     }
 }

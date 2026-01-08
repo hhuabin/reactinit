@@ -31,6 +31,7 @@
 
     .bin-picker-overlay-hidden {
         opacity: 0;
+        pointer-events: none;
         animation: mask-out var(--animation-duration);
 
         @keyframes mask-out {
@@ -246,6 +247,7 @@
 
 .bin-picker-popup-hidden {
     display: none;
+    pointer-events: none;
     animation: picker-out var(--animation-duration);
 
     @keyframes picker-out {

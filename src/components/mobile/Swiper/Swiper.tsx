@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-16 14:40:22
  * @LastEditors: bin
- * @LastEditTime: 2026-01-06 15:27:11
+ * @LastEditTime: 2026-01-08 19:23:03
  */
 /* eslint-disable max-lines */
 import React, {
@@ -53,6 +53,10 @@ const INERTIAL_SLIDE_DISTANCE = 15          // 惯性滚动判定距离
 // 获取中间的数字
 const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max)
 
+/**
+ * Swiper 要求在初始化时，容器必须参与布局，如不能被 `display: none;` 的容器包裹
+ * 否则 getRootRefDOMSize() 获取容器尺寸会失败
+ */
 // eslint-disable-next-line prefer-arrow-callback
 const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<SwiperRef>) {
 
@@ -134,12 +138,14 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
     /**
      * @description 获取并设置 swiper 框及滑块的大小
      * 不管参数 / 窗口是否发生变化，都能获取到正确的大小
+     * 使用 offsetWidth 要求 Swiper 在初始化时，容器必须参与布局
      */
     const getRootRefDOMSize = () => {
         if (!rootRef.current) return
 
         // 确保取到正确的 offsetWidth 值
         window.requestAnimationFrame(() => {
+            //bug：Swiper 一定要参与布局才能获取到正确的尺寸，否则为0
             const { offsetWidth, offsetHeight } = rootRef.current!
             // 轮播项的宽
             let slideItemWidth = offsetWidth
