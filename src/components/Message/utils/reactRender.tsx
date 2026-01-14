@@ -47,11 +47,20 @@ export const defaultReactRender: RenderType = (node: React.ReactElement, contain
 let unstableRender: RenderType = defaultReactRender
 
 /**
- * 渲染函数
+ * @description 渲染函数
  */
 export const unstableSetRender = (render?: RenderType) => {
     if (render) {
         unstableRender = render
     }
     return unstableRender
+}
+
+/**
+ * @description 渲染到body
+ */
+export const renderToBody = (element: React.ReactElement) => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    return unstableSetRender()(element, container)
 }

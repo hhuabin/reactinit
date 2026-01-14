@@ -15,7 +15,7 @@ import Image from '@/components/mobile/Image'
 
 import useSyncState from '@/hooks/reactHooks/useSyncState'
 import useTouch from '@/hooks/domHooks/useTouch'
-import { isBrowser, clamp } from './utils'
+import { isBrowser, clamp } from './utils/renderToContainer'
 
 type ImagePreviewItemProps = {
     src: string;

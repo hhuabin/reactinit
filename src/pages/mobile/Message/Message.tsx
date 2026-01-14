@@ -2,6 +2,8 @@ import message from '@/components/mobile/Message'
 
 const Message: React.FC = () => {
 
+    const [messageApi, contextHolder] = message.useMessage()
+
     const openMessage = () => {
         message.open({
             key: 'updatable',

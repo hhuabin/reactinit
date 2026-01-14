@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-16 14:40:22
  * @LastEditors: bin
- * @LastEditTime: 2026-01-08 19:23:03
+ * @LastEditTime: 2026-01-09 09:35:39
  */
 /* eslint-disable max-lines */
 import React, {
@@ -15,6 +15,8 @@ import { useInternalLayoutEffect } from '@/hooks/reactHooks/useLayoutUpdateEffec
 import useSyncState from '@/hooks/reactHooks/useSyncState'
 import SwiperItem, { type SwiperItemProps } from './SwiperItem'
 import useTouch from '@/hooks/domHooks/useTouch'
+import { getEnv } from './utils'
+
 import './Swiper.less'
 
 type SwiperProps = {
@@ -55,7 +57,7 @@ const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, 
 
 /**
  * Swiper 要求在初始化时，容器必须参与布局，如不能被 `display: none;` 的容器包裹
- * 否则 getRootRefDOMSize() 获取容器尺寸会失败
+ * 否则 getRootRefDOMSize() 获取容器尺寸会失败，可以尝试通过设置 slideItemSize 解决
  */
 // eslint-disable-next-line prefer-arrow-callback
 const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<SwiperRef>) {
@@ -151,15 +153,19 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
             let slideItemWidth = offsetWidth
             // 轮播项的高
             let slideItemHeight = offsetHeight
-            // 窗口变化，重置到默认索引
-            // const trustedDefaultIndex = clamp(defaultIndex, 0, swiperItemCount - 1)
-            // 窗口变化，不重置到默认索引
-            const trustedDefaultIndex = getNearIndexByOffset()
+            // const trustedDefaultIndex = clamp(defaultIndex, 0, swiperItemCount - 1)   // 窗口变化，重置到默认索引
+            const trustedDefaultIndex = getNearIndexByOffset()                           // 窗口变化，不重置到默认索引
 
             if (direction === 'horizontal') {
                 slideItemWidth = slideItemSize ?? offsetWidth
+                if (getEnv() === 'development' && slideItemWidth === 0) {
+                    console.warn('Swiper: 初始化宽度（尺寸）不能为0')
+                }
             } else if (direction === 'vertical') {
                 slideItemHeight = slideItemSize ?? offsetHeight
+                if (getEnv() === 'development' && slideItemHeight === 0) {
+                    console.warn('Swiper: 初始化高度（尺寸）不能为0')
+                }
             }
 
             setStableRootSize({

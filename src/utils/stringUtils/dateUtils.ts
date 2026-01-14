@@ -8,13 +8,13 @@
 /**
  * @description 通过 某时区某时间 获取该时刻的 时间戳
  * @example getTimestampByTimeAndOffset(new Date(), -480) 获取北京时间2025-07-07 17:00:00的时间戳
- * @param date 指定时间，默认值：new Date()
- * @param offsetMinutes 指定时区相对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：东八区（北京） -480
+ * @param { string | Date } date 指定时间，默认值：new Date()
+ * @param { number } timezoneOffset 指定时区相对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：东八区（北京） -480
  * @returns { number } 时间戳
  */
 export const getTimestampByTimeAndOffset = (
     date: string | Date = new Date(),
-    offsetMinutes: number = -480,
+    timezoneOffset: number = -480,
 ): number => {
 
     if (typeof date === 'string' && date.constructor === String) {
@@ -28,26 +28,28 @@ export const getTimestampByTimeAndOffset = (
         throw new Error('Invalid time string')
     }
     // 计算当前时区与目标时区“反向”偏移值差
-    const calcOffset = new Date().getTimezoneOffset() - offsetMinutes
+    const calcOffset = new Date().getTimezoneOffset() - timezoneOffset
 
     return localTimestamp - calcOffset * 60 * 1000
 }
 
 /**
- * @description 通过 当前时区某时间 获取 某时区时间
- * @example getDateStrByTimeAndCurrentOffset(new Date(), -480) 获取当前时区的此刻的北京时间
- * @param date 日期，默认值：当前时区该时刻
- * @param offsetMinutes 指定时区相对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：当前时区 new Date().getTimezoneOffset()
- * @param fmt 日期格式，默认值：YYYY-MM-DD hh:mm:ss
+ * @description 通过 当前时区时间 获取 目标时区时间字符串
+ * @example getDateStrByTimeAndCurrentOffset(new Date(), new Date().getTimezoneOffset()) 获取当前时区的此刻的时间字符串
+ * @example getDateStrByTimeAndCurrentOffset(new Date(), -480) 获取当前时区的此刻的北京时间字符串
+ * @param { string | Date | number } date 日期，默认值：当前时区该时刻
+ * @param { number } timezoneOffset 指定时区相对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：当前时区 new Date().getTimezoneOffset()
+ * @param { string } fmt 日期格式，默认值：YYYY-MM-DD hh:mm:ss
  * @returns { string } 日期字符串
+ * @introduction 是 getDateStrByTimeAndOffset 的一个用法，固定是当前时区
  */
 export const getDateStrByTimeAndCurrentOffset = (
     date: string | Date | number = new Date(),
-    offsetMinutes: number = new Date().getTimezoneOffset(),
+    timezoneOffset: number = new Date().getTimezoneOffset(),
     fmt = 'YYYY-MM-DD hh:mm:ss',
 ): string => {
     // 可以直接调用以下函数
-    return getDateStrByTimeAndOffset(date, new Date().getTimezoneOffset(), offsetMinutes, fmt)
+    return getDateStrByTimeAndOffset(date, new Date().getTimezoneOffset(), timezoneOffset, fmt)
     /* try {
         if (typeof date === 'string' && date.constructor === String) {
             // ios 不支持 - 连接故而需要使用 /
@@ -65,12 +67,12 @@ export const getDateStrByTimeAndCurrentOffset = (
         return date.toString()
     }
 
-    if (offsetMinutes < -840 || offsetMinutes > 720) {
-        throw new Error('Invalid offsetMinutes value')
+    if (timezoneOffset < -840 || timezoneOffset > 720) {
+        throw new Error('Invalid timezoneOffset value')
     }
 
     // 1. 转换为其他时区时间
-    const targetTime = new Date(date.getTime() - offsetMinutes * 60 * 1000)
+    const targetTime = new Date(date.getTime() - timezoneOffset * 60 * 1000)
 
     // 2. 格式化为 YYYY-MM-DD hh:mm:ss
     const dateFmtObj: Record<string, string> = {
@@ -95,7 +97,7 @@ export const getDateStrByTimeAndCurrentOffset = (
 }
 
 /**
- * @description 通过 任意时区时间 获取 某时区时间
+ * @description 通过 任意时区时间 获取 目标时区时间字符串
  * @example getDateStrByTimeAndOffset(new Date(), new Date().getTimezoneOffset(), -480) 获取当前时区的此刻的北京时间
  * @param { string | Date | number } currentDate 任意时区时间，默认值：new Date()
  * @param { number } currentTimezoneOffset 任意时区对于 UTC 的“反向”偏移值[ -840, +720 ]；默认值：new Date ().getTimezoneOffset()
@@ -105,7 +107,7 @@ export const getDateStrByTimeAndCurrentOffset = (
  */
 export const getDateStrByTimeAndOffset = (
     date: string | Date | number = new Date(),
-    timezoneOffset: number = new Date().getTimezoneOffset(),
+    currentTimezoneOffset: number = new Date().getTimezoneOffset(),
     targetTimezoneOffset: number = -480,
     fmt = 'YYYY-MM-DD hh:mm:ss',
 ): string => {
@@ -114,11 +116,11 @@ export const getDateStrByTimeAndOffset = (
     try {
         if (typeof date === 'string' && date.constructor === String) {
             // 根据给定时区时间 获取该时间的时间戳
-            dateUTCTimestamp = getTimestampByTimeAndOffset(date, timezoneOffset)
+            dateUTCTimestamp = getTimestampByTimeAndOffset(date, currentTimezoneOffset)
         } else if (typeof date === 'number' && date.constructor === Number) {
             dateUTCTimestamp = date
         } else if (date instanceof Object && date.constructor === Date) {
-            dateUTCTimestamp = getTimestampByTimeAndOffset(date, timezoneOffset)
+            dateUTCTimestamp = getTimestampByTimeAndOffset(date, currentTimezoneOffset)
         } else {
             throw new Error('Invalid date value')
         }
@@ -127,8 +129,8 @@ export const getDateStrByTimeAndOffset = (
         return date.toString()
     }
 
-    if (timezoneOffset < -840 || timezoneOffset > 720) {
-        throw new Error('Invalid timezoneOffset value')
+    if (currentTimezoneOffset < -840 || currentTimezoneOffset > 720) {
+        throw new Error('Invalid currentTimezoneOffset value')
     } else if (targetTimezoneOffset < -840 || targetTimezoneOffset > 720) {
         throw new Error('Invalid targetTimezoneOffset value')
     }

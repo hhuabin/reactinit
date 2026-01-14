@@ -192,7 +192,7 @@ closeFn()     // 手动关闭函数
 
 ## 实例化 Hooks
 
-```typescript
+```tsx
 const Message = () => {
     const [messageApi, contextHolder] = message.useMessage()
 

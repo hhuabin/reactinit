@@ -2,8 +2,31 @@
  * @Author: bin
  * @Date: 2025-08-04 14:37:21
  * @LastEditors: bin
- * @LastEditTime: 2025-12-18 16:17:07
+ * @LastEditTime: 2026-01-13 10:29:47
  */
+
+const FIRST_IDNO_PATTERN = /^([1-6][1-9]|50)\d{4}\d{2}((0[1-9])|1[0-2])(([0-2][1-9])|10|20|30|31)\d{3}/
+const SECOND_IDNO_PATTERN = /^([1-6][1-9]|50)\d{4}(19|20)\d{2}((0[1-9])|1[0-2])(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/
+
+// 辅助函数：验证日期有效性
+const isValidDate = (year: string, month: string, day: string): boolean => {
+    const y = parseInt(year, 10)
+    const m = parseInt(month, 10)
+    const d = parseInt(day, 10)
+
+    // 基本范围检查
+    if (y < 1900 || y > new Date().getFullYear()) return false
+    if (m < 1 || m > 12) return false
+    if (d < 1 || d > 31) return false
+
+    // 创建Date对象验证
+    const date = new Date(y, m - 1, d)
+    // NaN === NaN 是 false，所以 y, m, d 不用校验 NaN
+    return date.getFullYear() === y &&
+           date.getMonth() + 1 === m &&
+           date.getDate() === d
+}
+
 /**
  * @description 居民身份证号码格式校验，默认使用第二代身份证校验
  * @param { string } idCardNumber 身份证号码
@@ -31,9 +54,7 @@ const validateIdentityCard = (idCardNumber: string, enableFirst = false): boolea
 const validateFirstIdCard = (idCardNumber: string): boolean => {
     if (typeof idCardNumber !== 'string') return false
 
-    const pattern = /^([1-6][1-9]|50)\d{4}\d{2}((0[1-9])|1[0-2])(([0-2][1-9])|10|20|30|31)\d{3}/
-    const regex = new RegExp(pattern)
-    if (!regex.test(idCardNumber)) return false
+    if (!FIRST_IDNO_PATTERN.test(idCardNumber)) return false
 
     // 补全年份为19xx
     const [year, month, day] = [+('19' + idCardNumber.substring(6, 8)), +idCardNumber.substring(8, 10), +idCardNumber.substring(10, 12)]
@@ -89,9 +110,54 @@ const validateSecondIdCard = (idCardNumber: string): boolean => {
     return checkCode === idCardNumber.charAt(17).toUpperCase()
 }
 
+/**
+ * @description 根据身份证号获取性别
+ * @param { string } idCardNumber 身份证号码
+ * @param { boolean } enableFirst 是否开启第一代身份证校验
+ * @returns { -1 | 0 | 1 } -1 未知 | 0女 | 1 男
+ */
+const getGenderFromId = (idCardNumber: string,  enableFirst = false): -1 | 0 | 1 => {
+    let genderDigit: number = -1
+    if (enableFirst && idCardNumber.length === 15 && validateFirstIdCard(idCardNumber)) {
+        // 第一代身份证
+        genderDigit = parseInt(idCardNumber.charAt(14))
+    } else if (idCardNumber.length === 18 && validateSecondIdCard(idCardNumber)) {
+        // 第二代身份证
+        genderDigit = parseInt(idCardNumber.charAt(16))
+    } else {
+        return -1
+    }
+    if (isNaN(genderDigit)) return -1
+    // 获取性别
+    return (genderDigit % 2) as 0 | 1
+}
+
+/**
+ * @description 根据身份证号获取生日（YYYYMMDD格式）
+ * @param { string } idCardNumber 身份证号码
+ * @param { boolean } enableFirst 是否开启第一代身份证校验
+ * @returns { string } 生日
+ */
+const getBirthdayFromId = (idCardNumber: string, enableFirst = false): string => {
+    let birthday: string = ''
+    if (enableFirst && idCardNumber.length === 15 && validateFirstIdCard(idCardNumber)) {
+        // 第一代身份证
+        birthday = '19' + idCardNumber.substring(6, 12)   // YY → 19YY
+    } else if (idCardNumber.length === 18 && validateSecondIdCard(idCardNumber)) {
+        // 第二代身份证
+        birthday = idCardNumber.substring(6, 14)
+    }
+    // 由于 validateFirstIdCard、validateSecondIdCard 做了 isValidDate 校验，所以这里不用再做 isValidDate 校验
+    return birthday
+}
+
 export {
+    FIRST_IDNO_PATTERN,
+    SECOND_IDNO_PATTERN,
     validateIdentityCard,
     validateFirstIdCard,
     validateSecondIdCard,
+    getGenderFromId,
+    getBirthdayFromId,
 }
 export default validateIdentityCard

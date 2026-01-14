@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2024-12-03 16:32:40
  * @LastEditors: bin
- * @LastEditTime: 2026-01-06 15:33:55
+ * @LastEditTime: 2026-01-12 11:28:19
  */
 import { useCallback, useEffect, useLayoutEffect } from 'react'
 
@@ -10,9 +10,9 @@ import { useDebounce } from '@/hooks/utilsHooks/useDebounceThrottle'
 
 /**
  * 监听浏览器窗口变化，实现自适应（大屏使用）
- * @param designWidth 设计稿宽度
- * @param designHeight 设计稿高度
- * @param renderDom 需要挂载的元素（注意不能挂载在根html上，移动端可能会出现适配问题）
+ * @param { number } designWidth 设计稿宽度
+ * @param { number } designHeight 设计稿高度
+ * @param { string } renderDom 需要挂载的元素（注意不能挂载在根html上，移动端可能会出现适配问题）
  */
 export default function useScreenScale(designWidth = 1920, designHeight = 1080, renderDOM = '#root') {
 

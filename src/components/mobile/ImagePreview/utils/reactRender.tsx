@@ -1,8 +1,6 @@
+
 /**
- * @Author: bin
- * @Date: 2025-09-12 15:28:38
- * @LastEditors: bin
- * @LastEditTime: 2025-12-24 10:21:09
+ * 该文件与 Message 的 reactRender 一样，若有修改，需要同步
  */
 import { StrictMode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'

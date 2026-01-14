@@ -2,13 +2,13 @@
  * @Author: bin
  * @Date: 2025-06-09 10:10:06
  * @LastEditors: bin
- * @LastEditTime: 2026-01-06 10:01:34
+ * @LastEditTime: 2026-01-14 14:58:32
  */
 import { useEffect, useState } from 'react'
 
 import { Button, Image, ImageViewer, Swiper } from 'antd-mobile'
 
-import ImagePreview from '@/components/mobile/ImagePreview'
+import ImagePreview, { showImagePreview } from '@/components/mobile/ImagePreview'
 
 const Developing: React.FC = () => {
 
@@ -57,14 +57,18 @@ const Developing: React.FC = () => {
                 </div>
                 <Button
                     onClick={() => {
-                        setVisible(true)
+                        showImagePreview({
+                            images: demoViewImages,
+                        })
                     }}
                 >
                     显示自定义组件图片
                 </Button>
                 <Button
                     onClick={() => {
-                        setAntdVisible(true)
+                        ImageViewer.Multi.show({
+                            images: demoViewImages,
+                        })
                     }}
                 >
                     显示Antd组件图片

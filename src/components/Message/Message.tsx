@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-10 11:22:20
  * @LastEditors: bin
- * @LastEditTime: 2025-11-12 20:11:18
+ * @LastEditTime: 2026-01-14 16:44:22
  */
 /**
  * 参考源码：ant-design/components/message/index.tsx
@@ -117,9 +117,13 @@ const GlobalHolderWrapper = forwardRef(function MessageWrapper(props: unknown, r
  * 将消息队列的方法代理到 message 实例中
  */
 const flushNotice = () => {
-    // 如果此时 message 还没有挂载，挂载 message 最外层
+    /**
+     * 如果没有 message，创建单例离屏容器 holderFragment
+     * 并且添加 GlobalHolderWrapper 实例到 message 变量中
+     * 往后的 message.open() 都会直接调用已经创建的 GlobalHolderWrapper 的方法
+     */
     if (!message) {
-        // 创建空标签
+        // 创建空标签，作为一个单例的“离屏容器”
         const holderFragment = document.createDocumentFragment()
         message = {
             fragment: holderFragment,
