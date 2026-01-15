@@ -2,10 +2,10 @@
  * @Author: bin
  * @Date: 2026-01-04 10:36:21
  * @LastEditors: bin
- * @LastEditTime: 2026-01-15 16:03:16
+ * @LastEditTime: 2026-01-14 10:51:11
  */
 /**
- * @description 该文件与 Mask 一样，若需修改，需要同步修改
+ * @description 该文件与 ImagePreview 一样，若需修改，需要同步修改
  */
 import { type ReactElement, type ReactPortal } from 'react'
 import { createPortal } from 'react-dom'

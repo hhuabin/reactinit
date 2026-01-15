@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-05 15:41:52
  * @LastEditors: bin
- * @LastEditTime: 2025-12-25 16:28:14
+ * @LastEditTime: 2026-01-15 16:19:28
  */
 import { Navigate } from 'react-router-dom'
 
@@ -74,6 +74,17 @@ export const mobileRoute: RouteConfig[] = [
                 meta: {
                     auth: false,
                     title: 'ImagePreview',
+                },
+            },
+            {
+                path: 'mask',
+                lazy: async () => {
+                    const { default: Mask } = await import('@/pages/mobile/Mask/Mask')
+                    return { Component: Mask }
+                },
+                meta: {
+                    auth: false,
+                    title: 'Mask',
                 },
             },
         ],

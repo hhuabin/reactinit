@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-04 10:46:02
  * @LastEditors: bin
- * @LastEditTime: 2026-01-05 09:58:38
+ * @LastEditTime: 2026-01-15 17:00:44
  */
 /* eslint-disable max-lines */
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -191,7 +191,7 @@ const Picker: React.FC<PickerProps> = (props) => {
 
         const origin = document.body.style.overflow
         if (mergeVisible) {
-            // 禁止背景滚动
+            // 禁止 body 滚动
             document.body.style.overflow = 'hidden'
         }
         return () => {
