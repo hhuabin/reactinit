@@ -26,6 +26,81 @@ transform: matrix(1, 0, 0, 1, 0, 0);
 
 
 
+# 使用说明
+
+```tsx
+import ImagePreview, { showImagePreview } from '@/components/mobile/ImagePreview'
+
+const ImagePreviewComponent: React.FC = () => {
+    const [visible, setVisible] = useState(false)
+
+    const show = () => {
+        // 函数式调用
+        showImagePreview({ images: demoImages })
+    }
+
+    return (
+        <>
+            {/* 组件调用 */}
+            <ImagePreview
+                visible={visible}
+                images={demoImages}
+                onClose={() => setVisible(false)}
+            />
+        </>
+    )
+}
+```
+
+
+
+## 参数
+
+| 参数                  | 说明                                                   | 类型                                                  | 默认值         |
+| --------------------- | ------------------------------------------------------ | ----------------------------------------------------- | -------------- |
+| `visible`             | 是否显示                                               | `boolean`                                             | `false`        |
+| `direction`           | 滚动方向                                               | `'horizontal' | 'vertical'`                           | `'horizontal'` |
+| `loop`                | 是否循环播放                                           | `boolean`                                             | `false`        |
+| `defaultIndex`        | 默认显示第几张图片                                     | `number`                                              | `0`            |
+| `images`              | 图片地址列表                                           | `string[]`                                            | `[]`           |
+| `maxZoom`             | 最大缩放倍数                                           | `number`                                              | `3`            |
+| `minZoom`             | 最小缩放倍数                                           | `number`                                              | `1 / 3`        |
+| `closeOnPopstate`     | 是否在 popstate 时关闭图片预览                         | `boolean`                                             | `true`         |
+| `closeOnClickOverlay` | 是否在点击遮罩层后关闭图片预览                         | `boolean`                                             | `true`         |
+| `doubleScale`         | 是否启用双击缩放手势，禁用后，点击时会立即关闭图片预览 | `boolean`                                             | `true`         |
+| `stopPropagation`     | 是否阻止滑动事件冒泡                                   | `boolean`                                             | `true`         |
+| `showIndicator`       | 是否显示指示器                                         | `boolean`                                             | `true`         |
+| `indicator`           | 自定义指示器，优先级比 `showIndicator` 高              | `(total: number, current: number) => React.ReactNode` | -              |
+| `showCloseBtn`        | 是否显示关闭按钮                                       | `boolean`                                             | `false`        |
+| `renderFooter`        | 渲染额外内容                                           | `(index: number) => React.ReactNode`                  | -              |
+| `className`           | 自定义类名                                             | `string`                                              | `''`           |
+| `style`               | 自定义样式                                             | `React.CSSProperties`                                 | `{}`           |
+| `getContainer`        | 指定挂载的节点                                         | `HTMLElement | (() => HTMLElement) | null`            | -              |
+| `onClose`             | 关闭时触发                                             | `() => void`                                          | -              |
+| `afterClose`          | 关闭动画结束后触发                                     | `() => void`                                          | -              |
+| `onIndexChange`       | 切换时触发                                             | `(index: number) => void`                             | -              |
+| `onLongPress`         | 长按当前图片时触发                                     | `(index: number) => void`                             | -              |
+
+
+
+## `Ref`
+
+| 属性         | 说明                 | 类型                      |
+| ------------ | -------------------- | ------------------------- |
+| `resetScale` | 重置当前图片的缩放比 | `() => void`              |
+| `swipeTo`    | }切换到指定索引图片  | `(index: number) => void` |
+
+
+
+## CSS 变量
+
+| 属性                   | 说明             | 默认值 |
+| ---------------------- | ---------------- | ------ |
+| `--z-index`            | 蒙层层级         | `999`  |
+| `--animation-duration` | 蒙层动画持续时间 | `0.3s` |
+
+
+
 # 设计思路
 
 ## 1.图片展示
@@ -47,3 +122,6 @@ transform: matrix(1, 0, 0, 1, 0, 0);
 
 
 ## 2.单击关闭，双击方法
+
+1. 在 `onTouchEnd` 启动定时器，定时器结束执行单击方法
+2. 如果在 `TAP_TIME` (定时器还没结束之前)再次触发 `onTouchEnd` 事件，即为双击事件，执行双击方法
