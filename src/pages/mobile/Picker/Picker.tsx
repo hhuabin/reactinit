@@ -92,9 +92,10 @@ const PickerComponent: React.FC = () => {
     return (
         <>
             <div className='w-full min-h-screen bg-[var(--color-bg-layout)]'>
-                <ul role='list' className='w-full bg-[var(--color-bg-container)] text-[var(--color-text)] text-[2rem] leading-10'>
-                    <li className='relative w-full after:content-[""] after:absolute after:right-0 after:bottom-0 after:w-[45rem]
-                            after:h-px after:bg-[var(--color-border-bg)] after:scale-y-50 last:after:hidden hover:bg-[var(--color-container-hover)]'
+                <div className='w-full p-6 text-[#697b8c] text-[16px]'>MobilePicker单列选择器</div>
+                <ul role='list' className='w-[43.875rem] mx-auto rounded-[1rem] bg-[var(--color-bg-container)] text-[var(--color-text)] text-[2rem] leading-10'>
+                    <li className='relative w-full after:content-[""] after:absolute after:right-0 after:bottom-0 after:w-[42rem] after:h-px
+                        after:bg-[var(--color-border-bg)] after:scale-y-50 last:after:hidden hover:bg-[var(--color-container-hover)]'
                     >
                         <button
                             type='button'
@@ -114,10 +115,12 @@ const PickerComponent: React.FC = () => {
                             </div>
                         </button>
                     </li>
+                </ul>
 
-                    <li
-                        className='relative w-full after:content-[""] after:absolute after:right-0 after:bottom-0 after:w-[45rem]
-                            after:h-px after:bg-[var(--color-border-bg)] after:scale-y-50 last:after:hidden hover:bg-[var(--color-container-hover)]'
+                <div className='w-full p-6 text-[#697b8c] text-[16px]'>单列选择器</div>
+                <ul role='list' className='w-[43.875rem] mx-auto rounded-[1rem] bg-[var(--color-bg-container)] text-[var(--color-text)] text-[2rem] leading-10'>
+                    <li className='relative w-full after:content-[""] after:absolute after:right-0 after:bottom-0 after:w-[42rem] after:h-px
+                        after:bg-[var(--color-border-bg)] after:scale-y-50 last:after:hidden hover:bg-[var(--color-container-hover)]'
                     >
                         <button
                             type='button'
@@ -137,10 +140,12 @@ const PickerComponent: React.FC = () => {
                             </div>
                         </button>
                     </li>
+                </ul>
 
-                    <li
-                        className='relative w-full after:content-[""] after:absolute after:right-0 after:bottom-0 after:w-[45rem]
-                            after:h-px after:bg-[var(--color-border-bg)] after:scale-y-50 last:after:hidden hover:bg-[var(--color-container-hover)]'
+                <div className='w-full p-6 text-[#697b8c] text-[16px]'>多列选择器</div>
+                <ul role='list' className='w-[43.875rem] mx-auto rounded-[1rem] bg-[var(--color-bg-container)] text-[var(--color-text)] text-[2rem] leading-10'>
+                    <li className='relative w-full after:content-[""] after:absolute after:right-0 after:bottom-0 after:w-[42rem] after:h-px
+                        after:bg-[var(--color-border-bg)] after:scale-y-50 last:after:hidden hover:bg-[var(--color-container-hover)]'
                     >
                         <button
                             type='button'
@@ -160,10 +165,12 @@ const PickerComponent: React.FC = () => {
                             </div>
                         </button>
                     </li>
+                </ul>
 
-                    <li
-                        className='relative w-full after:content-[""] after:absolute after:right-0 after:bottom-0 after:w-[45rem]
-                            after:h-px after:bg-[var(--color-border-bg)] after:scale-y-50 last:after:hidden hover:bg-[var(--color-container-hover)]'
+                <div className='w-full p-6 text-[#697b8c] text-[16px]'>级联选择器</div>
+                <ul role='list' className='w-[43.875rem] mx-auto rounded-[1rem] bg-[var(--color-bg-container)] text-[var(--color-text)] text-[2rem] leading-10'>
+                    <li className='relative w-full after:content-[""] after:absolute after:right-0 after:bottom-0 after:w-[42rem] after:h-px
+                        after:bg-[var(--color-border-bg)] after:scale-y-50 last:after:hidden hover:bg-[var(--color-container-hover)]'
                     >
                         <button
                             type='button'

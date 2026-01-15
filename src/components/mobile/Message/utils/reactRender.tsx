@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-12 15:28:38
  * @LastEditors: bin
- * @LastEditTime: 2025-12-24 10:21:09
+ * @LastEditTime: 2026-01-14 17:20:51
  */
 import { StrictMode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
@@ -66,7 +66,14 @@ export const unstableSetRender = (render?: RenderType) => {
  * @description 渲染到body
  */
 export const renderToBody = (element: React.ReactElement) => {
-    const container = document.createElement('div')
+    const container = document.createDocumentFragment()
     document.body.appendChild(container)
-    return unstableSetRender()(element, container)
+
+    const unmountReact = unstableSetRender()(element, container)
+
+    return async () => {
+        await unmountReact()
+        // 卸载后，删除容器
+        container.parentNode?.removeChild(container)
+    }
 }

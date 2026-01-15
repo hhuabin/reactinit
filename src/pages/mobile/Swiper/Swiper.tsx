@@ -37,6 +37,23 @@ const SwiperComponent: React.FC = () => {
             </div>
 
             <div className='w-[45rem] mx-auto my-8'>
+                <div className='w-full text-[#697b8c] text-[16px]'>默认位置索引值</div>
+                <div className='w-full h-[160px] mt-4'>
+                    <Swiper defaultIndex={100}>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ace0ff]'>1</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#bcffbd]'>2</div>
+                        </SwiperItem>
+                        <SwiperItem>
+                            <div className='flex justify-center items-center w-full h-full text-[24px] bg-[#ffcfac]'>3</div>
+                        </SwiperItem>
+                    </Swiper>
+                </div>
+            </div>
+
+            <div className='w-[45rem] mx-auto my-8'>
                 <div className='w-full text-[#697b8c] text-[16px]'>自动播放</div>
                 <div className='w-full h-[160px] mt-4'>
                     <Swiper autoplay={true}>

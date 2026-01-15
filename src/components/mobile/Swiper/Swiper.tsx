@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-16 14:40:22
  * @LastEditors: bin
- * @LastEditTime: 2026-01-09 09:35:39
+ * @LastEditTime: 2026-01-14 17:48:05
  */
 /* eslint-disable max-lines */
 import React, {
@@ -153,8 +153,17 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
             let slideItemWidth = offsetWidth
             // 轮播项的高
             let slideItemHeight = offsetHeight
-            // const trustedDefaultIndex = clamp(defaultIndex, 0, swiperItemCount - 1)   // 窗口变化，重置到默认索引
-            const trustedDefaultIndex = getNearIndexByOffset()                           // 窗口变化，不重置到默认索引
+
+            /**
+             * bug：当 defaultIndex !== 0 时，窗口变化会跳转到默认位置索引
+             * 想要达到的效果：初始化 -> defaultIndex；窗口变化 -> getNearIndexByOffset()
+             * 初始化和窗口变化函数估计要重写
+             */
+            const trustedDefaultIndex = defaultIndex !== 0
+                ? clamp(defaultIndex, 0, swiperItemCount - 1)
+                : getNearIndexByOffset()
+            // const trustedDefaultIndex = clamp(defaultIndex, 0, swiperItemCount - 1)       // 初始化 / 窗口变化，重置到默认索引
+            // const trustedDefaultIndex = getNearIndexByOffset()                            // 初始化 / 窗口变化，重置到位置较近的索引
 
             if (direction === 'horizontal') {
                 slideItemWidth = slideItemSize ?? offsetWidth

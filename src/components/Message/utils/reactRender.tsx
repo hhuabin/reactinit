@@ -60,7 +60,14 @@ export const unstableSetRender = (render?: RenderType) => {
  * @description 渲染到body
  */
 export const renderToBody = (element: React.ReactElement) => {
-    const container = document.createElement('div')
+    const container = document.createDocumentFragment()
     document.body.appendChild(container)
-    return unstableSetRender()(element, container)
+
+    const unmountReact = unstableSetRender()(element, container)
+
+    return async () => {
+        await unmountReact()
+        // 卸载后，删除容器
+        container.parentNode?.removeChild(container)
+    }
 }
