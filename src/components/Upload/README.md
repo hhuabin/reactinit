@@ -11,7 +11,7 @@
 
 | 参数           | 说明                                                         | 类型                               | 默认值             |
 | :------------- | :----------------------------------------------------------- | :--------------------------------- | :----------------- |
-| `fileList`     | 已上传的文件列表，需要和`onChange`配合使用                   | `UploadFile[]`                     | -                  |
+| `fileList`     | 已上传的文件列表，需要和`onChange`配合使用                   | `UploadFile[]`                     | `[]`               |
 | `accept`       | 允许上传的文件类型，[详细说明](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/Input/file#限制允许的文件类型) | `string`                           | `'image/*'`        |
 | `maxCount`     | 文件上传数量限制，向前截断                                   | `number`                           | `Number.MAX_VALUE` |
 | `multiple`     | 是否支持多选文件                                             | `boolean`                          | `false`            |

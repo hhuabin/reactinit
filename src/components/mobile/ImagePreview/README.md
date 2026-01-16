@@ -56,30 +56,30 @@ const ImagePreviewComponent: React.FC = () => {
 
 ## 参数
 
-| 参数                  | 说明                                                   | 类型                                                  | 默认值         |
-| --------------------- | ------------------------------------------------------ | ----------------------------------------------------- | -------------- |
-| `visible`             | 是否显示                                               | `boolean`                                             | `false`        |
-| `direction`           | 滚动方向                                               | `'horizontal' | 'vertical'`                           | `'horizontal'` |
-| `loop`                | 是否循环播放                                           | `boolean`                                             | `false`        |
-| `defaultIndex`        | 默认显示第几张图片                                     | `number`                                              | `0`            |
-| `images`              | 图片地址列表                                           | `string[]`                                            | `[]`           |
-| `maxZoom`             | 最大缩放倍数                                           | `number`                                              | `3`            |
-| `minZoom`             | 最小缩放倍数                                           | `number`                                              | `1 / 3`        |
-| `closeOnPopstate`     | 是否在 popstate 时关闭图片预览                         | `boolean`                                             | `true`         |
-| `closeOnClickOverlay` | 是否在点击遮罩层后关闭图片预览                         | `boolean`                                             | `true`         |
-| `doubleScale`         | 是否启用双击缩放手势，禁用后，点击时会立即关闭图片预览 | `boolean`                                             | `true`         |
-| `stopPropagation`     | 是否阻止滑动事件冒泡                                   | `boolean`                                             | `true`         |
-| `showIndicator`       | 是否显示指示器                                         | `boolean`                                             | `true`         |
-| `indicator`           | 自定义指示器，优先级比 `showIndicator` 高              | `(total: number, current: number) => React.ReactNode` | -              |
-| `showCloseBtn`        | 是否显示关闭按钮                                       | `boolean`                                             | `false`        |
-| `renderFooter`        | 渲染额外内容                                           | `(index: number) => React.ReactNode`                  | -              |
-| `className`           | 自定义类名                                             | `string`                                              | `''`           |
-| `style`               | 自定义样式                                             | `React.CSSProperties`                                 | `{}`           |
-| `getContainer`        | 指定挂载的节点                                         | `HTMLElement | (() => HTMLElement) | null`            | -              |
-| `onClose`             | 关闭时触发                                             | `() => void`                                          | -              |
-| `afterClose`          | 关闭动画结束后触发                                     | `() => void`                                          | -              |
-| `onIndexChange`       | 切换时触发                                             | `(index: number) => void`                             | -              |
-| `onLongPress`         | 长按当前图片时触发                                     | `(index: number) => void`                             | -              |
+| 参数                  | 说明                                                   | 类型                                                  | 默认值          |
+| --------------------- | ------------------------------------------------------ | ----------------------------------------------------- | --------------- |
+| `visible`             | 是否显示                                               | `boolean`                                             | `true`          |
+| `direction`           | 滚动方向                                               | `'horizontal' | 'vertical'`                           | `'horizontal'`  |
+| `loop`                | 是否循环播放                                           | `boolean`                                             | `false`         |
+| `defaultIndex`        | 默认显示第几张图片                                     | `number`                                              | `0`             |
+| `images`              | 图片地址列表                                           | `string[]`                                            | `[]`            |
+| `maxZoom`             | 最大缩放倍数                                           | `number`                                              | `3`             |
+| `minZoom`             | 最小缩放倍数                                           | `number`                                              | `1 / 3`         |
+| `closeOnPopstate`     | 是否在 popstate 时关闭图片预览                         | `boolean`                                             | `true`          |
+| `closeOnClickOverlay` | 是否在点击遮罩层后关闭图片预览                         | `boolean`                                             | `true`          |
+| `doubleScale`         | 是否启用双击缩放手势，禁用后，点击时会立即关闭图片预览 | `boolean`                                             | `true`          |
+| `stopPropagation`     | 是否阻止滑动事件冒泡                                   | `boolean`                                             | `true`          |
+| `showIndicator`       | 是否显示指示器                                         | `boolean`                                             | `true`          |
+| `indicator`           | 自定义指示器，优先级比 `showIndicator` 高              | `(total: number, current: number) => React.ReactNode` | -               |
+| `showCloseBtn`        | 是否显示关闭按钮                                       | `boolean`                                             | `false`         |
+| `renderFooter`        | 渲染额外内容                                           | `(index: number) => React.ReactNode`                  | -               |
+| `className`           | 自定义类名                                             | `string`                                              | `''`            |
+| `style`               | 自定义样式                                             | `React.CSSProperties`                                 | `{}`            |
+| `getContainer`        | 指定挂载的节点                                         | `HTMLElement | (() => HTMLElement) | null`            | `document.body` |
+| `onClose`             | 关闭时触发                                             | `() => void`                                          | -               |
+| `afterClose`          | 关闭动画结束后触发                                     | `() => void`                                          | -               |
+| `onIndexChange`       | 切换时触发                                             | `(index: number) => void`                             | -               |
+| `onLongPress`         | 长按当前图片时触发                                     | `(index: number) => void`                             | -               |
 
 
 

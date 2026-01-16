@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-16 14:40:22
  * @LastEditors: bin
- * @LastEditTime: 2026-01-14 17:48:05
+ * @LastEditTime: 2026-01-16 08:30:43
  */
 /* eslint-disable max-lines */
 import React, {
@@ -620,7 +620,7 @@ const Swiper = forwardRef(function Swiper(props: SwiperProps, ref: ForwardedRef<
         trackRef.current.getAnimations().forEach(animation => animation.cancel())
         const animation = trackRef.current?.animate(keyframes, options)
         animation?.finished.then(() => {
-            moving.current = false
+            // moving.current = false
             // 循环时，首尾无感切换。动画结束触发
             if (loop && swiperItemCount > 1) {
                 if (direction === 'horizontal') {

@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-04 10:46:02
  * @LastEditors: bin
- * @LastEditTime: 2026-01-15 17:00:44
+ * @LastEditTime: 2026-01-16 10:28:18
  */
 /* eslint-disable max-lines */
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -20,16 +20,16 @@ type ColumnsFieldNames = {
 }
 
 type PickerProps = {
-    visible?: boolean;                         // 是否显示
+    visible?: boolean;                         // 是否显示，默认为 true
     columns?: PickerColumn | PickerColumn[];   // 配置列的选项
-    defaultIndexs?: number[];                  // 默认选中项
+    defaultIndexs?: number[];                  // 默认选中项，默认为 0
     columnsFieldNames?: ColumnsFieldNames;     // 自定义列字段名称
-    loading?: boolean;                         // 是否显示加载中
-    title?: string;                            // 标题
-    cancelText?: string;                       // 取消按钮的文字
-    confirmText?: string;                      // 确定按钮的文字
-    primaryColor?: string;                     // 主题色
-    visibleOptionNum?: number;                 // 可见的选项个数
+    loading?: boolean;                         // 是否显示加载中，默认为false
+    title?: string;                            // 标题，默认为 ''
+    cancelText?: string;                       // 取消按钮的文字，默认为 '取消'
+    confirmText?: string;                      // 确定按钮的文字，默认为 '确定'
+    primaryColor?: string;                     // 主题色，默认为 '#1989fa'
+    visibleOptionNum?: number;                 // 可见的选项个数， 默认为 6
     closeOnPopstate?: boolean;                 // 是否在 popstate 时关闭图片预览，默认值 true
     className?: string;                        // 自定义类名
     style?: React.CSSProperties;               // 自定义样式
