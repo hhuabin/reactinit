@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-08-13 11:52:25
  * @LastEditors: bin
- * @LastEditTime: 2026-01-16 15:50:36
+ * @LastEditTime: 2026-01-16 16:23:52
  */
 /* eslint-disable max-lines */
 import {
@@ -14,7 +14,7 @@ import { flushSync } from 'react-dom'
 import './Upload.less'
 
 import Image from '@/components/mobile/Image'
-import ImagePreview, { showImagePreview } from '@/components/mobile/ImagePreview'
+import { showImagePreview } from '@/components/mobile/ImagePreview'
 import useMergedState from '@/hooks/reactHooks/useMergedState'
 import { isImageFile, readFileContent, updateFileList } from './utils'
 import { xhrRequest } from './xhrRequest'
@@ -37,7 +37,7 @@ type UploadProps = {
     className?: string;                         // 自定义类名
     style?: React.CSSProperties;                // 自定义样式
     children?: JSX.Element;                     // 自定义 Upload children
-    isImageUrl?: (file: UploadFile) => boolean; // 用户自定义判断该文件是否为图片
+    isImageUrl?: (file: UploadFile) => boolean; // 用户自定义判断该文件是否为图片的方法
     onChange?: (info: UploadFile[]) => void;    // 上传文件改变时的回调，上传每个阶段都会触发该事件
     beforeRead?: UploaderBeforeRead;            // 读取文件之前的回调，返回 false | resolve(false) | reject()，则停止上传；切忌不可返回 pedding 状态的 Promise
     afterRead?: UploaderAfterRead;              // 文件读取完成后的回调

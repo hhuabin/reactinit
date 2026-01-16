@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-07-11 18:23:24
  * @LastEditors: bin
- * @LastEditTime: 2025-11-13 10:55:13
+ * @LastEditTime: 2026-01-16 16:35:16
  */
 /**
  * 参考源码：notification/src/Notice.tsx
@@ -73,6 +73,10 @@ const Notice: React.FC<NoticeProps> = (props) => {
         }
     }
 
+    /**
+     * bug：优化处理 message 离开动画
+     * 不应该修改 height 值而触发布局 / 回流，导致界面卡顿
+     */
     return (
         <div
             className={'bin-message-notice-wrapper' + (notice.isClose ? ' bin-message-notice-wrapper-leave' : '')}
@@ -146,6 +150,7 @@ const NoticeList: React.FC<NoticeListProps> = (props) => {
      * @param { MessageConfig[] } messageConfigList 新消息列表
      * @param { MessageConfig[] } noticeList 旧消息列表
      * @returns { MessageConfig[] } 新的消息列表
+     * bug: 优化对比函数，该函数太慢了
      */
     const compareConfigListAndNoticeList = (
         messageConfigList: MessageConfig[],

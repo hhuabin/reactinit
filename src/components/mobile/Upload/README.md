@@ -23,6 +23,7 @@
 | `action`       | 上传的请求配置                                               | `RequestOptions`                   | `{}`               |
 | `style`        | 自定义样式                                                   | `React.CSSProperties`              | `{}`               |
 | `children`     | 自定义 `Upload children`                                     | `JSX.Element`                      | -                  |
+| `isImageUrl`   | 用户自定义判断该文件是否为图片的方法                         | `(file: UploadFile) => boolean`    | -                  |
 | `onChange`     | 上传文件改变时的回调，上传每个阶段都会触发该事件，需要和`fileList`配合使用 | `(info: UploadFile[]) => void`     | -                  |
 | `beforeRead`   | **读取文件之前**的回调，返回`false | resolve(false) | reject()`，则停止读取；<br/>返回 `true | resolve(false)`则上传继续；<br/>切忌不可返回 `pedding` 状态的 `Promise` | `UploaderBeforeRead`               | -                  |
 | `afterRead`    | **读取文件完成**后的回调；<br/>可用**函数式更新**将上传状态改成 `'uploading'` | `UploaderAfterRead`                | -                  |
