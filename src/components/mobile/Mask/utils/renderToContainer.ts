@@ -4,9 +4,6 @@
  * @LastEditors: bin
  * @LastEditTime: 2026-01-14 10:51:11
  */
-/**
- * @description 该文件与 ImagePreview 一样，若需修改，需要同步修改
- */
 import { type ReactElement, type ReactPortal } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -61,5 +58,3 @@ export const renderToContainer = (
 
     return createPortal(node, container)
 }
-
-export const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max)

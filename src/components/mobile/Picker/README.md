@@ -40,6 +40,9 @@
 | `primaryColor`      | 主题色                           | `string`                                     | `'#1989fa'`                          |
 | `visibleOptionNum`  | 可见的选项个数                   | `number`                                     | `6`                                  |
 | `closeOnPopstate`   | 是否在 `popstate` 时关闭图片预览 | `boolean`                                    | `true`                               |
+| `className`         | 自定义类名                       | `string`                                     | `''`                                 |
+| `style`             | 自定义样式                       | `React.CSSProperties`                        | `{}`                                 |
+| `getContainer`      | 指定挂载的节点                   | `HTMLElement | (() => HTMLElement) | null`   | `document.body`                      |
 | `onChangeVisible`   | 显示状态改变时触发函数           | `(value: boolean) => void`                   | -                                    |
 | `onConfirm`         | 确认时触发函数                   | `(params: PickerConfirmEventParams) => void` | -                                    |
 | `onCancel`          | 取消时触发函数                   | `() => void`                                 | -                                    |

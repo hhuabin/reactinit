@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2026-01-14 09:09:06
  * @LastEditors: bin
- * @LastEditTime: 2026-01-14 15:59:46
+ * @LastEditTime: 2026-01-16 11:14:00
  */
 import React, {
     useState, useRef, useEffect,
@@ -57,7 +57,10 @@ export const renderImperatively = (element: TargetElement): ImperativeHandler =>
             elementToRender.props.onClose?.()
         }
 
-        // 在组件完全关闭后执行 unmount() 卸载整个组件
+        /**
+         * @description 在组件完全关闭后执行 unmount() 卸载整个组件
+         * 功能：等待动画执行完成，兼容动画/过渡
+         */
         const afterClose = () => {
             unmount()
             elementToRender.props.afterClose?.()
@@ -72,7 +75,7 @@ export const renderImperatively = (element: TargetElement): ImperativeHandler =>
             },
         }))
 
-        // 将 visible, onClose, afterClose 收归该组件控制
+        // 将 visible, onClose, afterClose 收归 GlobalHolderWrapper 控制
         return React.cloneElement(elementToRender, {
             ...elementToRender.props,
             key: keyRef.current,
@@ -86,7 +89,6 @@ export const renderImperatively = (element: TargetElement): ImperativeHandler =>
 
     return {
         close: async () => {
-            console.log('wrapperRef', wrapperRef)
             if (!wrapperRef) {
                 unmount()
                 element.props.afterClose?.()

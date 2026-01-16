@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-04 10:46:02
  * @LastEditors: bin
- * @LastEditTime: 2026-01-16 10:28:18
+ * @LastEditTime: 2026-01-16 10:47:29
  */
 /* eslint-disable max-lines */
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -33,6 +33,7 @@ type PickerProps = {
     closeOnPopstate?: boolean;                 // 是否在 popstate 时关闭图片预览，默认值 true
     className?: string;                        // 自定义类名
     style?: React.CSSProperties;               // 自定义样式
+    getContainer?: HTMLElement | (() => HTMLElement) | null;   // 指定挂载的节点
     onChangeVisible?: (value: boolean) => void;                // 显示状态改变时触发函数
     onConfirm?: (params: PickerConfirmEventParams) => void;    // 确认时触发函数
     onCancel?: () => void;                     // 取消时触发函数
@@ -70,6 +71,7 @@ const Picker: React.FC<PickerProps> = (props) => {
         closeOnPopstate = true,
         className = '',
         style = {},
+        getContainer,
     } = props
 
     const [mergeVisible, setMergeVisible] = useMergedState(true, {
@@ -557,7 +559,7 @@ const Picker: React.FC<PickerProps> = (props) => {
                 </div>
             </div>
         </>,
-        document.body,
+        getContainer,
     )
 }
 

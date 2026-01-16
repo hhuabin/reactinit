@@ -1,3 +1,51 @@
+.bin-image-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    .bin-image-preview-image {
+        width: 100%;
+        height: auto;
+        transition-property: transform;
+    }
+    .bin-image-preview-image-vertical {
+        width: auto;
+        height: 100%;
+    }
+}
+
+.bin-image-preview-indicator {
+    position: absolute;
+    left: 50%;
+    top: 16px;
+    display: flex;
+    transform: translateX(-50%);
+    z-index: var(--z-index);
+    color: #fff;
+    font-size: 14px;
+    line-height: 20px;
+    text-shadow: 0 1px 1px #323233;
+}
+
+.bin-image-preview-close-btn {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #c8c9cc;
+    color: #000;
+    z-index: var(--z-index);
+}
+
 .bin-image-preview-overlay {
     --z-index: 999;
     --animation-duration: 0.3s;
@@ -21,54 +69,6 @@
         to {
             opacity: 1;
         }
-    }
-
-    .bin-image-preview {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-
-        .bin-image-preview-image {
-            width: 100%;
-            height: auto;
-            transition-property: transform;
-        }
-        .bin-image-preview-image-vertical {
-            width: auto;
-            height: 100%;
-        }
-    }
-
-    .bin-image-preview-indicator {
-        position: absolute;
-        left: 50%;
-        top: 16px;
-        display: flex;
-        transform: translateX(-50%);
-        z-index: var(--z-index);
-        color: #fff;
-        font-size: 14px;
-        line-height: 20px;
-        text-shadow: 0 1px 1px #323233;
-    }
-
-    .bin-image-preview-close-btn {
-        position: absolute;
-        right: 16px;
-        top: 16px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background-color: #c8c9cc;
-        color: #000;
-        z-index: var(--z-index);
     }
 }
 .bin-image-preview-overlay-hidden {

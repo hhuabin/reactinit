@@ -16,7 +16,7 @@ export type ImagePreviewProps = {
     closeOnPopstate?: boolean;                 // 是否在 popstate 时关闭图片预览，默认值 true
     closeOnClickImage?: boolean;               // 是否允许点击图片关闭，默认值 true
     closeOnClickOverlay?: boolean;             // 是否在点击遮罩层后关闭图片预览，默认值 true
-    doubleScale?: boolean;                     // 是否启用双击缩放手势，禁用后，点击时会立即关闭图片预览，默认值 true
+    doubleScale?: boolean;                     // 是否启用双击缩放手势，禁用后，点击时会立即关闭图片预览，默认值 true。不建议禁用，由于触发的是 onTouchEnd，容易造成点击穿透
     stopPropagation?: boolean;                 // 是否阻止滑动事件冒泡，默认为 true
     showIndicator?: boolean;                   // 是否显示指示器，默认为 true
     indicator?: (total: number, current: number) => React.ReactNode;         // 自定义指示器，优先级比 showIndicator 高
@@ -25,7 +25,7 @@ export type ImagePreviewProps = {
     className?: string;                        // 自定义类名
     style?: React.CSSProperties;               // 自定义样式
     getContainer?: HTMLElement | (() => HTMLElement) | null;                 // 指定挂载的节点
-    onClose?: () => void;                      // 关闭时触发
+    onClose?: (value?: boolean) => void;       // 关闭时触发
     afterClose?: () => void;                   // 关闭动画结束后触发
     onIndexChange?: (index: number) => void;   // 切换时触发
     onLongPress?: (index: number) => void;     // 长按当前图片时触发

@@ -3,7 +3,7 @@
  * @Author: bin
  * @Date: 2025-12-25 19:45:38
  * @LastEditors: bin
- * @LastEditTime: 2026-01-08 17:39:54
+ * @LastEditTime: 2026-01-16 14:56:50
  */
 // https://picsum.photos/800/1600 随机生成图片尺寸的网址
 import {
@@ -15,7 +15,7 @@ import Image from '@/components/mobile/Image'
 
 import useSyncState from '@/hooks/reactHooks/useSyncState'
 import useTouch from '@/hooks/domHooks/useTouch'
-import { isBrowser, clamp } from './utils/renderToContainer'
+import { isBrowser, clamp } from './utils/utils'
 
 type ImagePreviewItemProps = {
     src: string;
@@ -29,6 +29,8 @@ type ImagePreviewItemProps = {
     closeOnClickOverlay?: boolean;             // 是否在点击遮罩层后关闭图片预览，默认值 true
     disableZoom?: boolean;                     // 是否禁止缩放，防止触摸事件冲突，默认值 false
     doubleScale?: boolean;                     // 是否启用双击缩放手势，禁用后，点击时会立即关闭图片预览，默认值 true
+    className?: string;                        // 自定义类名
+    style?: React.CSSProperties;               // 自定义样式
     onCloseImagePreview?: () => void;          // 关闭图片预览
     onLongPress?: () => void;                  // 长按当前图片时触发
 }
@@ -66,6 +68,8 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
         closeOnClickOverlay = true,
         disableZoom = false,
         doubleScale = true,
+        className = '',
+        style = {},
         onCloseImagePreview,
         onLongPress,
     } = props
@@ -75,7 +79,7 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
         moveX: 0,                      // 移动距离 X
         moveY: 0,                      // 移动距离 Y
         moving: false,                 // 是否正在移动
-        zooming: false,                // 是否正在缩放
+        zooming: false,                // 是否正在双指缩放
         initializing: false,           // 是否正在初始化，用于处理长图初始化显示有滚动的问题，仅在 resize() 中改变状态
         imageRatio: 0,                 // 图片 高宽 比，用于处理长图
     })
@@ -113,7 +117,7 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
          * 当 zooming || moving || initializing 时，没有动画（动画时长为0）
          */
         const style: React.CSSProperties = {
-            transitionDuration: zooming || moving || initializing ? '0s' : '0.3s',
+            transitionDuration: zooming || moving || initializing ? '0s' : '300ms',
         }
 
         if (scale !== 1 || isLongImage) {
@@ -298,7 +302,7 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
         }
 
         if (zooming) {
-            // 正在放大，禁止 touch 事件传导至 Swiper
+            // 正在双指缩放，禁止 touch 事件传导至 Swiper
             event.stopPropagation()
 
             // 3. 双指缩放（zoom） 事件
@@ -318,7 +322,7 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
         let { moveX, moveY } = imageState()
 
         if (moving || zooming) {
-            // 移动 / 缩放结束，禁止传递事件至 Swiper
+            // 移动 / 双指缩放结束，禁止传递事件至 Swiper
             stopPropagation = true
 
             // 没有拖动图片，可以传导 点击 事件
@@ -409,7 +413,7 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
     const isTapAndCheckClose = (event: React.TouchEvent) => {
         if (!imageWrapRef.current) return
 
-        // 获取图片元素
+        // 获取包裹图片元素
         const imageEle = imageWrapRef.current.firstElementChild
 
         // 点击蒙层
@@ -490,7 +494,8 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
     return (
         <div
             ref={imageWrapRef}
-            className='bin-image-preview'
+            className={'bin-image-preview' + (className ? ' ' + className : '')}
+            style={style}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}

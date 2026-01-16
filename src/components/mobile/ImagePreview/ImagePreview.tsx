@@ -2,19 +2,19 @@
  * @Author: bin
  * @Date: 2025-09-15 17:36:13
  * @LastEditors: bin
- * @LastEditTime: 2026-01-14 15:07:41
+ * @LastEditTime: 2026-01-16 15:09:23
  */
 import {
     useState, useRef, useEffect,
     forwardRef, useImperativeHandle, type ForwardedRef,
 } from 'react'
 
+import Mask from '@/components/mobile/Mask'
 import Swiper, { SwiperItem, type SwiperRef } from '@/components/mobile/Swiper'
 import ImagePreviewItem from './ImagePreviewItem'
 
 import useMergedState from '@/hooks/reactHooks/useMergedState'
 import useWindowSize from '@/hooks/deviceHooks/useWindowSize'
-import { renderToContainer } from './utils/renderToContainer'
 import { type ImagePreviewProps } from './ImagePreview.d'
 
 import './ImagePreview.less'
@@ -55,8 +55,7 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
     const [mergeVisible, setMergeVisible] = useMergedState(true, {
         value: visible,
         onChange: (value) => {
-            onClose?.()      // 只有 closeImagePreview 触发关闭事件，其他事件均不调用 setMergeVisible
-            afterClose?.()
+            onClose?.(value)      // 只有 closeImagePreview 触发关闭事件，其他事件均不调用 setMergeVisible
         },
     })
     const [swiperState, setSwiperState] = useState({
@@ -64,7 +63,6 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
         disableZoom: false,
     })
 
-    const swiperWrapRef = useRef<HTMLDivElement>(null)
     const swiperRef = useRef<SwiperRef>(null)
 
     // 此处的宽高应该使用 Swiper 的宽高，目前仅用屏幕宽高代替
@@ -88,12 +86,6 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
 
     const onCloseImagePreview = () => {
         setMergeVisible(false)
-        onClose?.()
-        afterClose?.()
-        /* setTimeout(() => {
-            if (!swiperWrapRef.current) return
-            swiperWrapRef.current.style.display = 'none'
-        }, 300) */
     }
 
     const swipeTo = (index: number) => {
@@ -163,6 +155,8 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
                             closeOnClickOverlay={closeOnClickOverlay}
                             disableZoom={swiperState.disableZoom}
                             doubleScale={doubleScale}
+                            className={className}
+                            style={style}
                             onCloseImagePreview={onCloseImagePreview}
                             onLongPress={() => onLongPress?.(index)}
                         >
@@ -189,20 +183,16 @@ export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: F
         )
     }
 
-    if (!mergeVisible) return null
-
-    // 默认挂载到 document.body
-    return renderToContainer(
-        <div
-            ref={swiperWrapRef}
-            role='button'
-            className={'bin-image-preview-overlay' + (className ? ' ' + className : '')}
-            style={style}
+    // afterClose 在 showImagePreview 用来处理销毁函数
+    return (
+        <Mask
+            visible={mergeVisible}
+            getContainer={getContainer}
+            afterClose={afterClose}
         >
             { renderImages() }
             { renderClose() }
             { renderFooter?.(swiperState.active) }
-        </div>,
-        getContainer,
+        </Mask>
     )
 })
