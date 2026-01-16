@@ -1,0 +1,186 @@
+.bin-upload-wrapper {
+    --bin-upload-size: 80px;
+    --bin-upload-bg-color: #f7f8fa;
+    --bin-upload-border-radius: 6px;
+    --bin-upload-icon-color: #dcdee0;
+    --bin-upload-delete-icon-size: 14px;
+    --bin-upload-progress-color: #1677ff;
+
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+
+    .bin-upload {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: var(--bin-upload-size);
+        height: var(--bin-upload-size);
+        overflow: hidden;
+
+        .bin-upload-add-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            border-radius: var(--bin-upload-border-radius);
+            background-color: var(--bin-upload-bg-color);
+            color: var(--bin-upload-icon-color);
+        }
+
+        .bin-upload-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .bin-upload-input::file-selector-button,
+        .bin-upload-input::-webkit-file-upload-button {
+            cursor: pointer;      /* 设置 file-upload-button 鼠标样式 */
+        }
+
+        .bin-upload-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            border-radius: var(--bin-upload-border-radius);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .bin-upload-file {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            border-radius: var(--bin-upload-border-radius);
+            background-color: #f7f8fa;
+
+            .bin-upload-file-icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 32px;
+                height: 32px;
+            }
+            .bin-upload-file-name {
+                max-width: 90%;
+                margin-top: 8px;
+                color: #333;
+                text-align: center;
+                font-size: 12px;
+                line-height: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .bin-upload-error, .bin-upload-loading {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            border-radius: var(--bin-upload-border-radius);
+            background-color: rgba(51, 51, 51, 0.8);
+            color: #fff;
+
+            .bin-upload-message {
+                max-width: 90%;
+                margin-top: 8px;
+                color: #fff;
+                text-align: center;
+                font-size: 12px;
+                line-height: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .bin-upload-error {
+            .bin-upload-error-icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 24px;
+                height: 18px;
+            }
+        }
+
+        .bin-upload-loading {
+            .bin-upload-loading-icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 24px;
+                height: 24px;
+
+                .bin-svg-rotate-spinner {
+                    transform-origin: 50% 50%;
+                    animation: spin 1.5s linear infinite;
+
+                    @keyframes spin {
+                        to {
+                            transform: rotate(360deg);
+                        }
+                    }
+                }
+            }
+            .bin-upload-progress-wrapper {
+                width: 70%;
+                height: 2px;
+                margin-top: 12px;
+                margin-bottom: 6px;
+                background-color: #fff;
+                border-radius: 1px;
+                overflow: hidden;
+
+                .bin-upload-progress {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 1px;
+                    background-color: var(--bin-upload-progress-color);
+                    transform: translateX(-100%);
+                    transition-property: transform;
+                    transition-duration: 0.3s;
+                }
+            }
+        }
+
+        .bin-upload-delete-icon {
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: var(--bin-upload-delete-icon-size);
+            height: var(--bin-upload-delete-icon-size);
+            padding: 0;
+            border: none;
+            border-radius: 0 var(--bin-upload-border-radius) 0 86%;
+            // border-radius: 0 var(--bin-upload-border-radius) 0 12px;
+            background-color: rgba(0, 0, 0, 0.7);
+            cursor: pointer;
+            overflow: hideden;
+        }
+    }
+}

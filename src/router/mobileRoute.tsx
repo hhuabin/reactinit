@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-06-05 15:41:52
  * @LastEditors: bin
- * @LastEditTime: 2026-01-15 16:19:28
+ * @LastEditTime: 2026-01-16 15:26:30
  */
 import { Navigate } from 'react-router-dom'
 
@@ -44,6 +44,17 @@ export const mobileRoute: RouteConfig[] = [
                 },
             },
             {
+                path: 'mask',
+                lazy: async () => {
+                    const { default: Mask } = await import('@/pages/mobile/Mask/Mask')
+                    return { Component: Mask }
+                },
+                meta: {
+                    auth: false,
+                    title: 'Mask',
+                },
+            },
+            {
                 path: 'picker',
                 lazy: async () => {
                     const { default: Picker } = await import('@/pages/mobile/Picker/Picker')
@@ -77,14 +88,14 @@ export const mobileRoute: RouteConfig[] = [
                 },
             },
             {
-                path: 'mask',
+                path: 'upload',
                 lazy: async () => {
-                    const { default: Mask } = await import('@/pages/mobile/Mask/Mask')
-                    return { Component: Mask }
+                    const { default: Upload } = await import('@/pages/mobile/FileUpload/FileUpload')
+                    return { Component: Upload }
                 },
                 meta: {
                     auth: false,
-                    title: 'Mask',
+                    title: 'Upload',
                 },
             },
         ],

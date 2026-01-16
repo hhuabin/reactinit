@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-08-13 11:52:25
  * @LastEditors: bin
- * @LastEditTime: 2025-11-13 10:59:19
+ * @LastEditTime: 2026-01-16 15:50:36
  */
 /* eslint-disable max-lines */
 import {
@@ -13,6 +13,8 @@ import { flushSync } from 'react-dom'
 
 import './Upload.less'
 
+import Image from '@/components/mobile/Image'
+import ImagePreview, { showImagePreview } from '@/components/mobile/ImagePreview'
 import useMergedState from '@/hooks/reactHooks/useMergedState'
 import { isImageFile, readFileContent, updateFileList } from './utils'
 import { xhrRequest } from './xhrRequest'
@@ -35,6 +37,7 @@ type UploadProps = {
     className?: string;                         // 自定义类名
     style?: React.CSSProperties;                // 自定义样式
     children?: JSX.Element;                     // 自定义 Upload children
+    isImageUrl?: (file: UploadFile) => boolean; // 用户自定义判断该文件是否为图片
     onChange?: (info: UploadFile[]) => void;    // 上传文件改变时的回调，上传每个阶段都会触发该事件
     beforeRead?: UploaderBeforeRead;            // 读取文件之前的回调，返回 false | resolve(false) | reject()，则停止上传；切忌不可返回 pedding 状态的 Promise
     afterRead?: UploaderAfterRead;              // 文件读取完成后的回调
@@ -381,6 +384,25 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
         readFiles(cloneFileList)
     }
 
+    const previewImage = (uploadFile: UploadFile, uploadFileIndex: number) => {
+        const previewImagesSrc: string[] = []
+        let defaultIndex = 0
+        mergedFileList.forEach((item, index) => {
+            const isImage = props.isImageUrl ? props.isImageUrl(item) : isImageFile(item)
+            // 过滤掉非图片的 src，避免图片显示错误
+            if (isImage) {
+                previewImagesSrc.push((item.url || item.tempUrl) as string)
+                if (index === uploadFileIndex) {
+                    defaultIndex = previewImagesSrc.length - 1
+                }
+            }
+        })
+        showImagePreview({
+            images: previewImagesSrc,
+            defaultIndex,
+        })
+    }
+
     /**
      * @description 删除文件
      * @param { UploadFile } uploadFile 文件对象
@@ -418,10 +440,10 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                     style={style}
                 >
                     {
-                        isImageFile(uploadFile) ? (
-                            // 图片显示
-                            <div className='bin-upload-image'>
-                                <img src={uploadFile.url || uploadFile.tempUrl} className={imageFit} />
+                        (props.isImageUrl ? props.isImageUrl(uploadFile) : isImageFile(uploadFile)) ? (
+                            // 图片显示、图片预览
+                            <div className='bin-upload-image' onClick={() => previewImage(uploadFile, index)}>
+                                <Image src={uploadFile.url || uploadFile.tempUrl || ''} fit={imageFit} ></Image>
                             </div>
                         ) : (
                             // 文件显示
