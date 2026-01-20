@@ -9,24 +9,24 @@
 
 ## 参数
 
-| 参数           | 说明                                                         | 类型                               | 默认值             |
-| :------------- | :----------------------------------------------------------- | :--------------------------------- | :----------------- |
-| `fileList`     | 已上传的文件列表，需要和`onChange`配合使用                   | `UploadFile[]`                     | `[]`               |
-| `accept`       | 允许上传的文件类型，[详细说明](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/Input/file#限制允许的文件类型) | `string`                           | `'image/*'`        |
-| `maxCount`     | 文件上传数量限制，向前截断                                   | `number`                           | `Number.MAX_VALUE` |
-| `multiple`     | 是否支持多选文件                                             | `boolean`                          | `false`            |
-| `maxSize`      | 文件大小限制，单位为 `byte`                                  | `number`                           | `Number.MAX_VALUE` |
-| `imageFit`     | 图片填充模式                                                 | `'contain' | 'cover' | 'fill'`     | `'contain'`        |
-| `drag`         | 是否开启拖拽上传                                             | `boolean`                          | `true`             |
-| `capture`      | 拍照方式（移动端生效，`environment` 调起后置摄像头且仅能拍照，`user` 调起前置摄像头且仅能拍照。）<br />`capture`在不同浏览器兼容不一样（`user`会直接拉起后置摄像头），不建议配置 | `boolean | 'environment' | 'user'` | -                  |
-| `disabled`     | 是否禁用文件上传                                             | `boolean`                          | `false`            |
-| `action`       | 上传的请求配置                                               | `RequestOptions`                   | `{}`               |
-| `style`        | 自定义样式                                                   | `React.CSSProperties`              | `{}`               |
-| `children`     | 自定义 `Upload children`                                     | `JSX.Element`                      | -                  |
-| `onChange`     | 上传文件改变时的回调，上传每个阶段都会触发该事件，需要和`fileList`配合使用 | `(info: UploadFile[]) => void`     | -                  |
-| `beforeRead`   | **读取文件之前**的回调，返回`false | resolve(false) | reject()`，则停止读取；<br/>返回 `true | resolve(false)`则上传继续；<br/>切忌不可返回 `pedding` 状态的 `Promise` | `UploaderBeforeRead`               | -                  |
-| `afterRead`    | **读取文件完成**后的回调；<br/>可用**函数式更新**将上传状态改成 `'uploading'` | `UploaderAfterRead`                | -                  |
-| `beforeDelete` | 删除文件之前的回调，返回 `false | resolve(false) | reject()`，则停止删除 | `UploaderBeforeDelete`             | -                  |
+| 参数           | 说明                                                         | 类型                                                   | 默认值             |
+| :------------- | :----------------------------------------------------------- | :----------------------------------------------------- | :----------------- |
+| `fileList`     | 已上传的文件列表，需要和`onChange`配合使用                   | `UploadFile[]`                                         | `[]`               |
+| `accept`       | 允许上传的文件类型，[详细说明](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/Input/file#限制允许的文件类型) | `string`                                               | `'image/*'`        |
+| `maxCount`     | 文件上传数量限制，向前截断                                   | `number`                                               | `Number.MAX_VALUE` |
+| `multiple`     | 是否支持多选文件                                             | `boolean`                                              | `false`            |
+| `maxSize`      | 文件大小限制，单位为 `byte`                                  | `number`                                               | `Number.MAX_VALUE` |
+| `fit`          | 图片填充模式                                                 | `'contain' | 'cover' | 'fill' | 'scale-down' | 'none'` | `'contain'`        |
+| `drag`         | 是否开启拖拽上传                                             | `boolean`                                              | `true`             |
+| `capture`      | 拍照方式（移动端生效，`environment` 调起后置摄像头且仅能拍照，`user` 调起前置摄像头且仅能拍照。）<br />`capture`在不同浏览器兼容不一样（`user`会直接拉起后置摄像头），不建议配置 | `boolean | 'environment' | 'user'`                     | -                  |
+| `disabled`     | 是否禁用文件上传                                             | `boolean`                                              | `false`            |
+| `action`       | 上传的请求配置                                               | `RequestOptions`                                       | `{}`               |
+| `style`        | 自定义样式                                                   | `React.CSSProperties`                                  | `{}`               |
+| `children`     | 自定义 `Upload children`                                     | `React.ReactNode`                                      | -                  |
+| `onChange`     | 上传文件改变时的回调，上传每个阶段都会触发该事件，需要和`fileList`配合使用 | `(info: UploadFile[]) => void`                         | -                  |
+| `beforeRead`   | **读取文件之前**的回调，返回`false | resolve(false) | reject()`，则停止读取；<br/>返回 `true | resolve(false)`则上传继续；<br/>切忌不可返回 `pedding` 状态的 `Promise` | `UploaderBeforeRead`                                   | -                  |
+| `afterRead`    | **读取文件完成**后的回调；<br/>可用**函数式更新**将上传状态改成 `'uploading'` | `UploaderAfterRead`                                    | -                  |
+| `beforeDelete` | 删除文件之前的回调，返回 `false | resolve(false) | reject()`，则停止删除 | `UploaderBeforeDelete`                                 | -                  |
 
 **`UploadFile`**
 

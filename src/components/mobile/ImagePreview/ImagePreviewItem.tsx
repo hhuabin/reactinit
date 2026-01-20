@@ -478,6 +478,7 @@ export default forwardRef(function ImagePreviewItem(props: ImagePreviewItemProps
      */
     const onLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
 
+        // naturalWidth, naturalHeight 图片资源本身的“原始像素宽度高度”
         const { naturalWidth, naturalHeight } = event.currentTarget
         setImageState((prevState) => ({
             ...prevState,

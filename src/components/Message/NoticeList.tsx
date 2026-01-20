@@ -76,6 +76,7 @@ const Notice: React.FC<NoticeProps> = (props) => {
     /**
      * bug：优化处理 message 离开动画
      * 不应该修改 height 值而触发布局 / 回流，导致界面卡顿
+     * 试试 scaleY ?
      */
     return (
         <div

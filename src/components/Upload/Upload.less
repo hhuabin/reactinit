@@ -61,14 +61,20 @@
                 height: 100%;
                 object-fit: contain;
             }
-            .contain {
-                object-fit: contain;     /* 包含：保持原始宽高比，内容完全显示在框内，可能留有空白区域 */
+            .bin-upload-image-contain {
+                object-fit: contain;         /* 包含：保持原始宽高比，内容完全显示在框内，可能留有空白区域 */
             }
-            .cover {
-                object-fit: cover;       /*  覆盖：保持原始宽高比，内容可能被裁剪，但会填满整个框 */
+            .bin-upload-image-cover {
+                object-fit: cover;           /* 覆盖：保持原始宽高比，内容可能被裁剪，但会填满整个框 */
             }
-            .fill {
-                object-fit: fill;        /* 填充：不保持宽高比 */
+            .bin-upload-image-fill {
+                object-fit: fill;            /* 填充：不保持宽高比 */
+            }
+            .bin-upload-image-scale-down {
+                object-fit: scale-down;      /* 类似 contain 但更保守 */
+            }
+            .bin-upload-image-none {
+                object-fit: none;            /* 原始尺寸 */
             }
         }
 

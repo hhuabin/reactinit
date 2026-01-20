@@ -165,7 +165,7 @@ const BigFileUpload: React.FC<Props> = (props) => {
         <>
             <div className='flex w-full my-8'>
                 <div className=''>
-                    <div className='w-full text-[2rem] leading-[3rem]'>大文件上传</div>
+                    <div className='w-full text-[16px] leading-[24px]'>大文件上传</div>
                     <div className='w-full mt-4'>
                         <Upload
                             fileList={fileList}
@@ -177,7 +177,7 @@ const BigFileUpload: React.FC<Props> = (props) => {
                 </div>
 
                 <div className='ml-4'>
-                    <div className='w-full text-[2rem] leading-[3rem]'>切片后回显的图片：</div>
+                    <div className='w-full text-[16px] leading-[24px]'>切片后回显的图片：</div>
                     <div className='w-full mt-4'>
                         <div className='w-[80px] h-[80px] rounded-sm border border-[var(--color-border)] [box-shadow:var(--box-bottom-shadow)]'>
                             <img src={sliceImgFile} className='block w-full h-full object-contain' alt="" />

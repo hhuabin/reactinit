@@ -101,14 +101,14 @@ const FileUpload: React.FC = () => {
     return (
         <div className='w-full min-h-full p-6'>
             <div className='w-full my-8'>
-                <div className='w-full text-[2rem] leading-[3rem]'>非受控模式</div>
+                <div className='w-full text-[16px] leading-[24px]'>非受控模式</div>
                 <div className='w-full mt-4'>
                     <Upload></Upload>
                 </div>
             </div>
 
             <div className='w-full my-8'>
-                <div className='w-full '>受控模式</div>
+                <div className='w-full text-[16px] leading-[24px]'>受控模式</div>
                 <div className='w-full mt-4'>
                     <Upload
                         fileList={fileList1}
@@ -118,7 +118,7 @@ const FileUpload: React.FC = () => {
             </div>
 
             <div className='w-full my-8'>
-                <div className='w-full text-[2rem] leading-[3rem]'>允许上传的文件类型（图片） + 文件上传数量限制（3） + 支持多选文件 + 文件大小限制（1M）</div>
+                <div className='w-full text-[16px] leading-[24px]'>允许上传的文件类型（图片） + 文件上传数量限制（3） + 支持多选文件 + 文件大小限制（1M）</div>
                 <div className='w-full mt-4'>
                     <Upload
                         accept='image/*'
@@ -131,7 +131,7 @@ const FileUpload: React.FC = () => {
 
             <div className='w-full my-8'>
                 <input
-                    className='block w-full h-[4.5rem] px-4 border border-[#ebedf0] outline-0 bg-[#fff] text-[2rem]'
+                    className='block w-full h-[36px] px-[8px] border border-[#ebedf0] outline-0 bg-[#fff] text-[16px]'
                     type='text'
                     placeholder='请输入你的上传地址'
                     value={uploadUrl}
@@ -140,7 +140,7 @@ const FileUpload: React.FC = () => {
             </div>
 
             <div className='w-full my-8'>
-                <div className='w-full text-[2rem] leading-[3rem]'>读取文件前置处理 + 读取文件后置处理 + 删除文件前置处理</div>
+                <div className='w-full text-[16px] leading-[24px]'>读取文件前置处理 + 读取文件后置处理 + 删除文件前置处理</div>
                 <div className='w-full mt-4'>
                     <Upload
                         fileList={fileList2}
@@ -153,7 +153,7 @@ const FileUpload: React.FC = () => {
             </div>
 
             <div className='w-full my-8'>
-                <div className='w-full text-[2rem] leading-[3rem]'>自动上传</div>
+                <div className='w-full text-[16px] leading-[24px]'>自动上传</div>
                 <div className='w-full mt-4'>
                     <Upload
                         action={{

@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-08-13 11:52:25
  * @LastEditors: bin
- * @LastEditTime: 2025-11-13 10:59:19
+ * @LastEditTime: 2026-01-20 10:43:28
  */
 /* eslint-disable max-lines */
 import {
@@ -27,14 +27,14 @@ type UploadProps = {
     maxCount?: number;                          // 文件上传数量限制，向前截断
     multiple?: boolean;                         // 是否支持多选文件
     maxSize?: number;                           // 文件大小限制，单位为 byte
-    imageFit?: 'contain' | 'cover' | 'fill';    // 图片填充模式
+    fit?: 'contain' | 'cover' | 'fill' | 'scale-down' | 'none';    // 图片填充模式，默认值 'contain'
     drag?: boolean;                             // 是否开启拖拽上传
     capture?: boolean | 'environment' | 'user'; // 拍照方式（移动端生效）
     disabled?: boolean;                         // 是否禁用文件上传
     action?: RequestOptions;                    // 上传的请求配置
     className?: string;                         // 自定义类名
     style?: React.CSSProperties;                // 自定义样式
-    children?: JSX.Element;                     // 自定义 Upload children
+    children?: React.ReactNode;                 // 自定义 Upload children
     onChange?: (info: UploadFile[]) => void;    // 上传文件改变时的回调，上传每个阶段都会触发该事件
     beforeRead?: UploaderBeforeRead;            // 读取文件之前的回调，返回 false | resolve(false) | reject()，则停止上传；切忌不可返回 pedding 状态的 Promise
     afterRead?: UploaderAfterRead;              // 文件读取完成后的回调
@@ -53,7 +53,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
         maxCount = Number.MAX_VALUE,
         multiple = false,
         maxSize = Number.MAX_VALUE,
-        imageFit = 'contain',
+        fit = 'contain',
         drag = true,
         disabled = false,
         action = {} as RequestOptions,
@@ -421,7 +421,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
                         isImageFile(uploadFile) ? (
                             // 图片显示
                             <div className='bin-upload-image'>
-                                <img src={uploadFile.url || uploadFile.tempUrl} className={imageFit} />
+                                <img src={uploadFile.url || uploadFile.tempUrl} className={'bin-upload-image-' + fit} />
                             </div>
                         ) : (
                             // 文件显示
