@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-07-11 18:23:24
  * @LastEditors: bin
- * @LastEditTime: 2026-01-16 16:35:16
+ * @LastEditTime: 2026-01-20 17:09:13
  */
 /**
  * 参考源码：notification/src/Notice.tsx
@@ -74,9 +74,7 @@ const Notice: React.FC<NoticeProps> = (props) => {
     }
 
     /**
-     * bug：优化处理 message 离开动画
-     * 不应该修改 height 值而触发布局 / 回流，导致界面卡顿
-     * 试试 scaleY ?
+     * bug：优化处理 message 离开动画稍显卡顿
      */
     return (
         <div
