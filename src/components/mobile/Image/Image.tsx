@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2026-01-04 15:33:22
  * @LastEditors: bin
- * @LastEditTime: 2026-01-20 14:52:13
+ * @LastEditTime: 2026-01-20 15:04:36
  */
 /**
  * @Author: bin
@@ -149,7 +149,18 @@ const Image: React.FC<ImageProps> = (props) => {
      * @returns 图片元素
      */
     const renderImage = () => {
-        if (!src || imageStatus === 'idle' || imageStatus === 'error') return null
+        /**
+         * 1.不传 src，不展示图片
+         * 2.图片未开始加载，不展示图片
+         * 3.图片可以展示失败占位符 并且 加载失败，不展示图片
+         */
+        if (
+            !src ||
+            imageStatus === 'idle' ||
+            (showError && imageStatus === 'error')
+        ) {
+            return null
+        }
 
         return (
             <img

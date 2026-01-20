@@ -152,6 +152,17 @@ const ImageComponents: React.FC = () => {
                         </div>
                         <div className='w-full mt-4 text-[14px] leading-[24px] text-center'>自定义提示</div>
                     </div>
+                    <div className='flex-none w-[100px]'>
+                        <div className='w-[100px] h-[100px]'>
+                            <Image
+                                width={100}
+                                height={100}
+                                src='http'
+                                showError={false}
+                            ></Image>
+                        </div>
+                        <div className='w-full mt-4 text-[14px] leading-[24px] text-center'>禁用加载失败提示</div>
+                    </div>
                 </div>
             </div>
 
