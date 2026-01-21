@@ -16,6 +16,7 @@
 | `maxCount`     | 文件上传数量限制，向前截断                                   | `number`                                                | `Number.MAX_VALUE` |
 | `multiple`     | 是否支持多选文件                                             | `boolean`                                               | `false`            |
 | `maxSize`      | 文件大小限制，单位为 `byte`                                  | `number`                                                | `Number.MAX_VALUE` |
+| `preview`      | 是否允许图片预览                                             | `boolean`                                               | `true`             |
 | `fit`          | 图片填充模式，详见 `Image`                                   | `'contain' | 'cover' | 'fill' | 'scale-down' |  'none'` | `'contain'`        |
 | `drag`         | 是否开启拖拽上传                                             | `boolean`                                               | `true`             |
 | `capture`      | 拍照方式（移动端生效，`environment` 调起后置摄像头且仅能拍照，`user` 调起前置摄像头且仅能拍照。）<br />`capture`在不同浏览器兼容不一样（`user`会直接拉起后置摄像头），不建议配置 | `boolean | 'environment' | 'user'`                      | -                  |

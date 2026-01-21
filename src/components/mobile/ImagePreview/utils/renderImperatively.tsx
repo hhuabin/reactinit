@@ -12,17 +12,17 @@ import React, {
 import { renderToBody } from './reactRender'
 
 type ImperativeProps = {
-    visible?: boolean
-    onClose?: () => void
-    afterClose: () => void
+    visible?: boolean;
+    onClose?: () => void;
+    afterClose: () => void;
 }
 
 type TargetElement = ReactElement<ImperativeProps>
 
 export type ImperativeHandler = {
-    close: () => void
-    replace: (element: TargetElement) => void
-    isRendered?: () => boolean
+    close: () => void;
+    replace: (element: TargetElement) => void;
+    isRendered?: () => boolean;
 }
 
 /**

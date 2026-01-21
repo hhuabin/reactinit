@@ -134,7 +134,7 @@ const Mask: React.FC<MaskProps> = (props) => {
                 '--z-index': zIndex ? zIndex : (style as Record<string, string>)['--z-index'],
                 '--animation-duration': duration ? duration + 'ms' : (style as Record<string, string>)['--animation-duration'],
                 '--bg-color': bgColor ? bgColor : (style as Record<string, string>)['--bg-color'],
-            }  as React.CSSProperties }
+            } as React.CSSProperties }
             onClick={(event) => handleMaskClick(event)}
             onTouchMove={onTouchMove}
             onTransitionEnd={(e) => onTransitionEnd(e)}

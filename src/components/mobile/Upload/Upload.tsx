@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-08-13 11:52:25
  * @LastEditors: bin
- * @LastEditTime: 2026-01-20 10:42:00
+ * @LastEditTime: 2026-01-21 16:31:01
  */
 /* eslint-disable max-lines */
 import {
@@ -10,8 +10,6 @@ import {
     type ForwardedRef,
 } from 'react'
 import { flushSync } from 'react-dom'
-
-import './Upload.less'
 
 import Image from '@/components/mobile/Image'
 import { showImagePreview } from '@/components/mobile/ImagePreview'
@@ -21,6 +19,8 @@ import { xhrRequest } from './xhrRequest'
 import { runTasksWithLimitSettled } from '@/utils/functionUtils/runTasksWithLimit'
 import type { UploadFile, RequestOptions, UploaderBeforeRead, UploaderAfterRead, UploaderBeforeDelete } from './Upload.d'
 
+import './Upload.less'
+
 let uploadKeyIndex = 0
 
 type UploadProps = {
@@ -29,6 +29,7 @@ type UploadProps = {
     maxCount?: number;                          // 文件上传数量限制，向前截断
     multiple?: boolean;                         // 是否支持多选文件
     maxSize?: number;                           // 文件大小限制，单位为 byte
+    preview?: boolean;                         // 是否允许图片预览，默认值为 true
     fit?: 'contain' | 'cover' | 'fill' | 'scale-down' | 'none';    // 图片填充模式，详见 Image
     drag?: boolean;                             // 是否开启拖拽上传
     capture?: boolean | 'environment' | 'user'; // 拍照方式（移动端生效）
@@ -56,6 +57,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
         maxCount = Number.MAX_VALUE,
         multiple = false,
         maxSize = Number.MAX_VALUE,
+        preview = true,
         fit = 'contain',
         drag = true,
         disabled = false,
@@ -385,6 +387,7 @@ export default forwardRef(function Upload(props: UploadProps, ref: ForwardedRef<
     }
 
     const previewImage = (uploadFile: UploadFile, uploadFileIndex: number) => {
+        if (!preview) return
         const previewImagesSrc: string[] = []
         let defaultIndex = 0
         mergedFileList.forEach((item, index) => {

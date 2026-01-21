@@ -11,13 +11,13 @@ import {
 } from 'react'
 import { flushSync } from 'react-dom'
 
-import './Upload.less'
-
 import useMergedState from '@/hooks/reactHooks/useMergedState'
 import { isImageFile, readFileContent, updateFileList } from './utils'
 import { xhrRequest } from './xhrRequest'
 import { runTasksWithLimitSettled } from '@/utils/functionUtils/runTasksWithLimit'
 import type { UploadFile, RequestOptions, UploaderBeforeRead, UploaderAfterRead, UploaderBeforeDelete } from './Upload.d'
+
+import './Upload.less'
 
 let uploadKeyIndex = 0
 

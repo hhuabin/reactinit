@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-15 17:36:13
  * @LastEditors: bin
- * @LastEditTime: 2026-01-16 15:09:23
+ * @LastEditTime: 2026-01-21 15:55:51
  */
 import {
     useState, useRef, useEffect,
@@ -15,14 +15,9 @@ import ImagePreviewItem from './ImagePreviewItem'
 
 import useMergedState from '@/hooks/reactHooks/useMergedState'
 import useWindowSize from '@/hooks/deviceHooks/useWindowSize'
-import { type ImagePreviewProps } from './ImagePreview.d'
+import { type ImagePreviewProps, type ImagePreviewRef } from './ImagePreview.d'
 
 import './ImagePreview.less'
-
-export type ImagePreviewRef = {
-    swipeTo: (index: number) => void;          // 切换到指定位置
-    resetScale: () => void;                    // 重置当前图片的缩放比
-}
 
 // eslint-disable-next-line prefer-arrow-callback
 export default forwardRef(function ImagePreview(props: ImagePreviewProps, ref: ForwardedRef<ImagePreviewRef>) {

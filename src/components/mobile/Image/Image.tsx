@@ -2,13 +2,7 @@
  * @Author: bin
  * @Date: 2026-01-04 15:33:22
  * @LastEditors: bin
- * @LastEditTime: 2026-01-20 15:04:36
- */
-/**
- * @Author: bin
- * @Date: 2026-01-04 15:33:22
- * @LastEditors: bin
- * @LastEditTime: 2026-01-20 10:00:21
+ * @LastEditTime: 2026-01-21 15:04:08
  */
 import { useState, useRef, useEffect } from 'react'
 
@@ -75,17 +69,18 @@ const Image: React.FC<ImageProps> = (props) => {
     const imageRef = useRef<HTMLImageElement>(null)
 
     useEffect(() => {
+        // 处理没有 src 的情况
         if (!src) {
             setImageStatus('idle')
             return
         }
-
+        // 图片可以加载
         if (shouldLoad) {
             setImageStatus('loading')
         }
     }, [src, shouldLoad])
 
-    // 处理不触发 onLoad() 事件的情况
+    // 在 imageStatus === 'loading' 时，处理不触发 onLoad() 事件的情况
     useEffect(() => {
         if (imageStatus !== 'loading') return
         if (!imageRef.current) return
