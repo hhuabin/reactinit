@@ -1,8 +1,14 @@
+/**
+ * @Author: bin
+ * @Date: 2024-05-29 22:12:59
+ * @LastEditors: bin
+ * @LastEditTime: 2026-01-21 09:35:07
+ */
 type LoadingProps = {
-    readonly beginColor?: string;
-    readonly endColor?: string;
-    readonly size?: string;
-    readonly duration?: number;
+    beginColor?: string;
+    endColor?: string;
+    size?: string;
+    duration?: number;
 }
 
 /**
@@ -20,7 +26,7 @@ const Loading: React.FC<LoadingProps> = (props) => {
     } = props
 
     return (
-        <div className={'flex justify-center items-center w-full h-full'}>
+        <div className='flex justify-center items-center w-full h-full'>
             <svg width={size} height={size} viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
                 <circle cx='25' cy='50' r='6' fill={beginColor}>
                     <animate attributeName='cx' values='25;50;25' dur={`${duration}s`} repeatCount='indefinite' begin='0s' />

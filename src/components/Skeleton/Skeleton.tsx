@@ -2,13 +2,16 @@
  * @Author: bin
  * @Date: 2025-12-30 16:12:27
  * @LastEditors: bin
- * @LastEditTime: 2025-12-30 16:21:04
+ * @LastEditTime: 2026-01-21 09:42:01
  */
+import './Skeleton.less'
+
 type SkeletonProps = {
-    readonly beginColor?: string;
-    readonly endColor?: string;
-    readonly size?: string;
-    readonly duration?: number;
+    loading?: boolean;                         // 是否显示骨架屏
+    children?: React.ReactNode | (() => React.ReactNode);             // Skeleton 子元素
+    renderSkeleton?: React.ReactNode | (() => React.ReactNode);       // 自定义 Skeleton
+    className?: string;                        // 自定义类名
+    style?: React.CSSProperties;               // 自定义样式
 }
 
 /**
@@ -19,30 +22,48 @@ type SkeletonProps = {
 const Skeleton: React.FC<SkeletonProps> = (props) => {
 
     const {
-        beginColor = '#66b8ff',
-        endColor = '#1890ff',
-        size = '50px',
-        duration = 1,
+        loading = true,
+        children = null,
+        renderSkeleton,
+        className = '',
+        style = {},
     } = props
 
-    return (
-        <div className={'flex justify-center items-center w-full h-full'}>
-            <svg width={size} height={size} viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
-                <circle cx='25' cy='50' r='6' fill={beginColor}>
-                    <animate attributeName='cx' values='25;50;25' dur={`${duration}s`} repeatCount='indefinite' begin='0s' />
-                    <animate attributeName='fill' values={`${beginColor};${endColor};${beginColor}`} dur={`${duration}s`} repeatCount='indefinite' begin='0s' />
-                </circle>
-                <circle cx='50' cy='50' r='6' fill={beginColor}>
-                    <animate attributeName='r' values='6;9;6' dur={`${duration}s`} repeatCount='indefinite' begin='0s' />
-                    <animate attributeName='fill' values={`${beginColor};${endColor};${beginColor}`} dur={`${duration}s`} repeatCount='indefinite' begin='0s' />
-                </circle>
-                <circle cx='75' cy='50' r='6' fill={beginColor}>
-                    <animate attributeName='cx' values='75;50;75' dur={`${duration}s`} repeatCount='indefinite' begin='0s' />
-                    <animate attributeName='fill' values={`${beginColor};${endColor};${beginColor}`} dur={`${duration}s`} repeatCount='indefinite' begin='0s' />
-                </circle>
-            </svg>
-        </div>
-    )
+    if (!loading) {
+        // 加载完成，显示目标元素
+        if (typeof children === 'function') {
+            return children()
+        } else {
+            return children
+        }
+    } else {
+        // 加载中，显示 Skeleton
+        if (typeof renderSkeleton === 'function') {
+            return renderSkeleton()
+        } else {
+            return renderSkeleton ?? (
+                <div
+                    className={'bin-skeleton' + (className ? ' ' + className : '')}
+                    style={style}
+                >
+                    <svg width='50px' height='50px' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+                        <circle cx='25' cy='50' r='6' fill='#66b8ff'>
+                            <animate attributeName='cx' values='25;50;25' dur='1s' repeatCount='indefinite' begin='0s' />
+                            <animate attributeName='fill' values='#66b8ff;#66b8ff;#66b8ff' dur='1s' repeatCount='indefinite' begin='0s' />
+                        </circle>
+                        <circle cx='50' cy='50' r='6' fill='#66b8ff'>
+                            <animate attributeName='r' values='6;9;6' dur='1s' repeatCount='indefinite' begin='0s' />
+                            <animate attributeName='fill' values='#66b8ff;#66b8ff;#66b8ff' dur='1s' repeatCount='indefinite' begin='0s' />
+                        </circle>
+                        <circle cx='75' cy='50' r='6' fill='#66b8ff'>
+                            <animate attributeName='cx' values='75;50;75' dur='1s' repeatCount='indefinite' begin='0s' />
+                            <animate attributeName='fill' values='#66b8ff;#66b8ff;#66b8ff' dur='1s' repeatCount='indefinite' begin='0s' />
+                        </circle>
+                    </svg>
+                </div>
+            )
+        }
+    }
 }
 
 export default Skeleton

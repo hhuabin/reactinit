@@ -25,7 +25,7 @@ type MaskProps = {
     getContainer?: HTMLElement | (() => HTMLElement) | null;       // 指定挂载的节点
     onMaskClick?: (value?: boolean) => void;   // 点击遮罩层时触发
     afterClose?: () => void;                   // 完全关闭后触发
-    children?: React.ReactNode;                // Mask children
+    children?: React.ReactNode | (() => React.ReactNode);          // Mask children
 }
 
 const Mask: React.FC<MaskProps> = (props) => {
@@ -139,7 +139,7 @@ const Mask: React.FC<MaskProps> = (props) => {
             onTouchMove={onTouchMove}
             onTransitionEnd={(e) => onTransitionEnd(e)}
         >
-            { children }
+            { typeof children === 'function' ? children() : children }
         </div>,
         getContainer,
     )

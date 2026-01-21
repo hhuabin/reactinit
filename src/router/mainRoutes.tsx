@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-04-16 14:12:24
  * @LastEditors: bin
- * @LastEditTime: 2025-12-25 15:52:19
+ * @LastEditTime: 2026-01-21 09:44:04
  */
 import { redirect, Navigate } from 'react-router-dom'
 
@@ -80,6 +80,17 @@ export const routes: RouteConfig[] = [
         },
         meta: {
             title: 'timezone',
+            auth: false,
+        },
+    },
+    {
+        path: '/skeleton',
+        lazy: async () => {
+            const { default: Skeleton } = await import('@/pages/Skeleton/Skeleton')
+            return { Component: Skeleton }
+        },
+        meta: {
+            title: 'skeleton',
             auth: false,
         },
     },

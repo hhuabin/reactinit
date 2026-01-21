@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2025-09-17 16:58:55
  * @LastEditors: bin
- * @LastEditTime: 2025-10-29 09:49:35
+ * @LastEditTime: 2026-01-21 09:35:55
  */
 export type SwiperItemProps = {
     width?: number;
@@ -11,7 +11,7 @@ export type SwiperItemProps = {
     transform?: string;
     className?: string;
     style?: React.CSSProperties;
-    children?: React.ReactNode;
+    children?: React.ReactNode | (() => React.ReactNode);
 }
 
 export const SwiperItem: React.FC<SwiperItemProps> = (props) => {
@@ -23,7 +23,7 @@ export const SwiperItem: React.FC<SwiperItemProps> = (props) => {
         transform,
         className = '',
         style = {},
-        children,
+        children = null,
     } = props
 
     return (
@@ -37,7 +37,7 @@ export const SwiperItem: React.FC<SwiperItemProps> = (props) => {
                 transform,
             }}
         >
-            {children}
+            { typeof children === 'function' ? children() : children }
         </div>
     )
 }
