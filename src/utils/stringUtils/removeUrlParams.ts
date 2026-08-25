@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2026-08-20 10:07:10
  * @LastEditors: bin
- * @LastEditTime: 2026-08-20 15:15:14
+ * @LastEditTime: 2026-08-25 10:46:35
  */
 /**
  * 1.历史路由带参数：https://example.com?a=1
@@ -97,3 +97,14 @@ export const removeUrlParams = (
         .map(part => removeParamsFromPart(part, names))
         .join('#')
 }
+
+/* const removeTokenFromUrl = () => {
+    const currentUrl = window.location.href
+    const url = removeUrlParams(currentUrl, ['token'])
+
+    if (url === currentUrl) return
+
+    window.history.replaceState(window.history.state, '', url)
+
+    // 保险一点，这里路由还需要做一次 replace
+} */
