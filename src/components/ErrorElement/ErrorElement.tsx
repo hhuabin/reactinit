@@ -5,7 +5,7 @@
  * @LastEditTime: 2026-04-15 10:52:30
  */
 import React from 'react'
-import { useRouteError, isRouteErrorResponse } from 'react-router-dom'
+import { useNavigate, useRouteError, isRouteErrorResponse } from 'react-router-dom'
 
 /**
  * @description 路由错误 → 用 ErrorElement
@@ -15,6 +15,7 @@ import { useRouteError, isRouteErrorResponse } from 'react-router-dom'
  */
 const ErrorElement: React.FC = () => {
     const error = useRouteError()
+    const navigate = useNavigate()
 
     let title = '出错了'
     let message = '发生未知错误'
@@ -60,7 +61,7 @@ const ErrorElement: React.FC = () => {
                             type='button'
                             className='px-[16px] border border-[var(--border-default)] rounded-md mx-4 text-[1em] bg-[var(--bg-color)] select-none
                             text-[var(--text-primary)] leading-[32px] hover:border-[var(--color-primary-hover)] hover:text-[var(--color-primary-hover)]'
-                            onClick={() => (window.location.href = '/')}
+                            onClick={() => navigate('/')}
                         >
                             <span>返回首页</span>
                         </button>

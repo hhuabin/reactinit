@@ -88,7 +88,10 @@ const shouldProjectUpdate = (
  * vite.config.ts 需要在构建时生成包含 version 和 buildTime 的 version.json
  * 优点：比 useVersionUpdate 规范；缺点：配置较多，需要注入全局变量__APP_VERSION__和__BUILD_TIME__，也生成 version.json 文件在前端服务器
  *
- * @param { string } projectLink 项目部署于域名下的路径，默认为域名根路径/；如果项目部署于子路径(window.location.pathname)，则需要填写子路径（子路径需以 / 结束），如 /project/
+ * @param { string } projectLink 项目部署于域名下的路径，默认为域名根路径/
+ *  历史路由可以使用 import.meta.env.BASE_URL
+ *  哈希路由中，如果项目部署于子路径(window.location.pathname)，则需要填写子路径（子路径需以 / 结束），如 /project/
+ *  最终就是要拼出项目的 index。html 所在的位置，才能正常访问
  * @param { boolean } intervalRefresh 是否定时轮询检查更新，默认为 false，设置为true时，需要注意是否有表单提交页，用户刷新将会导致表单填写数据丢失
  * @param { boolean } strictUpdate 是否需要版本号和构建时间都变化才更新，默认为 false
  */

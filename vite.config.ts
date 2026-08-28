@@ -4,11 +4,13 @@ import { visualizer } from 'rollup-plugin-visualizer'
 
 import { version } from './package.json'
 
+// 历史路由前缀，默认为 ''
+const BASE_ROUTE_PATH = '/react18'
 const buildTimeStamp = Date.now()
 
 // https://vitejs.dev/config/
 export default defineConfig((env: ConfigEnv) => ({
-    base: './',
+    base: BASE_ROUTE_PATH + '/',
     define: {
         __APP_VERSION__: JSON.stringify(version),
         __BUILD_TIME__: JSON.stringify(buildTimeStamp),
@@ -50,7 +52,7 @@ export default defineConfig((env: ConfigEnv) => ({
         },
     },
     build: {
-        outDir: 'dist',
+        outDir: 'dist' + BASE_ROUTE_PATH,
         /**
          * 在静态资源目录添加版本号
          * 1. 存下历史包，解决因为浏览器缓存了历史资源造成的**白屏问题**

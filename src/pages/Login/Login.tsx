@@ -63,8 +63,9 @@ const Login: React.FC = () => {
             if (redirectUrl) {
                 // 解码路由
                 redirectUrl = decodeURIComponent(redirectUrl)
+                const redirectRequestUrl = `${import.meta.env.BASE_URL}${redirectUrl.replace(/^\//, '')}`
                 // 网页存在才能跳转，否则跳转首页
-                axios.get(redirectUrl)
+                axios.get(redirectRequestUrl)
                 .then(res => {
                     if (res.status === 200) {
                         navigate(redirectUrl, { replace: true })

@@ -47,6 +47,18 @@ Other Introduction：
    yarn build
    ```
 
+## Nginx 部署
+
+构建完成后，将 `dist` 目录部署到服务器的 `/var/www/react18/`，然后复制示例配置：
+
+```bash
+sudo cp deploy/nginx/react18.conf.example /etc/nginx/conf.d/react18.conf
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+站点默认通过 `/react18/` 访问。示例配置位于 `deploy/nginx/`，不会被前端构建打包。
+
 
 
 # version
@@ -121,4 +133,3 @@ yarn: 1.22.21
 11. **文件：文件需要以空行结尾**
 
 12. **文件：一个文件最大行数为300行**
-

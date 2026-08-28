@@ -1,0 +1,35 @@
+server {
+    listen 80;
+    server_name _;
+
+    # 前端项目配置
+    # /react18 -> /react18/；/react18 是具体路径，nginx 不会默认加 /，所以需要配置重定向到/
+    location = /react18 {
+        return 301 /react18/;
+    }
+    
+    # index.html 禁止缓存
+    location = /react18/index.html {
+        root /var/www;
+
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+    }
+    
+    # 静态资源：缓存 7 天
+    location /react18/assets/ {
+        root /var/www;
+
+        expires 7d;
+        add_header Cache-Control "public";
+    }
+
+    # React History 路由
+    location /react18/ {
+        root /var/www;
+
+        # History 路由
+        try_files $uri $uri/ /react18/index.html;
+    }
+}
