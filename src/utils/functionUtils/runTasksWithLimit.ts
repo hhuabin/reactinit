@@ -2,7 +2,7 @@
  * @Author: bin
  * @Date: 2026-07-22 11:12:55
  * @LastEditors: bin
- * @LastEditTime: 2026-08-19 18:34:32
+ * @LastEditTime: 2026-09-01 17:37:18
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -34,7 +34,7 @@ export const runTasksWithLimitFailFast = <T extends (() => Promise<any>)[]>(
 ): Promise<{[K in keyof T]: T[K] extends () => Promise<infer R> ? R : never}> => {
     return new Promise((resolve, reject) => {
         // const results = [] as {[K in keyof T]: T[K] extends () => Promise<infer R> ? R : never}
-        const results = new Array(tasks.length) as {[K in keyof T]: T[K] extends () => Promise<infer R> ? R : never}
+        const results = Array.from({ length: tasks.length }) as {[K in keyof T]: T[K] extends () => Promise<infer R> ? R : never}
         let currentIndex = 0
         let running = 0
         let finished = 0
@@ -113,7 +113,7 @@ export const runTasksWithLimitSettled = <T extends (() => Promise<any>)[]>(
 ): Promise<{[K in keyof T]: T[K] extends () => Promise<infer R> ? TaskResult<R> : never}> => {
     return new Promise((resolve, reject) => {
         // const results = [] as {[K in keyof T]: T[K] extends () => Promise<infer R> ? TaskResult<R> : never}
-        const results = new Array(tasks.length) as {[K in keyof T]: T[K] extends () => Promise<infer R> ? TaskResult<R> : never}
+        const results = Array.from({ length: tasks.length }) as {[K in keyof T]: T[K] extends () => Promise<infer R> ? TaskResult<R> : never}
         let currentIndex = 0
         let running = 0
         let finished = 0

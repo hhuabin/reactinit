@@ -10,7 +10,7 @@ describe('arrayUtils', () => {
     test('isArray returns true for arrays', () => {
         expect(isArray([])).toBe(true)
         expect(isArray([1, 2, 3])).toBe(true)
-        expect(isArray(new Array(2))).toBe(true)
+        expect(isArray(Array.from({ length: 2 }))).toBe(true)
     })
 
     test('isArray returns false for array-like and non-array values', () => {

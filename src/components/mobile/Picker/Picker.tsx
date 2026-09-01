@@ -149,9 +149,9 @@ const Picker: React.FC<PickerProps> = (props) => {
         if (currentColumns.length === 0) return
 
         // 初始化/重置每一列的惯性滚动状态为 false
-        setIsInertialScrollings(new Array(currentColumns.length).fill(false))
+        setIsInertialScrollings(Array.from({ length: currentColumns.length }, () => false))
         // currentColumns.length 发生变化，即代表 columns 发生变化，初始化动画
-        lastIndexs.current = new Array(currentColumns.length).fill(0).map((_, i) => clamp(defaultIndexs[i] || 0, 0, Math.max(0, currentColumns[i].length - 1)))
+        lastIndexs.current = Array.from({ length: currentColumns.length }, (_, i) => clamp(defaultIndexs[i] || 0, 0, Math.max(0, currentColumns[i].length - 1)))
         currentIndexs.current = [...lastIndexs.current]
         for (let columnIndex = 0; columnIndex < currentColumns.length; columnIndex++) {
             updateColumnByIndex(columnIndex, lastIndexs.current[columnIndex] ?? 0, 0)
@@ -165,7 +165,7 @@ const Picker: React.FC<PickerProps> = (props) => {
 
     useEffect(() => {
         // 初始化/重置每一列的惯性滚动状态为 false
-        setIsInertialScrollings(new Array(currentColumns.length).fill(false))
+        setIsInertialScrollings(Array.from({ length: currentColumns.length }, () => false))
         // 恢复列选中位置为 lastIndexs 状态
         for (let columnIndex = 0; columnIndex < currentColumns.length; columnIndex++) {
             updateColumnByIndex(columnIndex, lastIndexs.current[columnIndex] ?? 0, 0)
@@ -222,16 +222,16 @@ const Picker: React.FC<PickerProps> = (props) => {
     const initializeBaseData = (newColumns: PickerColumn[]) => {
         const columnCount = Math.max(1, newColumns.length)
         // 初始化数据
-        const _transformYs = new Array(columnCount).fill(0) // 初始值为 0
-        setIsInertialScrollings(new Array(columnCount).fill(false))
+        const _transformYs = Array.from({ length: columnCount }, () => 0) // 初始值为 0
+        setIsInertialScrollings(Array.from({ length: columnCount }, () => false))
         // lastIndexs 不能超过数组边界
-        lastIndexs.current = new Array(columnCount).fill(0).map((_, i) => clamp(defaultIndexs[i] || 0, 0, Math.max(0, newColumns[i].length - 1)))
+        lastIndexs.current = Array.from({ length: columnCount }, (_, i) => clamp(defaultIndexs[i] || 0, 0, Math.max(0, newColumns[i].length - 1)))
         currentIndexs.current = [...lastIndexs.current]
 
-        startOffsets.current = new Array(columnCount).fill(0)
-        movings.current = new Array(columnCount).fill(false)
-        inertialStartTimes.current = new Array(columnCount).fill(0)
-        inertialOffsets.current = new Array(columnCount).fill(0)
+        startOffsets.current = Array.from({ length: columnCount }, () => 0)
+        movings.current = Array.from({ length: columnCount }, () => false)
+        inertialStartTimes.current = Array.from({ length: columnCount }, () => 0)
+        inertialOffsets.current = Array.from({ length: columnCount }, () => 0)
 
         if (newColumns.length === currentColumns.length) {
             for (let columnIndex = 0; columnIndex < newColumns.length; columnIndex++) {

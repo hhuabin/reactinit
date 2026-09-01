@@ -8,7 +8,7 @@
  * @tips 时间复杂度：O(nlog2n)、空间复杂度：O(n)
  */
 export const mergeSort = <T>(array: T[], compareFn: (a: T, b: T) => number) => {
-    const copy = new Array<T>(array.length)
+    const copy: T[] = Array.from({ length: array.length })
 
     const sort = (left: number, right: number) => {
         if (left < right) {
